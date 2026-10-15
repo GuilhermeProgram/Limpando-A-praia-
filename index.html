@@ -361,8 +361,9 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 /* =====================================================================
    RANKING ONLINE (Supabase) — usado quando o jogo roda fora do Claude
    (GitHub Pages, Netlify ou o arquivo aberto no navegador).
-   Cole aqui a "Project URL" e a chave "anon public" do seu projeto
-   (Supabase > Project Settings > API). A chave anon é pública por natureza:
+   Cole aqui a "Project URL" e a chave pública do seu projeto: a
+   "publishable key" (sb_publishable_...) ou a antiga "anon public" (eyJ...).
+   Ficam no botão "Connect" do painel do Supabase. A chave pública é pública por natureza:
    quem protege os dados são as regras do arquivo supabase/ranking.sql.
    Deixe em branco para salvar o ranking só no aparelho de cada pessoa.
    ===================================================================== */
@@ -1970,7 +1971,7 @@ const SB = {
     const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
     try {
       const r = await fetch(SUPABASE.url.replace(/\/+$/, '') + '/rest/v1/' + path, { ...opts, signal:ctl.signal,
-        headers:{ apikey:SUPABASE.chave, Authorization:'Bearer ' + SUPABASE.chave, 'Content-Type':'application/json', ...(opts.headers || {}) } });
+        headers:{ apikey:SUPABASE.chave, ...(SUPABASE.chave.startsWith('eyJ') ? { Authorization:'Bearer ' + SUPABASE.chave } : {}), 'Content-Type':'application/json', ...(opts.headers || {}) } });
       if (!r.ok) throw new Error('Supabase respondeu ' + r.status);
       return r;
     } finally { clearTimeout(to); }

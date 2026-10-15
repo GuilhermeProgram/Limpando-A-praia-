@@ -63,7 +63,7 @@ Onde o ranking fica salvo depende de onde o jogo está rodando:
 
 1. Crie uma conta em [supabase.com](https://supabase.com) e um projeto novo.
 2. No projeto, abra **SQL Editor > New query**, cole todo o conteúdo de [`supabase/ranking.sql`](supabase/ranking.sql) e clique em **Run**.
-3. Em **Project Settings > API**, copie a **Project URL** e a chave **anon public**.
+3. Clique no botão **Connect**, no topo do painel do projeto, e copie a **Project URL** e a chave pública: a **publishable key** (`sb_publishable_...`) ou, em projetos antigos, a **anon public** (`eyJ...`). Nunca use a chave secreta (`sb_secret_...` ou `service_role`).
 4. No `limpando-a-praia.html`, preencha o bloco `SUPABASE` no começo do `<script>`:
    ```js
    const SUPABASE = {
