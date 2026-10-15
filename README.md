@@ -49,8 +49,40 @@ No começo do `<script>` do `index.html` existe o bloco `MUTIRAO`. Preencha com 
 
 ## Ranking e votos
 
-- **Na versão hospedada no Claude**, o ranking e os votos são compartilhados entre todos que têm acesso ao jogo.
-- **No GitHub Pages ou abrindo o arquivo direto**, o ranking e o voto ficam salvos só no navegador de cada pessoa.
+O jogador digita um nick no início. A pontuação é salva quando ele vence ou encerra a partida, e a tela de ranking mostra as 10 melhores e as 10 piores pontuações, além dos votos "Gostei" e "Não gostei".
+
+Onde o ranking fica salvo depende de onde o jogo está rodando:
+
+| Onde o jogo roda | Onde ficam o ranking e os votos |
+|---|---|
+| Link do Claude | Banco de dados do artifact, compartilhado entre quem tem acesso |
+| GitHub Pages / Netlify, com Supabase configurado | Supabase: ranking online para todo mundo que joga pelo link |
+| Sem Supabase configurado | Só no navegador de cada pessoa |
+
+### Como ligar o ranking online (Supabase, grátis)
+
+1. Crie uma conta em [supabase.com](https://supabase.com) e um projeto novo.
+2. No projeto, abra **SQL Editor > New query**, cole todo o conteúdo de [`supabase/ranking.sql`](supabase/ranking.sql) e clique em **Run**.
+3. Em **Project Settings > API**, copie a **Project URL** e a chave **anon public**.
+4. No `limpando-a-praia.html`, preencha o bloco `SUPABASE` no começo do `<script>`:
+   ```js
+   const SUPABASE = {
+     url: 'https://SEU-PROJETO.supabase.co',
+     chave: 'SUA-CHAVE-ANON',
+   };
+   ```
+5. Gere o site de novo com `node gerar-index.js`, faça o commit e envie para o GitHub.
+
+A chave `anon` foi feita para ficar no site. As regras do `ranking.sql` deixam qualquer pessoa ler o ranking e enviar uma pontuação nova, mas ninguém consegue alterar ou apagar a pontuação dos outros, nem ver o voto de cada pessoa. Como o ranking é aberto, alguém que entenda de programação poderia enviar uma pontuação falsa. Os limites do banco (nick de 2 a 16 caracteres, pontuação máxima e fases de 1 a 3) reduzem isso.
+
+## Arquivos
+
+| Arquivo | Para que serve |
+|---|---|
+| `index.html` | O site (GitHub Pages / Netlify). É gerado, não edite direto |
+| `limpando-a-praia.html` | O jogo em si, também usado na versão publicada no Claude. Edite este |
+| `gerar-index.js` | Gera o `index.html` a partir do `limpando-a-praia.html` (`node gerar-index.js`) |
+| `supabase/ranking.sql` | Cria as tabelas e as regras do ranking online |
 
 ## Temas abordados
 

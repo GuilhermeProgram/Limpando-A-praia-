@@ -76,7 +76,7 @@ button{font:inherit}
 
 /* Telas */
 .screen{position:absolute;inset:0;display:grid;place-items:center;padding:16px;padding-block:calc(16px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-bottom,0px));background:rgba(9,15,32,.6);overflow-y:auto}
-.panel{background:linear-gradient(#1b2f57,#13203d);border:4px solid var(--foam);border-radius:8px;box-shadow:0 0 0 4px var(--deep),10px 10px 0 4px rgba(0,0,0,.35);width:100%;max-width:820px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.panel{box-sizing:border-box;background:linear-gradient(#1b2f57,#13203d);border:4px solid var(--foam);border-radius:8px;box-shadow:0 0 0 4px var(--deep),10px 10px 0 4px rgba(0,0,0,.35);width:100%;max-width:820px;padding:22px;display:flex;flex-direction:column;gap:14px}
 .panel.narrow{max-width:540px}
 h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;line-height:1.45}
 h1{font-size:clamp(22px,5vw,42px);color:var(--sun);text-shadow:4px 4px 0 #b23a2f,8px 8px 0 var(--deep)}
@@ -358,6 +358,19 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
    Preencha com os números reais registrados na limpeza da praia.
    Enquanto "itens" estiver todo em 0, a tela final não mostra esta seção.
    ===================================================================== */
+/* =====================================================================
+   RANKING ONLINE (Supabase) — usado quando o jogo roda fora do Claude
+   (GitHub Pages, Netlify ou o arquivo aberto no navegador).
+   Cole aqui a "Project URL" e a chave "anon public" do seu projeto
+   (Supabase > Project Settings > API). A chave anon é pública por natureza:
+   quem protege os dados são as regras do arquivo supabase/ranking.sql.
+   Deixe em branco para salvar o ranking só no aparelho de cada pessoa.
+   ===================================================================== */
+const SUPABASE = {
+  url: '',     // ex.: 'https://abcdefgh.supabase.co'
+  chave: '',   // ex.: 'eyJhbGciOi...'
+};
+
 const MUTIRAO = {
   local: '',            // ex.: 'Praia de Ponta Negra'
   data: '',             // ex.: '12/10/2026'
@@ -1943,11 +1956,64 @@ async function initRank(){
       for (const d of s.docs){ const v = (d.data() || {}).voto; if (v === 'like') like++; else if (v === 'dislike') dislike++; if (d.id === Rank.uid && (v === 'like' || v === 'dislike')) mine = v; }
       Rank.votes = { like, dislike }; Rank.myVote = mine; renderVotes();
     }, () => {});
+  } else if (SB.on()){
+    Rank.mode = 'supabase';
+    refreshSB();
   }
   renderRank(); renderVotes();
 }
+
+/* ---- Supabase: conversa com a API REST, sem bibliotecas ---- */
+const SB = {
+  on(){ return !!(SUPABASE.url && SUPABASE.chave); },
+  async req(path, opts = {}){
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const r = await fetch(SUPABASE.url.replace(/\/+$/, '') + '/rest/v1/' + path, { ...opts, signal:ctl.signal,
+        headers:{ apikey:SUPABASE.chave, Authorization:'Bearer ' + SUPABASE.chave, 'Content-Type':'application/json', ...(opts.headers || {}) } });
+      if (!r.ok) throw new Error('Supabase respondeu ' + r.status);
+      return r;
+    } finally { clearTimeout(to); }
+  },
+  async count(filter){
+    const r = await SB.req('scores?select=id' + (filter || ''), { method:'HEAD', headers:{ Prefer:'count=exact' } });
+    const m = /\/(\d+)$/.exec(r.headers.get('content-range') || ''); return m ? +m[1] : 0;
+  },
+};
+const SB_COLS = 'select=nick,classe,pontos,fase,venceu,criado_em';
+function clientId(){
+  let id = load('lp-client', null);
+  if (!id){ id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }); store('lp-client', id); }
+  return id;
+}
+async function refreshSB(){
+  if (Rank.mode !== 'supabase') return;
+  try {
+    const conv = r => cleanRun({ ...r, quando:Date.parse(r.criado_em) || 0 }, false);
+    const [best, worst, total, votes] = await Promise.all([
+      SB.req(`scores?${SB_COLS}&order=pontos.desc,criado_em.asc&limit=10`).then(r => r.json()),
+      SB.req(`scores?${SB_COLS}&order=pontos.asc,criado_em.asc&limit=10`).then(r => r.json()),
+      SB.count(),
+      SB.req('rpc/contar_votos', { method:'POST', body:'{}' }).then(r => r.json()),
+    ]);
+    Rank.sb = { best:best.map(conv).filter(Boolean), worst:worst.map(conv).filter(Boolean), total, ok:true };
+    Rank.votes = { like:+(votes && votes.like) || 0, dislike:+(votes && votes.dislike) || 0 };
+    if (Rank.last) Rank.sb.myPos = (await SB.count('&pontos=gt.' + Rank.last.pontos)) + 1;
+  } catch (e) { Rank.sb = { best:[], worst:[], total:0, ...(Rank.sb || {}), ok:false }; }
+  renderRank(); renderVotes();
+}
+setInterval(() => { if (state === 'rank' && Rank.mode === 'supabase') refreshSB(); }, 20000);
+
 const sharedWritable = () => Rank.mode === 'shared' && Rank.canWrite;
 async function saveRun(run){
+  if (Rank.mode === 'supabase'){
+    try {
+      await SB.req('scores', { method:'POST', headers:{ Prefer:'return=minimal' },
+        body:JSON.stringify({ nick:run.nick, classe:run.classe, pontos:run.pontos, fase:run.fase, venceu:run.venceu, separados:Math.min(5000, run.separados || 0) }) });
+      Rank.sbFail = false; await refreshSB();
+      return 'supabase';
+    } catch (e) { Rank.sbFail = true; }
+  }
   if (sharedWritable()){
     try {
       const ref = Rank.db.doc('scores/' + Rank.uid), snap = await ref.get();
@@ -1969,6 +2035,12 @@ async function finishRun(venceu){
   renderRank();
 }
 async function vote(v){
+  if (Rank.mode === 'supabase'){
+    const prev = Rank.localVote; Rank.localVote = v; store('lp-vote', v); renderVotes();
+    try { await SB.req('rpc/votar', { method:'POST', body:JSON.stringify({ p_cliente:clientId(), p_voto:v }) }); Rank.sbFail = false; await refreshSB(); }
+    catch (e) { Rank.sbFail = true; Rank.localVote = prev; store('lp-vote', prev); renderVotes(); renderRank(); }
+    return;
+  }
   if (sharedWritable()){
     const prev = Rank.myVote; Rank.myVote = v; renderVotes();
     try { await Rank.db.doc('votos/' + Rank.uid).set({ voto:v, quando:Date.now() }); return; }
@@ -1978,6 +2050,7 @@ async function vote(v){
 }
 function currentVote(){ return sharedWritable() ? Rank.myVote : Rank.localVote; }
 function voteCounts(){
+  if (Rank.mode === 'supabase') return { ...Rank.votes };
   const c = Rank.mode === 'shared' ? { ...Rank.votes } : { like:0, dislike:0 };
   const mine = currentVote(); if (!sharedWritable() && mine) c[mine]++;
   return c;
@@ -2010,7 +2083,7 @@ function allRuns(){
 }
 function rankItem(r, pos){
   const li = document.createElement('li');
-  const isLast = Rank.last && r.quando === Rank.last.quando && r.nick === Rank.last.nick;
+  const isLast = Rank.last && r.nick === Rank.last.nick && r.pontos === Rank.last.pontos && r.classe === Rank.last.classe;
   if (isLast || (r.own && sharedWritable())) li.className = 'me';
   const p = document.createElement('span'); p.className = 'pos'; p.textContent = '#' + pos;
   const w = document.createElement('span'); w.className = 'rwho';
@@ -2021,24 +2094,35 @@ function rankItem(r, pos){
   li.append(p, w, s); return li;
 }
 function renderRank(){
-  const runs = allRuns();
-  const desc = [...runs].sort((a, b) => b.pontos - a.pontos || a.quando - b.quando);
-  const fill = (sel, list) => {
+  const fill = (sel, list, posOf) => {
     const ol = $(sel); ol.replaceChildren();
     if (!list.length){ const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'Ninguém jogou ainda. Seja o primeiro!'; ol.append(li); return; }
-    list.forEach(r => ol.append(rankItem(r, desc.indexOf(r) + 1)));
+    list.forEach((r, i) => ol.append(rankItem(r, posOf(r, i))));
   };
-  fill('#rank-best', desc.slice(0, 10));
-  fill('#rank-worst', desc.slice(-10).reverse());
   const mine = $('#rank-mine');
-  if (Rank.last){
-    const pos = desc.filter(r => r.pontos > Rank.last.pontos).length + 1;
-    mine.hidden = false; mine.textContent = `${Rank.last.nick}: ${Rank.last.pontos.toLocaleString('pt-BR')} pontos · ${pos}º lugar de ${Math.max(desc.length, pos)}`;
-  } else mine.hidden = true;
+  const showMine = (pos, total) => {
+    if (!Rank.last || !pos){ mine.hidden = true; return; }
+    mine.hidden = false; mine.textContent = `${Rank.last.nick}: ${Rank.last.pontos.toLocaleString('pt-BR')} pontos · ${pos}º lugar de ${Math.max(total, pos)}`;
+  };
+  if (Rank.mode === 'supabase'){
+    const sb = Rank.sb || { best:[], worst:[], total:0, ok:true };
+    fill('#rank-best', sb.best, (r, i) => i + 1);
+    fill('#rank-worst', sb.worst, (r, i) => Math.max(1, sb.total - i));
+    showMine(sb.myPos, sb.total);
+    $('#rank-note').textContent = !sb.ok ? 'Não foi possível conectar ao ranking online agora. Tente de novo em instantes.'
+      : Rank.sbFail ? 'Sua última ação não chegou ao ranking online. Verifique a internet e tente de novo.'
+      : 'Ranking online: todo mundo que joga por este link aparece aqui.';
+    return;
+  }
+  const runs = allRuns();
+  const desc = [...runs].sort((a, b) => b.pontos - a.pontos || a.quando - b.quando);
+  fill('#rank-best', desc.slice(0, 10), r => desc.indexOf(r) + 1);
+  fill('#rank-worst', desc.slice(-10).reverse(), r => desc.indexOf(r) + 1);
+  showMine(Rank.last ? desc.filter(r => r.pontos > Rank.last.pontos).length + 1 : 0, desc.length);
   $('#rank-note').textContent = Rank.mode === 'shared'
     ? (Rank.canWrite ? 'Ranking compartilhado: todo mundo que abre este jogo vê as mesmas pontuações e votos.'
                      : 'Você está vendo o ranking compartilhado, mas sua conta não pode gravar nele. Sua pontuação e seu voto ficam salvos só neste aparelho.')
-    : 'Ranking deste aparelho. Abra o jogo pelo link do Claude para ver o ranking compartilhado.';
+    : 'Ranking deste aparelho: as pontuações e o voto ficam salvos só neste navegador.';
 }
 
 /* ============================ laço principal ============================ */
@@ -2082,7 +2166,7 @@ $('#nick-form').addEventListener('submit', e => {
   $('#nick-err').hidden = true; $('#nick').value = n; myNick = n; store('lp-nick', n);
   initAudio(); playMusic('main'); buildSelect(); setState('select');
 });
-$('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); };
+$('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); refreshSB(); };
 $('#btn-rank-back').onclick = () => toTitle();
 $('#btn-win-rank').onclick = () => goRank();
 $('#btn-howbins').onclick = () => { const b = $('#title-bins'); b.hidden = !b.hidden; };
@@ -2100,7 +2184,7 @@ $('#btn-shop-go').onclick = () => startFase(G.fase + 1);
 $('#btn-retry').onclick = () => { restore(G.player, G.snap); G.score = G.scoreSnap; G.sep = G.sepSnap; startFase(G.fase); };
 function resetToMenu(){ G = null; L = makeLevel(0); toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); $('#banner').textContent = ''; playMusic('main'); }
 function toTitle(){ resetToMenu(); setState('title'); }
-function goRank(){ resetToMenu(); renderRank(); renderVotes(); setState('rank'); }
+function goRank(){ resetToMenu(); renderRank(); renderVotes(); setState('rank'); refreshSB(); }
 async function endRun(){ if (G && G.score > 0 && !G.saved){ await finishRun(false); goRank(); } else toTitle(); }
 
 function boot(){

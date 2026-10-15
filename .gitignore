@@ -1,4 +1,2 @@
 # Configuração local do editor
 .claude/
-# Versão usada para publicar o artifact no Claude (o site usa o index.html)
-limpando-a-praia.html
