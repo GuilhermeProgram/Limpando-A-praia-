@@ -157,6 +157,24 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .field input:focus-visible{outline:3px dashed var(--sun);outline-offset:3px}
 .err{color:#ffb0a8;font-size:16px}
 .only-mobile{display:none}
+#coach{position:absolute;left:50%;transform:translateX(-50%);top:calc(84px + env(safe-area-inset-top,0px));width:min(460px,calc(100% - 24px));box-sizing:border-box;background:var(--foam);color:var(--ink);border:3px solid var(--ink);box-shadow:0 0 0 3px var(--foam),6px 6px 0 3px rgba(0,0,0,.35);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+#coach .ch{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+#coach-n{font-family:var(--f-display);font-size:7px;color:#b23a2f;letter-spacing:.05em}
+#coach-t{font-family:var(--f-display);font-size:11px}
+#coach p{margin:0;font-size:17px}
+#coach .row{gap:8px}
+#coach .btn{font-size:9px;padding:9px 12px}
+#coach .mini-btn{background:transparent;color:var(--ink);border-color:var(--ink)}
+.lvl-foot{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.build{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 300px}
+.build .items{display:flex;gap:6px;flex-wrap:wrap}
+.build .bi{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.25);padding:3px 7px 3px 4px;font-size:13px;font-weight:700}
+.build .bi canvas{width:18px;height:18px}
+.build .bi.evo{outline:2px solid var(--sun)}
+.build .ev{font-size:13px;color:var(--muted);margin:0}
+.build .ev b{color:var(--foam)}
+.build .ok{color:var(--kelp)}
+.build .falta{color:#ffb0a8}
 .ranks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .rcol{min-width:0}
 .rcol h3{margin-bottom:8px}
@@ -192,6 +210,9 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   .how{display:none}
   .only-mobile{display:block}
   .field input{font-size:16px}
+  #coach{top:calc(146px + env(safe-area-inset-top,0px));padding:7px 9px;gap:4px}
+  #coach p{font-size:14px}
+  #coach-t{font-size:9px}
   .chars{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .char{padding:8px;gap:4px}
   .char canvas.body{width:52px;height:72px}
@@ -231,6 +252,10 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   #toast{max-width:240px;bottom:auto;top:calc(62px + env(safe-area-inset-top,0px));padding:5px 8px;border-width:2px;box-shadow:0 0 0 2px var(--foam),3px 3px 0 2px rgba(0,0,0,.3)}
   #toast h4{font-size:6px;margin-bottom:3px}
   #toast p{font-size:12px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  #coach{top:calc(58px + env(safe-area-inset-top,0px));width:min(380px,calc(100% - 24px));padding:5px 8px;gap:3px}
+  #coach p{font-size:13px}
+  #coach-t{font-size:8px}
+  #coach .btn{font-size:8px;padding:6px 9px}
   .chars{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
   .char{padding:8px;gap:4px}
   .char canvas.body{width:44px;height:60px}
@@ -270,6 +295,11 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
       <div id="bagslots"></div>
     </div>
     <button id="btn-burst" type="button" hidden>BURST!</button>
+  </div>
+  <div id="coach" hidden aria-live="polite">
+    <div class="ch"><span id="coach-n">TUTORIAL 1/6</span><b id="coach-t">ANDAR</b></div>
+    <p id="coach-p"></p>
+    <div class="row"><button class="btn" id="coach-go" type="button" hidden>COMEÇAR A FASE 1</button><button class="mini-btn" id="coach-skip" type="button">PULAR TUTORIAL</button></div>
   </div>
   <div id="banner" aria-live="polite"></div>
   <div id="toast" class="off" aria-live="polite"><h4 id="toast-h">VOCÊ SABIA?</h4><p id="toast-p"></p></div>
@@ -319,15 +349,17 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
       <p id="intro-d"></p>
       <div class="tally" id="intro-foes"></div>
       <p class="muted" id="intro-goal"></p>
-      <div class="row"><button class="btn" id="btn-go" type="button">VAMOS LIMPAR!</button></div>
+      <p class="note" id="tut-hint" hidden>Primeira vez? O tutorial leva cerca de 1 minuto e ensina tudo jogando.</p>
+      <div class="row"><button class="btn" id="btn-tut" type="button">FAZER O TUTORIAL</button><button class="btn" id="btn-go" type="button">VAMOS LIMPAR!</button></div>
     </div>
   </section>
 
   <section class="screen" id="scr-levelup" hidden>
     <div class="panel">
       <h2 id="lvl-title">SUBIU DE NÍVEL!</h2>
-      <p class="muted">Escolha uma melhoria (teclas 1, 2 ou 3).</p>
+      <p class="muted">Escolha uma melhoria (teclas 1, 2 ou 3). A tecla R troca as opções.</p>
       <div class="choices" id="choices"></div>
+      <div class="lvl-foot"><div class="build" id="lvl-build"></div><button class="btn ghost" id="btn-reroll" type="button">TROCAR OPÇÕES (2)</button></div>
     </div>
   </section>
 
@@ -1123,15 +1155,77 @@ function playerMood(){
 }
 
 /* ============================ partida e telas ============================ */
+function freshRun(){
+  return { player:makePlayer(selected), fase:0, totals:{}, seenItem:new Set(), pendingLv:0, kills:0, snap:null, credits:0, bought:{},
+           nick:myNick || 'Anônimo', score:0, sep:0, scoreSnap:0, sepSnap:0, saved:false, rerolls:2 };
+}
 function newRun(){
-  G = { player:makePlayer(selected), fase:0, totals:{}, seenItem:new Set(), pendingLv:0, kills:0, snap:null, credits:0, bought:{},
-        nick:myNick || 'Anônimo', score:0, sep:0, scoreSnap:0, sepSnap:0, saved:false };
+  G = freshRun();
   startFase(0);
+}
+
+/* ============================ tutorial ============================
+   Uma praia calma antes da fase 1: o jogador aprende fazendo, passo a passo.
+   Os monstros do tutorial são fracos e não causam dano. */
+const isTouch = () => matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
+const TUT = [
+  { titulo:'ANDAR', texto:() => isTouch() ? 'Arraste o dedo na tela para andar.' : 'Use W A S D ou as setas do teclado para andar.' },
+  { titulo:'ATACAR', texto:() => 'Apareceram monstros de lixo! Sua arma ataca sozinha: é só chegar perto deles.' },
+  { titulo:'RECOLHER', texto:() => 'Eles viraram lixo no chão. Passe por cima para guardar na mochila.' },
+  { titulo:'SEPARAR', texto:() => 'Garrafa PET é plástico. Siga a seta vermelha e encoste na lixeira VERMELHA.' },
+  { titulo:'PODER ESPECIAL', texto:() => (isTouch() ? 'Toque no botão BURST' : 'Aperte ESPAÇO') + ' para usar o poder especial da sua classe.' },
+  { titulo:'PRONTO!', texto:() => 'Lixo largado no chão volta a virar monstro, e no fim da fase todo o lixo que sobrar vira um chefe gigante. Boa limpeza!' },
+];
+function startTutorial(){
+  G = freshRun(); L = makeLevel(0);
+  const p = G.player; p.x = WORLD_W / 2; p.y = 560;
+  L.tut = { step:0, x0:p.x, y0:p.y };
+  hudDirty = true; toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); bannerT = 0; $('#banner').textContent = '';
+  renderCoach(); $('#coach').hidden = false;
+  playMusic('main'); setState('play', null);
+}
+function finishTutorial(){
+  store('lp-tut', true);
+  $('#coach').hidden = true;
+  newRun();
+}
+function renderCoach(){
+  const T = L && L.tut; if (!T) return;
+  const st = TUT[T.step], last = T.step === TUT.length - 1;
+  $('#coach-n').textContent = `TUTORIAL ${T.step + 1}/${TUT.length}`;
+  $('#coach-t').textContent = st.titulo;
+  $('#coach-p').textContent = st.texto();
+  $('#coach-go').hidden = !last;
+  $('#coach-skip').textContent = last ? 'FECHAR' : 'PULAR TUTORIAL';
+}
+function tutUpdate(){
+  const T = L.tut, p = G.player;
+  let done = false;
+  if (T.step === 0) done = Math.hypot(p.x - T.x0, p.y - T.y0) > 60;
+  else if (T.step === 1){
+    if (!T.spawned){
+      T.spawned = true;
+      for (let i = 0; i < 3; i++){
+        const a = p.face + Math.PI * 0.35 * (i - 1);
+        const e = spawnEnemy('pet', clamp(p.x + Math.cos(a) * 95, 20, WORLD_W - 20), clamp(p.y + Math.sin(a) * 95, SHORE + 20, WORLD_H - 30));
+        e.dmg = 0; e.spd *= 0.5; e.hp = e.maxHp = 9;
+      }
+    }
+    done = L.enemies.length === 0;
+  }
+  else if (T.step === 2) done = !L.items.some(i => !i.coco) && p.bag.length > 0;
+  else if (T.step === 3) done = p.bag.length === 0 && L.deposited > 0;
+  else if (T.step === 4){
+    if (!T.charged){ T.charged = true; p.burst = 100; }
+    if (p.burstT > 0) T.used = true;
+    done = T.used && p.burstT <= 0;
+  }
+  if (done){ T.step++; p.cheer = Math.max(p.cheer, 1); sfx('deposit'); renderCoach(); }
 }
 function startFase(f){
   G.fase = f; L = makeLevel(f);
   const p = G.player; p.x = WORLD_W / 2; p.y = 560; p.hp = p.maxHp; p.bag = []; p.inv = 0; p.hurt = 0; p.slow = 0; p.burstT = 0;
-  G.snap = snapshot(p); G.pendingLv = 0; hudDirty = true; G.scoreSnap = G.score; G.sepSnap = G.sep;
+  G.snap = snapshot(p); G.pendingLv = 0; G.rerolls = 2; hudDirty = true; G.scoreSnap = G.score; G.sepSnap = G.sep;
   playMusic('main');
   showIntro();
 }
@@ -1142,7 +1236,7 @@ function show(id){
 }
 function setState(s, scr){
   state = s; const id = scr === undefined ? s : scr; show(id);
-  const b = id === 'title' ? $('#nick') : document.querySelector('#scr-' + id + ' .choice, #scr-' + id + ' .btn'); if (b) setTimeout(() => b.focus({ preventScroll:true }), 30);
+  const b = id === 'title' ? $('#nick') : (document.querySelector('#scr-' + id + ' .choice') || document.querySelector('#scr-' + id + ' .btn:not(.ghost):not([hidden])') || document.querySelector('#scr-' + id + ' .btn')); if (b) setTimeout(() => b.focus({ preventScroll:true }), 30);
 }
 function binsHTML(){
   const ex = { plastico:'Garrafa PET, sacola, isopor', papel:'Caixa de papelão, papel limpo', vidro:'Garrafa e pote de vidro', metal:'Latinha de alumínio', rejeito:'Bituca e lixo sujo' };
@@ -1181,6 +1275,12 @@ function showIntro(){
   $('#intro-d').textContent = F.desc;
   $('#intro-foes').innerHTML = Object.keys(F.tipos).map(k => `<div style="border-left-color:${MATS[ETYPES[k].mat].cor}"><span>${ETYPES[k].nome}</span><span class="muted">${MATS[ETYPES[k].mat].lixeira}</span></div>`).join('');
   $('#intro-goal').textContent = `Deposite ${F.meta} recicláveis nas lixeiras certas. Depois, todo o lixo que sobrar na praia vai se juntar no ${B.nome}.`;
+  const first = G.fase === 0, tutDone = !!load('lp-tut', false);
+  $('#btn-tut').hidden = !first;
+  $('#tut-hint').hidden = !first || tutDone;
+  $('#btn-tut').textContent = tutDone ? 'REFAZER O TUTORIAL' : 'FAZER O TUTORIAL';
+  $('#btn-tut').className = tutDone ? 'btn ghost' : 'btn';
+  $('#btn-go').className = first && !tutDone ? 'btn ghost' : 'btn';
   setState('intro');
 }
 function iconCanvas(id){
@@ -1190,6 +1290,39 @@ function iconCanvas(id){
 
 /* ---- subir de nível ---- */
 let lvOptions = [];
+// números reais dos itens passivos: atual → depois de escolher
+const PSTAT = {
+  protetor:['Vida máxima', p => p.maxHp, v => v + 20, v => Math.round(v)],
+  chinelo: ['Velocidade', p => p.speed, v => v * 1.08, v => Math.round(v)],
+  luvas:   ['Dano', p => p.dmgMul, v => v * 1.10, v => Math.round(v * 100) + '%'],
+  coco:    ['Regeneração', p => p.regen, v => v + 0.5, v => fmt1(v) + '/s'],
+  saco:    ['Alcance de coleta', p => p.magnet, v => v * 1.3, v => Math.round(v)],
+  mochila: ['Espaços na mochila', p => p.cap, v => v + 2, v => Math.round(v)],
+  oculos:  ['Tempo de recarga', p => p.cdMul, v => v * 0.93, v => Math.round(v * 100) + '%'],
+};
+function reroll(){
+  if (state !== 'levelup' || !G || G.rerolls <= 0) return;
+  G.rerolls--; openLevelUp();
+}
+function renderBuild(){
+  const p = G.player, box = $('#lvl-build'); box.replaceChildren();
+  const h = document.createElement('h3'); h.textContent = 'SEU EQUIPAMENTO'; box.append(h);
+  const items = document.createElement('div'); items.className = 'items';
+  const chip = (id, txt, evo) => { const d = document.createElement('span'); d.className = 'bi' + (evo ? ' evo' : ''); d.append(iconCanvas(id)); d.append(document.createTextNode(txt)); items.append(d); };
+  for (const w of p.weapons) chip(w.id, w.evo ? 'EVO' : 'Nv ' + w.lvl, w.evo);
+  for (const [id, l] of Object.entries(p.passives)) chip(id, 'Nv ' + l, false);
+  box.append(items);
+  for (const w of p.weapons){
+    if (w.evo) continue;
+    const W = WEAPONS[w.id], has = !!p.passives[W.evoReq];
+    const e = document.createElement('p'); e.className = 'ev';
+    const b = document.createElement('b'); b.textContent = W.evoNome;
+    const s1 = document.createElement('span'); s1.className = w.lvl >= 5 ? 'ok' : 'falta'; s1.textContent = `nível ${w.lvl}/5`;
+    const s2 = document.createElement('span'); s2.className = has ? 'ok' : 'falta'; s2.textContent = PASSIVAS[W.evoReq].nome + (has ? ' (tem)' : ' (falta)');
+    e.append('Evolução ', b, ': ', s1, ' + ', s2); box.append(e);
+  }
+  const rb = $('#btn-reroll'); rb.textContent = `TROCAR OPÇÕES (${G.rerolls})`; rb.disabled = G.rerolls <= 0;
+}
 function statLines(id, l1, e1, l2, e2){
   const a = l1 ? WEAPONS[id].st(l1, e1) : null, b = WEAPONS[id].st(l2, e2), out = [];
   for (const k of Object.keys(b)){
@@ -1223,6 +1356,7 @@ function openLevelUp(){
     else if (o.kind === 'evo'){ const W = WEAPONS[o.id]; nome = W.evoNome; lvTxt = 'EVOLUÇÃO'; desc = `${W.nome} + ${PASSIVAS[W.evoReq].nome} se combinam em uma arma nova.`;
       lines = statLines(o.id, 5, false, 5, true); rar = 'epica'; rarTxt = 'ÉPICA · EVOLUÇÃO'; }
     else if (o.kind === 'p'){ const Pp = PASSIVAS[o.id]; nome = Pp.nome; lvTxt = o.lvl === 1 ? 'NOVO ITEM' : `NÍVEL ${o.lvl - 1} > ${o.lvl}`; desc = Pp.desc;
+      const [lab, get, nxt, f] = PSTAT[o.id], cur = get(p); lines.push(`${lab}: ${f(cur)} → ${f(nxt(cur))}`);
       const evoFor = Object.values(WEAPONS).find(W => W.evoReq === o.id && p.weapons.find(w => WEAPONS[w.id] === W)); if (evoFor) lines.push(`Faz evoluir: ${evoFor.nome} (no nível 5)`); }
     else if (o.kind === 'burst'){ nome = cl.burstNome; lvTxt = `PODER ${o.lvl - 1} > ${o.lvl}`; desc = 'Seu Burst fica mais forte e dura mais.'; rar = 'poder'; rarTxt = 'PODER DE CLASSE'; }
     else { nome = 'Água de Coco Gelada'; lvTxt = 'CURA'; desc = 'Recupera toda a sua vida.'; }
@@ -1236,6 +1370,7 @@ function openLevelUp(){
     b.onclick = () => chooseUpgrade(i);
     box.append(b);
   });
+  renderBuild();
   sfx('lvl'); setState('levelup');
 }
 function chooseUpgrade(i){
@@ -1305,7 +1440,7 @@ function gameOver(){
 
 let toastT = 0; const toastQ = [];
 const smallScreen = () => innerWidth < 640 || innerHeight < 500;
-function toast(title, text, short){ toastQ.push([title, text, short]); if (toastT <= 0) nextToast(); }
+function toast(title, text, short){ if (L && L.tut) return; toastQ.push([title, text, short]); if (toastT <= 0) nextToast(); }
 function nextToast(){ const t = toastQ.shift(); if (!t){ $('#toast').classList.add('off'); return; } const sm = smallScreen(); $('#toast-h').textContent = sm ? t[0].replace('VOCÊ SABIA? · ', '') : t[0]; $('#toast-p').textContent = sm && t[2] ? t[2] : t[1]; $('#toast').classList.remove('off'); toastT = sm ? 4.5 : 6.5; }
 let bannerT = 0;
 function banner(text, d = 2.4){ $('#banner').textContent = text; bannerT = d; }
@@ -1366,9 +1501,10 @@ function addXp(v){
 }
 function hurtPlayer(d){
   const p = G.player; if (p.inv > 0 || p.hp <= 0 || (p.burstT > 0 && p.burstKind === 'tornado')) return;
+  if (d <= 0) return;
   d = Math.max(1, d); p.hp -= d; p.inv = 0.55; p.hurt = 0.8; cam.shake = Math.max(cam.shake, 0.18); sfx('hurt');
   say(p.x, p.y - 20, '-' + Math.round(d), '#ff6b5b', 0.7);
-  if (p.bag.length && Math.random() < 0.7){ const t = p.bag.splice(Math.random() * p.bag.length | 0, 1)[0]; dropItem(t, p.x, p.y, { spread:80, delay:1.1 }); say(p.x, p.y - 32, 'DERRUBOU LIXO!', '#ffb0a8', 0.9); hudDirty = true; }
+  if (p.bag.length && Math.random() < 0.35){ const t = p.bag.splice(Math.random() * p.bag.length | 0, 1)[0]; dropItem(t, p.x, p.y, { spread:80, delay:1.1 }); say(p.x, p.y - 32, 'DERRUBOU LIXO!', '#ffb0a8', 0.9); hudDirty = true; }
   if (p.hp <= 0){ p.hp = 0; setTimeout(() => { if (state === 'play') gameOver(); }, 500); }
 }
 
@@ -1605,16 +1741,16 @@ function updateItems(dt){
         if (!G.seenItem.has(it.type)){ G.seenItem.add(it.type); toast('VOCÊ SABIA? · ' + ETYPES[it.type].nome.toUpperCase(), ETYPES[it.type].fato, ETYPES[it.type].curto); } }
       else if (p.fullT <= 0){ p.fullT = 2; say(p.x, p.y - 32, 'MOCHILA CHEIA!', '#d7a6ff', 1.1); }
     }
-    if (!it.keep && !L.forming && !L.boss && !L.cleanup && it.age > 22 && L.enemies.length < 90){ it.dead = true; const e = spawnEnemy(it.type, it.x, it.y); e.flash = 0.3; say(it.x, it.y - 12, 'O LIXO VOLTOU!', '#ff9d8a', 1); if (Math.hypot(it.x - p.x, it.y - p.y) < 140) p.surprise = Math.max(p.surprise, 0.8); }
+    if (!it.keep && !L.tut && !L.forming && !L.boss && !L.cleanup && it.age > 22 && L.enemies.length < 90){ it.dead = true; const e = spawnEnemy(it.type, it.x, it.y); e.flash = 0.3; say(it.x, it.y - 12, 'O LIXO VOLTOU!', '#ff9d8a', 1); if (Math.hypot(it.x - p.x, it.y - p.y) < 140) p.surprise = Math.max(p.surprise, 0.8); }
   }
   L.items = L.items.filter(i => !i.dead);
   p.fullT -= dt;
   for (const b of L.bins){
     b.wrongT -= dt;
-    if (Math.hypot(p.x - b.x, p.y - (b.y + 2)) > 22 || !p.bag.length) continue;
+    if (Math.hypot(p.x - b.x, p.y - (b.y + 2)) > 26 || !p.bag.length) continue;
     const ok = p.bag.filter(t => ETYPES[t].mat === b.mat);
     if (ok.length) deposit(b, ok.length);
-    else if (b.wrongT <= 0){ b.wrongT = 1.6; say(b.x, b.y - 26, 'AQUI SÓ ' + MATS[b.mat].nome.toUpperCase() + '! -10', '#ffb0a8', 1.2); sfx('wrong'); addScore(-10); }
+    else if (b.wrongT <= 0){ b.wrongT = 2.2; const t = p.bag[0], m = MATS[ETYPES[t].mat]; say(b.x, b.y - 26, `${ETYPES[t].nome.toUpperCase()}: LIXEIRA ${m.lixeira.toUpperCase()}`, '#ffe08a', 1.4); }
   }
 }
 function deposit(b, n, auto){
@@ -1692,7 +1828,8 @@ function update(dt){
   p.inv -= dt; p.hurt -= dt; p.slow -= dt; p.cheer -= dt; p.surprise -= dt; p.idle = p.moving ? 0 : p.idle + dt;
   if (p.hp > 0) p.hp = Math.min(p.maxHp, p.hp + p.regen * dt);
 
-  if (L.forming) updateForming(dt);
+  if (L.tut) tutUpdate();
+  else if (L.forming) updateForming(dt);
   else if (!L.boss && !L.bossDone){
     if (L.deposited >= F.meta) startForming();
     else {
@@ -1960,7 +2097,8 @@ function hud(){
   setText('#bagtx', p.bag.length + '/' + p.cap); setW('#bagbar', p.bag.length / p.cap * 100);
   $('#btn-burst').hidden = !(p.burst >= 100 && state === 'play');
   const ob = $('#objbar');
-  if (L.boss){ setText('#objtext', BOSSES[L.boss.type].nome); setW('#objbar', L.boss.hp / L.boss.maxHp * 100); ob.classList.add('boss'); }
+  if (L.tut){ setText('#objtext', `TUTORIAL · PASSO ${L.tut.step + 1} DE ${TUT.length}`); setW('#objbar', (L.tut.step + 1) / TUT.length * 100); ob.classList.remove('boss'); }
+  else if (L.boss){ setText('#objtext', BOSSES[L.boss.type].nome); setW('#objbar', L.boss.hp / L.boss.maxHp * 100); ob.classList.add('boss'); }
   else if (L.forming){ setText('#objtext', 'O LIXO ESTÁ SE JUNTANDO...'); setW('#objbar', L.forming.t / L.forming.dur * 100); ob.classList.add('boss'); }
   else if (L.cleanup){ const n = L.items.filter(i => i.boss).length + p.bag.length; setText('#objtext', `LEVE OS RESTOS PARA AS LIXEIRAS · ${n}`); setW('#objbar', 100); ob.classList.remove('boss'); }
   else { setText('#objtext', `FASE ${L.fase + 1} · SEPARE O LIXO ${Math.min(L.deposited, F.meta)}/${F.meta}`); setW('#objbar', L.deposited / F.meta * 100); ob.classList.remove('boss'); }
@@ -2202,6 +2340,7 @@ addEventListener('keydown', e => {
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
   if (e.code === 'Space' && state === 'play') useBurst();
   if (e.code === 'KeyM') toggleMusic();
+  if (state === 'levelup' && e.code === 'KeyR') reroll();
   if (state === 'levelup' && ['Digit1','Digit2','Digit3','Numpad1','Numpad2','Numpad3'].includes(e.code)) chooseUpgrade(+e.code.slice(-1) - 1);
 });
 addEventListener('keyup', e => { keys[e.code] = false; });
@@ -2233,6 +2372,10 @@ $('#btn-pause').onclick = togglePause;
 // o celular não gera "click"; o click fica só para teclado e mouse
 $('#btn-burst').addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); useBurst(); });
 $('#btn-burst').onclick = useBurst;
+$('#btn-tut').onclick = () => { initAudio(); startTutorial(); };
+$('#coach-go').onclick = finishTutorial;
+$('#coach-skip').onclick = finishTutorial;
+$('#btn-reroll').onclick = reroll;
 // bloqueia o zoom de pinça e de dois toques durante o jogo
 document.addEventListener('gesturestart', e => e.preventDefault());
 document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive:false });
@@ -2244,10 +2387,10 @@ $('#btn-quit').onclick = () => endRun(); $('#btn-menu').onclick = () => endRun()
 $('#btn-next').onclick = () => { if (G.fase + 1 < FASES.length) showShop(); else showWin(); };
 $('#btn-shop-go').onclick = () => startFase(G.fase + 1);
 $('#btn-retry').onclick = () => { restore(G.player, G.snap); G.score = G.scoreSnap; G.sep = G.sepSnap; startFase(G.fase); };
-function resetToMenu(){ G = null; L = makeLevel(0); toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); $('#banner').textContent = ''; playMusic('main'); }
+function resetToMenu(){ $('#coach').hidden = true; G = null; L = makeLevel(0); toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); $('#banner').textContent = ''; playMusic('main'); }
 function toTitle(){ resetToMenu(); setState('title'); }
 function goRank(){ resetToMenu(); renderRank(); renderVotes(); setState('rank'); refreshSB(); }
-async function endRun(){ if (G && G.score > 0 && !G.saved){ await finishRun(false); goRank(); } else toTitle(); }
+async function endRun(){ if (L && L.tut){ toTitle(); return; } if (G && G.score > 0 && !G.saved){ await finishRun(false); goRank(); } else toTitle(); }
 
 function boot(){
   resize(); buildSprites();
