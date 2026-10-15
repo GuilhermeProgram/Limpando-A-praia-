@@ -184,7 +184,9 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   .obj{top:calc(84px + env(safe-area-inset-top,0px));width:calc(100% - 24px)}
   .party{min-width:0;left:0;padding-left:12px}
   .cell{min-width:0}
-  #toast{bottom:auto;top:calc(150px + env(safe-area-inset-top,0px))}
+  #toast{bottom:auto;top:calc(146px + env(safe-area-inset-top,0px));left:10px;max-width:min(250px,calc(100% - 20px));padding:5px 8px;border-width:2px;box-shadow:0 0 0 2px var(--foam),3px 3px 0 2px rgba(0,0,0,.3)}
+  #toast h4{font-size:6px;margin-bottom:3px}
+  #toast p{font-size:12px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   #btn-burst{bottom:calc(120px + env(safe-area-inset-bottom,0px));width:70px;height:70px;font-size:8px}
   .how{display:none}
   .only-mobile{display:block}
@@ -225,8 +227,9 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   .slot{width:14px;height:14px}
   .slot canvas{width:12px;height:12px}
   #btn-burst{width:62px;height:62px;font-size:8px}
-  #toast{max-width:300px;bottom:auto;top:calc(64px + env(safe-area-inset-top,0px));padding:6px 10px}
-  #toast p{font-size:14px}
+  #toast{max-width:240px;bottom:auto;top:calc(62px + env(safe-area-inset-top,0px));padding:5px 8px;border-width:2px;box-shadow:0 0 0 2px var(--foam),3px 3px 0 2px rgba(0,0,0,.3)}
+  #toast h4{font-size:6px;margin-bottom:3px}
+  #toast p{font-size:12px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .chars{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
   .char{padding:8px;gap:4px}
   .char canvas.body{width:44px;height:60px}
@@ -583,19 +586,19 @@ const MATS = {
 };
 const ETYPES = {
   pet:     { nome:'Garrafa PET', plural:'Garrafas PET', hp:16, spd:30, dmg:6, r:7, mat:'plastico',
-             fato:'Garrafa PET: o plástico pode levar centenas de anos para se decompor. Vai na lixeira VERMELHA.' },
+             fato:'Garrafa PET: o plástico pode levar centenas de anos para se decompor. Vai na lixeira VERMELHA.', curto:'Leva centenas de anos para sumir. Lixeira VERMELHA.' },
   lata:    { nome:'Latinha', plural:'Latinhas', hp:11, spd:44, dmg:5, r:5, mat:'metal',
-             fato:'Latinha de alumínio: pode ser reciclada e virar uma lata nova várias vezes. Vai na lixeira AMARELA.' },
+             fato:'Latinha de alumínio: pode ser reciclada e virar uma lata nova várias vezes. Vai na lixeira AMARELA.', curto:'Vira lata nova várias vezes. Lixeira AMARELA.' },
   bituca:  { nome:'Bituca de cigarro', plural:'Bitucas', hp:5, spd:52, dmg:3, r:3, mat:'rejeito',
-             fato:'Bituca de cigarro: é um dos resíduos mais encontrados nas praias e solta substâncias tóxicas na areia e na água. Vai no lixo comum (CINZA).' },
+             fato:'Bituca de cigarro: é um dos resíduos mais encontrados nas praias e solta substâncias tóxicas na areia e na água. Vai no lixo comum (CINZA).', curto:'Solta veneno na areia e na água. Lixo comum (CINZA).' },
   papelao: { nome:'Caixa de papelão', plural:'Caixas de papelão', hp:20, spd:27, dmg:7, r:7, mat:'papel',
-             fato:'Papelão e papel limpos vão na lixeira AZUL. Papel molhado ou sujo de gordura não serve para reciclar.' },
+             fato:'Papelão e papel limpos vão na lixeira AZUL. Papel molhado ou sujo de gordura não serve para reciclar.', curto:'Papelão limpo vai na lixeira AZUL.' },
   sacola:  { nome:'Sacola plástica', plural:'Sacolas', hp:13, spd:36, dmg:6, r:7, mat:'plastico',
-             fato:'Sacola plástica: no mar, tartarugas podem confundi-la com águas-vivas e engoli-la. Prefira sacolas retornáveis.' },
+             fato:'Sacola plástica: no mar, tartarugas podem confundi-la com águas-vivas e engoli-la. Prefira sacolas retornáveis.', curto:'Tartarugas confundem com água-viva. Lixeira VERMELHA.' },
   isopor:  { nome:'Isopor', plural:'Isopores', hp:48, spd:20, dmg:10, r:8, mat:'plastico',
-             fato:'Isopor: se quebra em bolinhas que peixes e aves confundem com comida. É plástico, então vai na lixeira VERMELHA.' },
+             fato:'Isopor: se quebra em bolinhas que peixes e aves confundem com comida. É plástico, então vai na lixeira VERMELHA.', curto:'Vira bolinhas que os peixes comem. Lixeira VERMELHA.' },
   vidro:   { nome:'Garrafa de vidro', plural:'Garrafas de vidro', hp:26, spd:34, dmg:9, r:6, mat:'vidro',
-             fato:'Vidro: quebrado na areia, vira caco e machuca quem anda descalço. Pode ser reciclado muitas vezes. Vai na lixeira VERDE.' },
+             fato:'Vidro: quebrado na areia, vira caco e machuca quem anda descalço. Pode ser reciclado muitas vezes. Vai na lixeira VERDE.', curto:'Caco machuca quem anda descalço. Lixeira VERDE.' },
 };
 const FASES = [
   { nome:'Praia do Sol', meta:22, rate:0.8, hpMul:1, tipos:{ pet:4, lata:3, bituca:3, papelao:2 }, boss:'garrafao',
@@ -1300,8 +1303,9 @@ function gameOver(){
 }
 
 let toastT = 0; const toastQ = [];
-function toast(title, text){ toastQ.push([title, text]); if (toastT <= 0) nextToast(); }
-function nextToast(){ const t = toastQ.shift(); if (!t){ $('#toast').classList.add('off'); return; } $('#toast-h').textContent = t[0]; $('#toast-p').textContent = t[1]; $('#toast').classList.remove('off'); toastT = 6.5; }
+const smallScreen = () => innerWidth < 640 || innerHeight < 500;
+function toast(title, text, short){ toastQ.push([title, text, short]); if (toastT <= 0) nextToast(); }
+function nextToast(){ const t = toastQ.shift(); if (!t){ $('#toast').classList.add('off'); return; } const sm = smallScreen(); $('#toast-h').textContent = sm ? t[0].replace('VOCÊ SABIA? · ', '') : t[0]; $('#toast-p').textContent = sm && t[2] ? t[2] : t[1]; $('#toast').classList.remove('off'); toastT = sm ? 4.5 : 6.5; }
 let bannerT = 0;
 function banner(text, d = 2.4){ $('#banner').textContent = text; bannerT = d; }
 function say(x, y, text, col, life = 1){ if (L.texts.length < 30) L.texts.push({ x, y, text, col, life }); }
@@ -1394,7 +1398,7 @@ function startForming(){
   for (const it of L.items) if (!it.coco) it.fly = true;
   banner('O LIXO QUE SOBROU ESTÁ SE JUNTANDO!', 3);
   playMusic('boss'); sfx('boss'); cam.shake = 0.3;
-  toast('ATENÇÃO', `Todo o lixo que ficou no chão vira parte do ${BOSSES[F.boss].nome}. Quanto mais sujeira, mais forte ele fica!`);
+  toast('ATENÇÃO', `Todo o lixo que ficou no chão vira parte do ${BOSSES[F.boss].nome}. Quanto mais sujeira, mais forte ele fica!`, 'O lixo do chão virou o chefe!');
 }
 function updateForming(dt){
   const f = L.forming; f.t += dt;
@@ -1597,7 +1601,7 @@ function updateItems(dt){
     if (d < 8 && it.delay <= 0){
       if (it.coco){ it.dead = true; p.hp = Math.min(p.maxHp, p.hp + p.maxHp * 0.3); say(p.x, p.y - 22, '+VIDA', '#7ee081', 0.9); sfx('lvl'); }
       else if (p.bag.length < p.cap){ it.dead = true; p.bag.push(it.type); sfx('pick'); hudDirty = true;
-        if (!G.seenItem.has(it.type)){ G.seenItem.add(it.type); toast('VOCÊ SABIA? · ' + ETYPES[it.type].nome.toUpperCase(), ETYPES[it.type].fato); } }
+        if (!G.seenItem.has(it.type)){ G.seenItem.add(it.type); toast('VOCÊ SABIA? · ' + ETYPES[it.type].nome.toUpperCase(), ETYPES[it.type].fato, ETYPES[it.type].curto); } }
       else if (p.fullT <= 0){ p.fullT = 2; say(p.x, p.y - 32, 'MOCHILA CHEIA!', '#d7a6ff', 1.1); }
     }
     if (!it.keep && !L.forming && !L.boss && !L.cleanup && it.age > 22 && L.enemies.length < 90){ it.dead = true; const e = spawnEnemy(it.type, it.x, it.y); e.flash = 0.3; say(it.x, it.y - 12, 'O LIXO VOLTOU!', '#ff9d8a', 1); if (Math.hypot(it.x - p.x, it.y - p.y) < 140) p.surprise = Math.max(p.surprise, 0.8); }
@@ -2221,7 +2225,7 @@ $('#btn-win-rank').onclick = () => goRank();
 $('#btn-howbins').onclick = () => { const b = $('#title-bins'); b.hidden = !b.hidden; };
 $('#btn-back').onclick = () => setState('title');
 $('#btn-start').onclick = () => { initAudio(); newRun(); };
-$('#btn-go').onclick = () => { initAudio(); setState('play', null); if (G.fase === 0) toast('COMO SEPARAR', 'Derrote os monstros, recolha o lixo na mochila e encoste na lixeira da cor certa. Lixo largado no chão volta a virar monstro!'); };
+$('#btn-go').onclick = () => { initAudio(); setState('play', null); if (G.fase === 0) toast('COMO SEPARAR', 'Derrote os monstros, recolha o lixo na mochila e encoste na lixeira da cor certa. Lixo largado no chão volta a virar monstro!', 'Recolha o lixo e leve à lixeira da cor certa.'); };
 $('#btn-resume').onclick = togglePause;
 $('#btn-pause').onclick = togglePause;
 $('#btn-burst').onclick = useBurst;
