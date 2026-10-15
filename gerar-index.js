@@ -13,7 +13,7 @@ const html = `<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="description" content="Limpando a Praia: jogo educativo em pixel art sobre lixo nas praias e coleta seletiva.">
 <style>html,body{margin:0}</style>
 ${s.slice(0, cut).trim()}
