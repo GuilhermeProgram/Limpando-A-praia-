@@ -32,6 +32,15 @@ As armas atacam sozinhas. A cada fase você:
 
 Lixo largado por muito tempo volta a virar monstro.
 
+## História
+
+A **Mestra Caretta**, uma tartaruga-marinha que guarda a praia há mais de cem anos, treina cinco jovens para defender o litoral. O nome vem da *Caretta caretta*, a tartaruga-cabeçuda, espécie ameaçada que desova no Brasil. Um dos aprendizes, **Robert**, cansa de ver a praia suja de novo, vira **Robert, o Descarte**, e desperta o lixo abandonado. Os quatro que ficam formam os **Guardiões da Maré**.
+
+- A abertura aparece na primeira vez que a pessoa joga e pode ser revista pelo botão **HISTÓRIA** do menu.
+- Antes de cada chefe, Robert aparece provocando.
+- No final, Robert ataca a Marina com uma gosma tóxica. A partir daí, a Marina fica infectada e não pode mais ser escolhida naquele aparelho. A seleção de personagem tem a opção **Reiniciar a história** para ela voltar.
+- Cada momento tem uma música própria: alegre, triste, tensa, misteriosa e heroica. Cada fase também tem a sua trilha.
+
 ## Personagens
 
 | Personagem | Classe | Arma | Poder especial |

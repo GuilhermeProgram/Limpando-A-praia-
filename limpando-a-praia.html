@@ -149,6 +149,24 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .field input::placeholder{color:#6f81a3}
 .field input:focus-visible{outline:3px dashed var(--sun);outline-offset:3px}
 .err{color:#ffb0a8;font-size:16px}
+#cine{position:absolute;inset:0;cursor:pointer;touch-action:manipulation}
+#cine::before,#cine::after{content:"";position:absolute;left:0;right:0;height:min(6vh,40px);background:#000;pointer-events:none}
+#cine::before{top:0} #cine::after{bottom:0}
+#cine-skip{position:absolute;right:12px;top:calc(min(6vh,40px) + 8px + env(safe-area-inset-top,0px));z-index:2}
+#dlg{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(min(6vh,40px) + 10px + env(safe-area-inset-bottom,0px));width:min(780px,calc(100% - 24px));box-sizing:border-box;background:linear-gradient(#1d3a6b,#13284d);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 8px 0 rgba(0,0,0,.35);padding:12px 16px 16px;display:flex;gap:14px;align-items:flex-start;min-height:104px}
+#dlg.narr{background:linear-gradient(#2c2547,#1a1530)}
+#dlg-face{width:68px;height:68px;background:#2c4a7c;border:3px solid var(--foam);border-radius:50%;flex:none}
+#dlg .dt{min-width:0;flex:1}
+#dlg-name{font-family:var(--f-display);font-size:10px;color:var(--sun);display:block;margin-bottom:8px;letter-spacing:.04em}
+#dlg-text{margin:0;font-size:20px;line-height:1.4;min-height:2.8em}
+#dlg .nx{position:absolute;right:14px;bottom:10px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--sun);animation:nx .8s steps(2) infinite}
+@keyframes nx{50%{transform:translateY(3px)}}
+.char.locked{opacity:.7;cursor:not-allowed}
+.char.locked .cls{background:#8bd450}
+.linkbtn{all:unset;cursor:pointer;color:var(--sun);text-decoration:underline;font-weight:700}
+.linkbtn:focus-visible{outline:2px dashed var(--sun);outline-offset:2px}
+.fact.story{background:#2c2547;color:var(--foam);box-shadow:0 0 0 3px #8bd450;border-color:#1a1530}
+.fact.story h3{color:#8bd450}
 .only-mobile{display:none}
 #coach{position:absolute;left:50%;transform:translateX(-50%);top:calc(84px + env(safe-area-inset-top,0px));width:min(460px,calc(100% - 24px));box-sizing:border-box;background:var(--foam);color:var(--ink);border:3px solid var(--ink);box-shadow:0 0 0 3px var(--foam),6px 6px 0 3px rgba(0,0,0,.35);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 #coach .ch{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
@@ -203,6 +221,10 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   .how{display:none}
   .only-mobile{display:block}
   .field input{font-size:16px}
+  #dlg{padding:9px 10px 14px;gap:10px;min-height:84px}
+  #dlg-face{width:46px;height:46px}
+  #dlg-text{font-size:15px}
+  #dlg-name{font-size:8px;margin-bottom:5px}
   #coach{top:calc(146px + env(safe-area-inset-top,0px));padding:7px 9px;gap:4px}
   #coach p{font-size:14px}
   #coach-t{font-size:9px}
@@ -245,6 +267,10 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   #toast{max-width:240px;bottom:auto;top:calc(62px + env(safe-area-inset-top,0px));padding:5px 8px;border-width:2px;box-shadow:0 0 0 2px var(--foam),3px 3px 0 2px rgba(0,0,0,.3)}
   #toast h4{font-size:6px;margin-bottom:3px}
   #toast p{font-size:12px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  #dlg{min-height:68px;padding:6px 10px 12px}
+  #dlg-face{width:40px;height:40px}
+  #dlg-text{font-size:14px;min-height:2.4em}
+  #dlg-name{font-size:8px;margin-bottom:4px}
   #coach{top:calc(58px + env(safe-area-inset-top,0px));width:min(380px,calc(100% - 24px));padding:5px 8px;gap:3px}
   #coach p{font-size:13px}
   #coach-t{font-size:8px}
@@ -293,6 +319,10 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     <p id="coach-p"></p>
     <div class="row"><button class="btn" id="coach-go" type="button" hidden>COMEÇAR A FASE 1</button><button class="mini-btn" id="coach-skip" type="button">PULAR TUTORIAL</button></div>
   </div>
+  <div id="cine" hidden>
+    <button class="mini-btn" id="cine-skip" type="button">PULAR HISTÓRIA</button>
+    <div id="dlg" aria-live="polite"><canvas id="dlg-face" class="px" width="20" height="20"></canvas><div class="dt"><b id="dlg-name"></b><p id="dlg-text"></p></div><span class="nx"></span></div>
+  </div>
   <div id="banner" aria-live="polite"></div>
   <div id="toast" class="off" aria-live="polite"><h4 id="toast-h">VOCÊ SABIA?</h4><p id="toast-p"></p></div>
 
@@ -315,6 +345,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
       </form>
       <p class="err" id="nick-err" hidden>Digite um nick de 2 a 16 caracteres para entrar no ranking.</p>
       <div class="row">
+        <button class="btn ghost" id="btn-story" type="button">HISTÓRIA</button>
         <button class="btn ghost" id="btn-rank" type="button">RANKING</button>
         <button class="btn ghost" id="btn-howbins" type="button">CORES DA COLETA SELETIVA</button>
       </div>
@@ -327,6 +358,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
       <h2>ESCOLHA SUA CLASSE</h2>
       <p class="muted">Cada personagem usa um item de limpeza como arma e tem um poder especial. O rosto reage ao que acontece: dor ao levar dano, comemoração ao separar o lixo, surpresa quando o chefe aparece, cansaço com pouca vida e até sono se ficar parado.</p>
       <div class="chars" id="chars"></div>
+      <p class="note" id="sel-infect" hidden>Marina foi infectada pelo Robert, o Descarte, e não pode mais lutar. <button class="linkbtn" id="btn-cure" type="button">Reiniciar a história</button></p>
       <div class="row actions">
         <button class="btn" id="btn-start" type="button">COMEÇAR</button>
         <button class="btn ghost" id="btn-back" type="button">VOLTAR</button>
@@ -404,6 +436,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
       <div class="row"><canvas class="big-face px" id="win-face" width="20" height="20"></canvas><div><h3>VOCÊ LIMPOU AS TRÊS PRAIAS</h3><h2>A PRAIA AGRADECE!</h2></div></div>
       <h3>TOTAL SEPARADO NO JOGO</h3>
       <div class="tally" id="win-tally"></div>
+      <div class="fact story" id="win-story" hidden><h3>CONTINUA...</h3><p>Robert, o Descarte, atingiu a Marina com uma gosma tóxica. Ela não pode mais lutar até os Guardiões encontrarem a cura no fundo do mar. A história continua na próxima aventura!</p></div>
       <div id="win-real"></div>
       <div class="fact"><h3>NA VIDA REAL</h3><p>Leve seu lixo de volta, separe os recicláveis e use as lixeiras certas. A Política Nacional de Resíduos Sólidos (Lei 12.305/2010) define que governo, empresas e cidadãos dividem a responsabilidade pelo destino do lixo. Cuidar da praia também é cumprir o ODS 14 da ONU: Vida na Água.</p></div>
       <p class="scoreline" id="win-score"></p>
@@ -626,13 +659,13 @@ const ETYPES = {
              fato:'Vidro: quebrado na areia, vira caco e machuca quem anda descalço. Pode ser reciclado muitas vezes. Vai na lixeira VERDE.', curto:'Caco machuca quem anda descalço. Lixeira VERDE.' },
 };
 const FASES = [
-  { nome:'Praia do Sol', meta:22, rate:0.8, hpMul:1, tipos:{ pet:4, lata:3, bituca:3, papelao:2 }, boss:'garrafao',
+  { nome:'Praia do Sol', musica:'main', meta:22, rate:0.8, hpMul:1, tipos:{ pet:4, lata:3, bituca:3, papelao:2 }, boss:'garrafao',
     desc:'Um domingo de sol deixou a areia cheia de garrafas, latinhas, caixas e bitucas. Os banhistas foram embora, mas o lixo ficou.',
     tema:{ s:['#d9a95e','#e8bf78','#f3d49a','#fbe6bd'], wet:'#c9a06a', deep:'#1f6fae', mid:'#2f8fcc', shallow:'#56b7e0', foam:'#ffffff', spark:'#d8f6ff' } },
-  { nome:'Enseada do Pôr do Sol', meta:32, rate:1.15, hpMul:1.7, tipos:{ pet:3, lata:2, bituca:3, papelao:2, sacola:4, isopor:1 }, boss:'sacolao',
+  { nome:'Enseada do Pôr do Sol', musica:'enseada', meta:32, rate:1.15, hpMul:1.7, tipos:{ pet:3, lata:2, bituca:3, papelao:2, sacola:4, isopor:1 }, boss:'sacolao',
     desc:'No fim da tarde, o vento espalha sacolas e pedaços de isopor. A maré começa a levar tudo para o mar.',
     tema:{ s:['#cf9658','#e0ae72','#edc48e','#f7d9ad'], wet:'#b98858', deep:'#2b5a92', mid:'#3d76ac', shallow:'#6f9fc8', foam:'#fff1e0', spark:'#ffd2a8' }, overlay:'rgba(255,110,60,0.12)' },
-  { nome:'Recife da Lua', meta:42, rate:1.5, hpMul:2.5, tipos:{ pet:2, lata:2, bituca:3, papelao:2, sacola:3, isopor:2, vidro:3 }, boss:'lixao',
+  { nome:'Recife da Lua', musica:'recife', meta:42, rate:1.5, hpMul:2.5, tipos:{ pet:2, lata:2, bituca:3, papelao:2, sacola:3, isopor:2, vidro:3 }, boss:'lixao',
     desc:'À noite, cacos de vidro e todo tipo de lixo ameaçam os animais do recife. Última limpeza!',
     tema:{ s:['#b9a07c','#cbb38e','#dac6a3','#e8d8b9'], wet:'#a08a6a', deep:'#123e66', mid:'#1b5585', shallow:'#2c6c9c', foam:'#e8f4ff', spark:'#cfe8ff' }, night:true },
 ];
@@ -766,6 +799,12 @@ function charRows(style, frame){
     put(1, 12, 'w');
     g[21] = g[21].map(c => c === 'S' ? 'P' : c);
   }
+  if (style === 'hood'){
+    row(0, '.....hhhhhh.....'); row(1, '...hhHHHHHHhh...'); row(2, '..hHHLLHHHHHHh..'); row(3, '.hHHLHHHHHHHHHh.');
+    row(4, '.hHHHHHHHHHHHHh.'); row(5, '.hHHHhhhhhhhHHh.');
+    for (let y = 6; y <= 12; y++){ put(1, y, 'h'); put(2, y, 'H'); }
+    put(14, 6, 'h'); put(14, 7, 'h');
+  }
   if (style === 'hat'){
     row(0, '................'); row(1, '....CCCCCCC.....'); row(2, '...CCCCCCCCC....'); row(3, '...CcCCCCCCC....');
     row(4, '.CCCCCCCCCCCCCC.'); row(5, '.hHHHHHHHhHHHHh.');
@@ -790,6 +829,19 @@ function makeEnemy(w, h, body, face, feet, arms){
 function buildSprites(){
   SPR.chars = {};
   for (const c of CLASSES) SPR.chars[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f), c.pal), { x:6, y:8, style:'big' }));
+  const ROBERT_PAL = { H:'#3b2a55', h:'#22183a', L:'#5a4380', S:'#e0b896', s:'#b08a6c', A:'#4a3a6a', a:'#2c2142', B:'#8bd450', C:'#8bd450', P:'#2a2438', p:'#1a1626', K:'#1a1a22', k:'#3a3a48' };
+  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f), ROBERT_PAL), { x:6, y:8, style:'big' }));
+  const turtleSkin = ['#3d5a2a','#5f8a3c','#86b85a','#b5dd8a'];
+  SPR.caretta = [0, 1].map(f => wrap(mk(38, 26, g => {
+    paintEllipsoid(g, 8, 6 + f, 6, 3.2, turtleSkin); paintEllipsoid(g, 8, 20 - f, 6, 3.2, turtleSkin);
+    paintEllipsoid(g, 24, 5 - f, 5, 3, turtleSkin); paintEllipsoid(g, 24, 21 + f, 5, 3, turtleSkin);
+    paintEllipsoid(g, 16, 13, 12, 9.5, ['#4a2e14','#7a4a1e','#a8692c','#cf9248','#e9b874']);
+    g.fillStyle = 'rgba(58,34,14,.75)';
+    for (let a = 0; a < 6; a++) for (let r = 4; r < 9; r++) g.fillRect(Math.round(16 + Math.cos(a * Math.PI / 3 + 0.5) * r * 1.2), Math.round(13 + Math.sin(a * Math.PI / 3 + 0.5) * r * 0.85), 1, 1);
+    for (let a = 0; a < TAU; a += 0.12) g.fillRect(Math.round(16 + Math.cos(a) * 4.5), Math.round(13 + Math.sin(a) * 3.4), 1, 1);
+    paintEllipsoid(g, 31, 13, 6.4, 5.6, turtleSkin);
+    g.fillStyle = '#f2f2ea'; g.fillRect(28, 9, 2, 1); g.fillRect(32, 9, 2, 1);
+  }), { x:28, y:11, style:'small' }));
 
   const petBody = (g) => {
     const prof = [2.6,2.6,2.6,2.2,2.2,2.2,3,4,5,5.8,6.3,6.3,6.3,6.3,6.3,6.3,6.3,6.3,6.1,5.6];
@@ -975,20 +1027,55 @@ const TRACKS = {
 const NOTE = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 };
 function midi(t){ const m = /^([A-G])(#|b)?(\d)$/.exec(t); if (!m) return null; return 12 * (+m[3] + 1) + NOTE[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0); }
 const hz = n => 440 * Math.pow(2, (n - 69) / 12);
+/* trilhas da história e das fases (chiptune original) */
+Object.assign(TRACKS, {
+  alegre: { bpm:132, leadVol:0.045,
+    lead:'C5 . E5 . G5 . C6 - - - G5 . E5 . C5 . | F5 . A5 . C6 . A5 - - - F5 . A5 . C6 . | G5 . B5 . D6 . B5 - - - G5 . F5 . E5 . | D5 . E5 . F5 . G5 - - - - - . . . .',
+    bass:'C3 C3 F2 F2 G2 G2 G2 G2', bassPat:[0,null,7,null,12,null,7,null], bassWave:'triangle', bassVol:0.07,
+    kick:'x.......x.......', snare:'....x.......x...', hat:'..x...x...x...x.' },
+  triste: { bpm:76, leadWave:'triangle', leadVol:0.07, lead2:false, echo:true,
+    lead:'A4 - - - C5 - - - E5 - - - D5 - C5 - | B4 - - - - - - - G4 - - - - - - - | F4 - - - A4 - - - C5 - - - B4 - A4 - | E4 - - - - - - - - - - - . . . .',
+    bass:'A2 A2 E2 E2 F2 F2 E2 E2', bassSustain:true },
+  tensa: { bpm:120, leadVol:0.035, cut:2200, echo:true,
+    lead:'D5 . . . D5 . . . G#4 - - - A4 - - - | D5 . . . D5 . . . F5 - - - E5 - - - | D5 . D5 . D#5 . D5 . G#4 - - - A4 - - - | C#5 - - - - - - - D5 - - - - - - -',
+    bass:'D2 D2 D2 D2 D2 D2 A1 A1', bassPat:[0,0,0,0,0,0,0,0], bassVol:0.04,
+    kick:'x...x...x...x...', snare:'........x.......' },
+  misteriosa: { bpm:90, leadWave:'triangle', leadVol:0.06, lead2:false, echo:true,
+    lead:'B5 - - - - - - - . . . . A5 - G5 - | F#5 - - - - - - - . . . . E5 - - - | G5 - - - - - - - . . . . A5 - B5 - | E5 - - - - - - - - - - - . . . .',
+    bass:'E2 E2 C2 C2 G2 G2 B1 B1', bassSustain:true, arp:[0,7,12,15,19,15,12,7] },
+  heroica: { bpm:112, leadVol:0.055,
+    lead:'D5 - - . D5 . D5 . A5 - - - - - . . | G5 - - . F#5 . E5 . F#5 - - - D5 - - - | B4 - - . C#5 . D5 . E5 - - . F#5 . G5 . | A5 - - - - - - - D6 - - - - - - -',
+    bass:'D2 D2 G2 G2 B1 B1 A1 A1', bassPat:[0,null,12,null,0,null,12,null],
+    kick:'x.......x.......', snare:'....x..x....x.xx', hat:'x.x.x.x.x.x.x.x.' },
+  enseada: { bpm:108, leadWave:'triangle', leadVol:0.06,
+    lead:'A4 . C5 . . E5 . D5 - - C5 . A4 - - - | G4 . A4 . . C5 . A4 - - G4 . F4 - - - | A4 . C5 . . E5 . F5 - - E5 . D5 - - - | C5 - - - E5 - - - D5 - - - - - . .',
+    bass:'D2 D2 Bb1 Bb1 F2 F2 C2 C2', bassPat:[0,null,null,12,null,0,7,null], bassVol:0.055,
+    kick:'x.....x...x.....', snare:'....x.......x...', hat:'x.xxx.x.x.xxx.x.' },
+  recife: { bpm:128, leadVol:0.04, cut:2400, echo:true,
+    lead:'E5 . F5 . E5 . . . B4 - - - C5 - B4 - | E5 . F5 . G5 . F5 . E5 - - - - - - - | A5 . G5 . F5 . E5 . F5 - - - E5 - D5 - | E5 - - - - - - - F5 - - - E5 - - -',
+    bass:'E2 E2 F2 F2 E2 E2 D2 F2', bassPat:[0,null,0,12,null,0,null,0], bassVol:0.05,
+    kick:'x..x..x.x..x..x.', snare:'....x.......x...', hat:'.x.x.x.x.x.x.x.x' },
+});
 for (const T of Object.values(TRACKS)){ T.steps = T.lead.replace(/\|/g, ' ').trim().split(/\s+/); T.len = T.steps.length; T.roots = T.bass.split(/\s+/).map(midi); }
+TRACKS.bossFinal = { ...TRACKS.boss, bpm:184, leadWave:'sawtooth', leadVol:0.04, cut:2600 };
 
+let echoBus = null;
 let AC = null, sfxOn = true, musicOn = true, master = null, musicGain = null, noiseBuf = null;
 const Music = { track:null, step:0, nextT:0, timer:null };
 function initAudio(){
   if (!AC){ try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; return; }
     master = AC.createGain(); master.gain.value = 0.9; master.connect(AC.destination);
     musicGain = AC.createGain(); musicGain.gain.value = 0.55; musicGain.connect(master);
+    echoBus = AC.createGain(); echoBus.gain.value = 0.5; const dl = AC.createDelay(1); dl.delayTime.value = 0.3; const fb = AC.createGain(); fb.gain.value = 0.38;
+    echoBus.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(musicGain);
     noiseBuf = AC.createBuffer(1, AC.sampleRate * 0.5, AC.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
   if (AC.state === 'suspended') AC.resume();
 }
 function playMusic(name){
-  if (!AC) return; const T = TRACKS[name]; if (Music.track === T) return;
-  Music.track = T; Music.step = 0; Music.nextT = AC.currentTime + 0.08;
+  if (!AC) return; const T = TRACKS[name]; if (!T || Music.track === T) return;
+  const now = AC.currentTime;
+  musicGain.gain.cancelScheduledValues(now); musicGain.gain.setValueAtTime(0.0001, now); musicGain.gain.linearRampToValueAtTime(0.55, now + 0.7);
+  Music.track = T; Music.step = 0; Music.nextT = now + 0.08;
   if (!Music.timer) Music.timer = setInterval(musicTick, 25);
 }
 function musicTick(){
@@ -1008,16 +1095,20 @@ function noise(t, dur, vol, hp, dest = musicGain){
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); s.connect(f).connect(g).connect(dest); s.start(t); s.stop(t + dur + 0.02);
 }
 function scheduleStep(T, i, t, sd){
-  const n = midi(T.steps[i]);
+  const n = midi(T.steps[i]), lv = T.leadVol ?? 0.05, lw = T.leadWave || 'square';
   if (n != null){ let hold = 1; while (T.steps[(i + hold) % T.len] === '-') hold++;
-    const d = hold * sd * 0.92; voice('square', hz(n), t, d, 0.05, 3200); voice('sawtooth', hz(n) * 1.004, t, d, 0.02, 2200); }
+    const d = hold * sd * 0.92; voice(lw, hz(n), t, d, lv, T.cut || 3200);
+    if (T.lead2 !== false) voice('sawtooth', hz(n) * 1.004, t, d, lv * 0.4, 2200);
+    if (T.echo) voice(lw, hz(n), t, d, lv * 0.7, 2400, echoBus); }
   const bar = i >> 4, s = i & 15, half = i >> 3, root = T.roots[half % T.roots.length];
-  const pat = T.chug ? [0,0,0,12,0,0,7,0] : [0,null,12,0,null,12,0,12];
-  const b = pat[s & 7]; if (b != null) voice('square', hz(root + b), t, sd * 0.85, 0.05, 900);
+  if (T.bassSustain){ if ((s & 7) === 0) voice(T.bassWave || 'triangle', hz(root), t, sd * 7.6, T.bassVol ?? 0.08, 700); }
+  else { const pat = T.bassPat || (T.chug ? [0,0,0,12,0,0,7,0] : [0,null,12,0,null,12,0,12]); const b = pat[s & 7]; if (b != null) voice(T.bassWave || 'square', hz(root + b), t, sd * 0.85, T.bassVol ?? 0.05, 900); }
+  if (T.arp){ const iv = T.arp[s % T.arp.length]; voice('square', hz(root + 24 + iv), t, sd * 0.8, 0.016, 2600, T.echo ? echoBus : musicGain); }
   const lastBar = bar === (T.len >> 4) - 1;
-  if (T.kick[s] === 'x'){ const o = AC.createOscillator(), g = AC.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16); o.connect(g).connect(musicGain); o.start(t); o.stop(t + 0.18); }
-  if ((lastBar ? T.fill : T.snare)[s] === 'x'){ noise(t, 0.13, 0.16, 1400); voice('triangle', 190, t, 0.06, 0.06); }
-  if (T.hat[s] === 'x') noise(t, 0.03, 0.035, 7000);
+  if (T.kick && T.kick[s] === 'x'){ const o = AC.createOscillator(), g = AC.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16); o.connect(g).connect(musicGain); o.start(t); o.stop(t + 0.18); }
+  const sn = lastBar && T.fill ? T.fill : T.snare;
+  if (sn && sn[s] === 'x'){ noise(t, 0.13, 0.16, 1400); voice('triangle', 190, t, 0.06, 0.06); }
+  if (T.hat && T.hat[s] === 'x') noise(t, 0.03, 0.035, 7000);
 }
 function jingle(){
   if (!AC || !musicOn) return; const t = AC.currentTime + 0.05;
@@ -1093,15 +1184,16 @@ function buildBg(f){
   for (let x = 0; x < WORLD_W; x += 2){ const h = 10 + R() * 8; for (let y = 0; y < h; y++) px(x, WORLD_H - y, 2, 1, RAMP.leaf[clamp(4 - (y / h * 4 | 0), 0, 4)]); }
   return c;
 }
+const BG_CACHE = {};
 function makeLevel(f){
-  const lv = { fase:f, bg:buildBg(f), time:0, spawnAcc:0, waveT:26, enemies:[], projs:[], eprojs:[], items:[], parts:[], fx:[], texts:[], critters:[], props:[], bins:[], zones:[],
+  const lv = { fase:f, bg:BG_CACHE[f] || (BG_CACHE[f] = buildBg(f)), time:0, spawnAcc:0, waveT:26, enemies:[], projs:[], eprojs:[], items:[], parts:[], fx:[], texts:[], critters:[], props:[], bins:[], zones:[],
     boss:null, forming:null, bossDone:false, cleanup:false, clearT:0, deposited:0, stats:{} };
   const cx = WORLD_W / 2, cy = 560;
   ['plastico','papel','vidro','metal','rejeito'].forEach((m, i) => { const a = -Math.PI / 2 + i * TAU / 5; lv.bins.push({ mat:m, x:cx + Math.cos(a) * 430, y:cy + Math.sin(a) * 250, wrongT:0 }); });
   for (const [x, y, v] of [[210, 330, 0], [1290, 320, 2], [150, 720, 1], [1360, 760, 0], [760, 880, 2]]){ const s = SPR.rock[v]; lv.props.push({ kind:'rock', spr:s, x, y, rect:{ x:x - s.w / 2 + 2, y:y - s.h / 2 + 3, w:s.w - 4, h:s.h - 5 } }); }
   const R = mulberry(5 + f);
   for (let i = 0; i < 16; i++){ const x = 40 + R() * (WORLD_W - 80), y = i < 7 ? WORLD_H - 40 - R() * 30 : SHORE + 60 + R() * 650;
-    if (lv.bins.some(b => Math.hypot(b.x - x, b.y - y) < 80) || lv.props.some(p => Math.hypot(p.x - x, p.y - y) < 70) || Math.hypot(x - cx, y - cy) < 120) continue;
+    if (lv.bins.some(b => Math.hypot(b.x - x, b.y - y) < 80) || lv.props.some(p => Math.hypot(p.x - x, p.y - y) < 70) || Math.hypot(x - cx, y - cy) < 120 || (Math.abs(x - 590) < 190 && y < 480)) continue;
     lv.props.push({ kind:'palm', spr:SPR.palm, x, y, circ:{ x, y:y + 22, r:4 } }); }
   for (let i = 0; i < 7; i++){ const x = 80 + R() * (WORLD_W - 160), y = SHORE + 40 + R() * 200; lv.critters.push({ x, y, hx:x, hy:y, tx:x, ty:y, wait:R() * 2, anim:R() * 3, mood:'alegre' }); }
   return lv;
@@ -1218,13 +1310,13 @@ function startFase(f){
   G.fase = f; L = makeLevel(f);
   const p = G.player; p.x = WORLD_W / 2; p.y = 560; p.hp = p.maxHp; p.bag = []; p.inv = 0; p.hurt = 0; p.slow = 0; p.burstT = 0;
   G.snap = snapshot(p); G.pendingLv = 0; G.rerolls = 2; hudDirty = true; G.scoreSnap = G.score; G.sepSnap = G.sep;
-  playMusic('main');
+  playMusic(FASES[f].musica);
   showIntro();
 }
 const screens = ['title','select','intro','levelup','pause','clear','shop','over','win','rank'];
 function show(id){
   for (const s of screens) $('#scr-' + s).hidden = s !== id;
-  $('#hud').hidden = !(G && !['title','select'].includes(id));
+  $('#hud').hidden = !(G && !['title','select','rank'].includes(id)) || state === 'cutscene';
 }
 function setState(s, scr){
   state = s; const id = scr === undefined ? s : scr; show(id);
@@ -1235,23 +1327,28 @@ function binsHTML(){
   return Object.entries(MATS).map(([k, m]) => `<div class="bin"><canvas class="px" data-bin="${k}" width="18" height="24"></canvas><span><b>${m.lixeira}: ${m.nome}</b><br>${ex[k]}</span></div>`).join('');
 }
 function paintBinCanvases(root){ root.querySelectorAll('canvas[data-bin]').forEach(c => c.getContext('2d').drawImage(SPR.bin[c.dataset.bin].img, 0, 0)); }
-function portraitCanvas(cnv, id, mood){
-  const g = cnv.getContext('2d'), s = SPR.chars[id][0]; g.imageSmoothingEnabled = false;
+function portraitCanvas(cnv, id, mood, sick){
+  const g = cnv.getContext('2d'), s = sick ? sickOf(SPR.chars[id][0]) : SPR.chars[id][0]; g.imageSmoothingEnabled = false;
   g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 0, 0, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x + 1, s.face.y + 3, mood, s.face);
 }
 function buildSelect(){
   const box = $('#chars'); box.innerHTML = '';
+  const infected = !!load('lp-marina-infectada', false);
+  if (infected && selected === 'marina') selected = 'tiago';
+  $('#sel-infect').hidden = !infected;
   for (const c of CLASSES){
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'char' + (c.id === selected ? ' sel' : ''); b.setAttribute('aria-pressed', c.id === selected);
+    const locked = infected && c.id === 'marina';
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'char' + (c.id === selected ? ' sel' : '') + (locked ? ' locked' : ''); b.setAttribute('aria-pressed', c.id === selected);
+    if (locked){ b.disabled = true; b.title = 'Marina foi infectada pelo Robert, o Descarte'; }
     const body = document.createElement('canvas'); body.className = 'body px'; body.width = 26; body.height = 36;
-    const s = SPR.chars[c.id][0], g = body.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(s.img, 4, 6); drawFace(g, s.face.x + 4, s.face.y + 6, 'alegre', s.face);
+    const s = locked ? sickOf(SPR.chars[c.id][0]) : SPR.chars[c.id][0], g = body.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(s.img, 4, 6); drawFace(g, s.face.x + 4, s.face.y + 6, locked ? 'exausto' : 'alegre', s.face);
     drawHeld(g, c.id, 18, 24, 0, false, 0);
     b.append(body);
     const statRows = Object.entries(c.stats).map(([k, v]) => `<span>${k}</span><span class="sb">${[1,2,3,4,5].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`).join('');
-    b.insertAdjacentHTML('beforeend', `<span class="cls">${c.classe.toUpperCase()}</span><span class="nm">${c.nome}</span><span class="rl">${c.papel}</span><span class="wp">Arma: <b>${WEAPONS[c.weapon].nome}</b></span><div class="stats">${statRows}</div><span class="burst">Burst: ${c.burstNome}. ${c.burstDesc}</span>`);
+    b.insertAdjacentHTML('beforeend', `<span class="cls">${locked ? 'INFECTADA' : c.classe.toUpperCase()}</span><span class="nm">${c.nome}</span><span class="rl">${c.papel}</span><span class="wp">Arma: <b>${WEAPONS[c.weapon].nome}</b></span><div class="stats">${statRows}</div><span class="burst">Burst: ${c.burstNome}. ${c.burstDesc}</span>`);
     const moods = document.createElement('div'); moods.className = 'moods';
     for (const m of ['alegre','triste','zangado','dor','comemorando','surpreso']){ const label = { dor:'Dor', comemorando:'Festa', surpreso:'Surpresa' }[m] || MOOD_LABEL[m];
-      const fig = document.createElement('figure'); const pc = document.createElement('canvas'); pc.className = 'px'; pc.width = 20; pc.height = 20; portraitCanvas(pc, c.id, m);
+      const fig = document.createElement('figure'); const pc = document.createElement('canvas'); pc.className = 'px'; pc.width = 20; pc.height = 20; portraitCanvas(pc, c.id, locked ? 'exausto' : m, locked);
       fig.append(pc); fig.insertAdjacentHTML('beforeend', `<figcaption>${label}</figcaption>`); moods.append(fig);
     }
     b.append(moods);
@@ -1420,7 +1517,8 @@ function showWin(){
     const meta = [MUTIRAO.local, MUTIRAO.data, MUTIRAO.voluntarios ? MUTIRAO.voluntarios + ' voluntários' : '', MUTIRAO.quilos ? MUTIRAO.quilos + ' kg recolhidos' : ''].filter(Boolean).join(' · ');
     real.innerHTML = `<h3>NO NOSSO MUTIRÃO DE VERDADE${meta ? ' · ' + meta.toUpperCase() : ''}</h3><div class="tally" style="margin-top:8px">${rows}</div>`;
   } else real.innerHTML = '';
-  jingle(); setState('win');
+  $('#win-story').hidden = !load('lp-marina-infectada', false);
+  jingle(); setState('win'); setTimeout(() => { if (state === 'win') playMusic('heroica'); }, 1200);
 }
 function gameOver(){
   portraitCanvas($('#over-face'), G.player.id, 'triste');
@@ -1475,7 +1573,7 @@ function killEnemy(e){
     for (let i = 0; i < 70; i++) L.parts.push({ x:e.x, y:e.y, vx:rand(-110, 110), vy:rand(-130, 40), life:rand(.5, 1.2), col:['#ffd23f','#ffffff','#7fd8ff','#ff6b5b'][i % 4], s:2 });
     L.fx.push({ kind:'ghost', spr:SPR[e.type][0], x:e.x, y:e.y, t:0, dur:1.6 });
     banner(B.nome + ' DESMONTADO! LEVE OS RESTOS PARA AS LIXEIRAS!', 3.2);
-    cam.shake = 0.6; sfx('boss'); playMusic('main'); G.player.cheer = 2.5; addScore(500 * (L.fase + 1));
+    cam.shake = 0.6; sfx('boss'); playMusic(FASES[L.fase].musica); G.player.cheer = 2.5; addScore(500 * (L.fase + 1));
     return;
   }
   G.kills++; addScore(2);
@@ -1520,13 +1618,14 @@ function spawnGroup(){
 
 /* ---- o lixo que sobrou se junta e forma o chefe ---- */
 function startForming(){
+  if (!L.preCine && BOSS_CINE[L.fase]){ L.preCine = true; playCine(BOSS_CINE[L.fase](), () => { setState('play', null); startForming(); }); return; }
   const p = G.player, F = FASES[L.fase];
   const a = Math.random() * TAU; const x = clamp(p.x + Math.cos(a) * 120, 80, WORLD_W - 80), y = clamp(p.y + Math.sin(a) * 90, SHORE + 70, WORLD_H - 80);
   L.forming = { t:0, dur:3.4, x, y, absorbed:0 };
   for (const e of L.enemies) e.fly = true;
   for (const it of L.items) if (!it.coco) it.fly = true;
   banner('O LIXO QUE SOBROU ESTÁ SE JUNTANDO!', 3);
-  playMusic('boss'); sfx('boss'); cam.shake = 0.3;
+  playMusic(L.fase === 2 ? 'bossFinal' : 'boss'); sfx('boss'); cam.shake = 0.3;
   toast('ATENÇÃO', `Todo o lixo que ficou no chão vira parte do ${BOSSES[F.boss].nome}. Quanto mais sujeira, mais forte ele fica!`, 'O lixo do chão virou o chefe!');
 }
 function updateForming(dt){
@@ -1917,7 +2016,7 @@ function sortY(o, k){ return k === 'prop' ? o.y + o.spr.h / 2 - (o.kind === 'pal
 
 function render(dt){
   const t = L.time;
-  const target = G ? G.player : { x:WORLD_W / 2 + Math.sin(performance.now() / 6000) * 300, y:SHORE + 120 };
+  const target = CINE ? CINE.cam : G ? G.player : { x:WORLD_W / 2 + Math.sin(performance.now() / 6000) * 300, y:SHORE + 120 };
   camUpdate(target.x, target.y, dt);
   let sx = 0, sy = 0; if (cam.shake > 0 && !reduceMotion){ sx = rand(-2, 2); sy = rand(-2, 2); }
   const cx = Math.round(cam.x + sx), cy = Math.round(cam.y + sy);
@@ -1957,6 +2056,7 @@ function render(dt){
   for (const e of L.enemies) if (!e.fly && onScr(e.x, e.y)) list.push(['e', e]);
   if (L.boss) list.push(['b', L.boss]);
   if (G) list.push(['p', G.player]);
+  if (CINE) for (const a of CINE.actors) list.push(['a', a]);
   list.sort((a, b) => sortY(a[1], a[0]) - sortY(b[1], b[0]));
   for (const [k, o] of list){
     const x = Math.round(o.x - cx), y = Math.round(o.y - cy);
@@ -1973,7 +2073,8 @@ function render(dt){
       shadow(x, y + (s.h >> 1) - 4, s.w - 10); shadow(x, y + (s.h >> 1) - 2, s.w - 4);
       if (g < 1){ const w = Math.round(s.w * g), h = Math.round(s.h * g); ctx.drawImage(((t * 12) | 0) % 2 ? s.flash : s.img, x - (w >> 1), y + (s.h >> 1) - h, w, h); }
       else drawSpr(s, x - (s.w >> 1), y - (s.h >> 1), o.hitT > 0 ? 'dor' : o.hp / o.maxHp < 0.35 ? 'triste' : 'zangado', o.flash > 0 || (o.stun > 0 && ((t * 8) | 0) % 2)); }
-    else drawPlayer(o, x, y, t);
+    else if (k === 'a'){ const r = drawActor(o, x, y, t); if (r && CINE && CINE.speaker === o.id) speakerArrow(x, r.top - 3, t); }
+    else { drawPlayer(o, x, y, t); if (CINE && CINE.speaker === o.id) speakerArrow(x, y - 30, t); }
   }
 
   if (L.forming){ const f = L.forming, x = Math.round(f.x - cx), y = Math.round(f.y - cy), k = f.t / f.dur;
@@ -2040,6 +2141,7 @@ function render(dt){
     ctx.fillStyle = '#fffbe6'; for (let i = 0; i < 40; i++){ const x = (i * 97 + 13) % VW, y = (i * 53) % Math.max(10, SHORE - 40 - cy); if ((t * 2 + i) % 7 > 1) ctx.fillRect(x, y, 1, 1); }
   }
 
+  drawCineOverlay(cx, cy, t);
   for (const tx of L.texts){ ctx.globalAlpha = Math.min(1, tx.life * 2); pixText(tx.text, Math.round(tx.x - cx), Math.round(tx.y - cy), tx.col); }
   ctx.globalAlpha = 1;
 
@@ -2309,12 +2411,249 @@ function renderRank(){
     : 'Ranking deste aparelho: as pontuações e o voto ficam salvos só neste navegador.';
 }
 
+/* ============================ história e cutscenes ============================
+   Mestra Caretta treina cinco aprendizes. Robert desiste, vira "o Descarte" e
+   desperta o lixo. Os quatro que ficam formam os Guardiões da Maré.
+   No final, Robert infecta a Marina, que deixa de ser jogável neste aparelho. */
+const NOMES = { narr:'Narração', caretta:'Mestra Caretta', robert:'Robert', todos:'Guardiões da Maré', marina:'Marina', tiago:'Tiago', cida:'Cida', leo:'Léo' };
+const HEROIS = ['marina', 'tiago', 'cida', 'leo'];
+const STAGE_X = 590;   // área livre da praia usada como palco das cenas
+let CINE = null;
+
+function roster(y, ids, mood, dx = 34){
+  return ids.map((id, i) => ({ id, kind:'char', x:STAGE_X + (i - (ids.length - 1) / 2) * dx, y, mood:mood || 'alegre' }));
+}
+const carettaAt = (y, extra) => ({ id:'caretta', kind:'caretta', x:STAGE_X, y, mood:'alegre', ...(extra || {}) });
+function actor(C, id){ return C.actors.find(a => a.id === id); }
+function walk(C, id, dx, dy, leave){ const a = actor(C, id); if (a){ a.tx = a.x + dx; a.ty = a.y + (dy || 0); a.leave = !!leave; } }
+function setMoods(C, ids, m){ for (const id of ids){ const a = actor(C, id); if (a) a.mood = m; } }
+function riseMonsters(C, x, y){
+  const types = ['pet','lata','sacola','bituca','vidro','papelao','isopor','pet','lata'];
+  types.forEach((type, i) => { const a = i / types.length * TAU; C.actors.push({ id:'m' + i, kind:'enemy', type, x:x + Math.cos(a) * 80, y:y + Math.sin(a) * 46, rise:0, delay:i * 0.12, anim:Math.random() * 3 }); });
+  cam.shake = 0.4; sfx('boss');
+}
+function throwToxic(C, from, to){
+  const a = actor(C, from), b = actor(C, to); if (!a || !b) return;
+  C.fx.push({ kind:'toxic', x0:a.x, y0:a.y - 12, b, t:0, dur:0.8, hit:false });
+}
+
+const OPENING = () => [
+  { fase:0, music:'alegre', cam:[STAGE_X, 300], crabs:'alegre', actors:[], lines:[
+    { who:'narr', text:'Houve um tempo em que a Praia do Sol era só areia, mar e vida.' },
+    { who:'narr', text:'Os caranguejos passeavam na beira da água e as tartarugas desovavam em paz.' } ] },
+  { fase:0, music:'triste', cam:[STAGE_X, 360], crabs:'triste', trash:44, actors:[], lines:[
+    { who:'narr', text:'Mas, a cada verão, mais lixo ficava para trás: garrafas, sacolas, latinhas, bitucas...' },
+    { who:'narr', text:'E ninguém recolhia.' } ] },
+  { fase:0, music:'triste', cam:[STAGE_X, 400], crabs:'triste', trash:24, actors:roster(420, [...HEROIS, 'robert'], 'triste'), lines:[
+    { who:'narr', text:'Cinco jovens da cidade não aguentavam mais ver a praia assim.' },
+    { who:'marina', mood:'triste', text:'Hoje tirei uma tartaruga presa numa sacola. Até quando?' },
+    { who:'tiago', mood:'dor', text:'Cortei o pé num caco de vidro... na minha própria praia.' },
+    { who:'cida', mood:'zangado', text:'Metade do que jogam fora podia ser reciclado. Isso é trabalho e é renda!' },
+    { who:'leo', mood:'triste', text:'Todo ano eu conto menos animais. O lixo está vencendo.' },
+    { who:'robert', mood:'zangado', text:'Então a gente faz alguma coisa. Agora!' } ] },
+  { fase:0, music:'misteriosa', cam:[STAGE_X, 300], crabs:'alegre', actors:[...roster(380, [...HEROIS, 'robert'], 'surpreso'), carettaAt(SHORE + 14, { tx:STAGE_X, ty:SHORE + 62 })], lines:[
+    { who:'narr', text:'No fim da tarde, algo enorme saiu do mar...' },
+    { who:'caretta', text:'Eu sou Caretta. Guardo esta praia há mais de cem anos.' },
+    { who:'caretta', text:'Vi este oceano mudar. Vocês cinco sentem a mesma dor que eu.' },
+    { who:'caretta', text:'Venham comigo. Vou ensinar vocês a lutar pela praia.', do:C => setMoods(C, [...HEROIS, 'robert'], 'alegre') } ] },
+  { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre', actors:[...roster(380, [...HEROIS, 'robert'], 'alegre'), carettaAt(SHORE + 62)], lines:[
+    { who:'caretta', text:'Marina, a Espada de Brinquedo: coragem para enfrentar o lixo de perto.', do:C => setMoods(C, ['marina'], 'comemorando') },
+    { who:'caretta', text:'Tiago, o Lança-Esponja: mira para alcançar o que está longe.', do:C => setMoods(C, ['tiago'], 'comemorando') },
+    { who:'caretta', text:'Cida, o Lançador de Limpeza: a força da água que limpa tudo.', do:C => setMoods(C, ['cida'], 'comemorando') },
+    { who:'caretta', text:'Léo, o Frisbee Reciclado: o que vai, volta. Nada se perde.', do:C => setMoods(C, ['leo'], 'comemorando') },
+    { who:'caretta', text:'Robert... você é o mais rápido de todos. Mas força sem paciência vira raiva.', do:C => setMoods(C, ['robert'], 'zangado') },
+    { who:'caretta', text:'E a lição mais importante: separar o lixo na origem. Cada resíduo tem a sua lixeira.' } ] },
+  { fase:1, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:46, actors:roster(420, [...HEROIS, 'robert'], 'triste'), lines:[
+    { who:'narr', text:'Meses depois, num fim de tarde de domingo...' },
+    { who:'robert', mood:'zangado', text:'Olhem isso! Limpamos tudo ontem e já está sujo de novo!' },
+    { who:'cida', mood:'triste', text:'Robert, é assim mesmo. A gente limpa, ensina, e um dia eles aprendem.' },
+    { who:'robert', mood:'zangado', text:'Vocês limpam e eles sujam. Eu cansei! Se ninguém se importa, que o lixo tome conta de tudo!', do:C => walk(C, 'robert', 280, 30, true) },
+    { who:'marina', mood:'triste', text:'Robert, espera!' } ] },
+  { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:40, glow:true, actors:[{ id:'robert', kind:'char', x:STAGE_X, y:420, mood:'zangado' }], lines:[
+    { who:'narr', text:'Naquela noite, Robert usou tudo o que aprendeu... ao contrário.' },
+    { who:'robert', mood:'zangado', text:'Lixo esquecido, acorde! Se o mundo quer lixo, ele vai ter lixo!', do:C => riseMonsters(C, STAGE_X, 420) },
+    { who:'narr', text:'O lixo abandonado ganhou vida. Daquele dia em diante, ele passou a ser chamado de Robert, o Descarte.', do:C => { const a = actor(C, 'robert'); if (a){ a.nome = 'Robert, o Descarte'; a.mood = 'alegre'; } } } ] },
+  { fase:0, music:'heroica', cam:[STAGE_X, 320], crabs:'alegre', actors:[...roster(380, HEROIS, 'zangado', 40), carettaAt(SHORE + 62)], lines:[
+    { who:'caretta', text:'O lixo despertou. Agora é com vocês quatro.' },
+    { who:'marina', mood:'zangado', text:'Ninguém mexe com a nossa praia.' },
+    { who:'tiago', mood:'alegre', text:'Cada lixo na lixeira certa!' },
+    { who:'todos', mood:'comemorando', text:'Pela praia, pelo mar, pela vida: Guardiões da Maré!' } ] },
+];
+
+/* Robert provoca antes de cada chefe (usa a praia da fase atual) */
+function robertEnters(){
+  const p = G.player;
+  return { id:'robert', kind:'char', nome:'Robert, o Descarte', x:p.x + 170, y:p.y - 6, tx:p.x + 62, ty:p.y - 6, mood:'zangado', flip:true };
+}
+const BOSS_CINE = {
+  0: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
+    { who:'robert', mood:'zangado', text:'Vocês recolheram umas garrafinhas... Agora vejam o que o resto virou!' },
+    { who:'player', mood:'zangado', text:'Robert! Você não vai sujar a nossa praia!' },
+    { who:'robert', mood:'alegre', text:'Lixo que sobrou, junte-se!', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+  1: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
+    { who:'robert', mood:'zangado', text:'Cada sacola que voa daqui acaba no mar. Vocês não vão dar conta!' },
+    { who:'player', mood:'zangado', text:'A gente dá conta, sim. Uma de cada vez!' },
+    { who:'robert', mood:'alegre', text:'Então tentem segurar isto!', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+  2: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
+    { who:'robert', mood:'zangado', text:'Chega de brincadeira. Eu mesmo vou comandar o Lixão Gigante!' },
+    { who:'player', mood:'triste', text:'Robert, você ainda pode parar com isso!' },
+    { who:'robert', mood:'zangado', text:'Tarde demais, Guardiões!', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+};
+
+const FINAL_CINE = () => [
+  { fase:0, music:'heroica', cam:[STAGE_X, 330], crabs:'alegre', actors:[...roster(390, HEROIS, 'comemorando', 40), carettaAt(SHORE + 62)], lines:[
+    { who:'narr', text:'O Lixão Gigante foi desmontado, e cada resíduo foi parar na lixeira certa.' },
+    { who:'caretta', text:'A praia mais limpa não é a que mais se limpa. É a que menos se suja.' },
+    { who:'todos', mood:'comemorando', text:'Conseguimos!' } ] },
+  { keep:true, music:'tensa', actorsAdd:[{ id:'robert', kind:'char', nome:'Robert, o Descarte', x:STAGE_X + 260, y:392, tx:STAGE_X + 120, ty:392, mood:'zangado', flip:true }], lines:[
+    { who:'robert', mood:'zangado', text:'Vocês acham que acabou? Enquanto existir descuido, eu volto.', do:C => setMoods(C, HEROIS, 'surpreso') },
+    { who:'robert', mood:'zangado', text:'Tomem um presente do fundo do oceano!', do:C => throwToxic(C, 'robert', 'marina') },
+    { who:'marina', mood:'dor', text:'Ahh! O que é isso?!' },
+    { who:'narr', text:'Uma gosma tóxica, feita do pior lixo do mar, atingiu Marina.', do:C => { setMoods(C, ['marina'], 'exausto'); setMoods(C, ['tiago','cida','leo'], 'triste'); } },
+    { who:'robert', mood:'alegre', text:'Até a próxima, Guardiões.', do:C => walk(C, 'robert', 320, 0, true) } ] },
+  { keep:true, music:'triste', lines:[
+    { who:'leo', mood:'triste', text:'Ela está ardendo em febre... é contaminação.' },
+    { who:'caretta', mood:'triste', text:'Só existe uma cura, e ela está no fundo do mar. Vamos precisar de todos vocês.' },
+    { who:'narr', text:'Marina não pode mais lutar. A história continua...' } ] },
+];
+
+function playCine(scenes, done){
+  CINE = { scenes, i:0, line:-1, actors:[], fx:[], cam:{ x:STAGE_X, y:300 }, text:'', typed:0, done, crabs:'alegre', speaker:null };
+  toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); bannerT = 0; $('#banner').textContent = '';
+  for (const k in keys) keys[k] = false; joy = null;
+  $('#cine').hidden = false; setState('cutscene', null);
+  cineScene(0);
+}
+function cineScene(i){
+  const C = CINE, sc = C.scenes[i]; C.i = i;
+  if (!sc.keep){
+    if (sc.fase != null) L = makeLevel(sc.fase);
+    C.actors = (sc.actors || []).map(a => ({ anim:Math.random() * 3, ...a }));
+    C.fx = [];
+    if (sc.trash){
+      const R = mulberry(17 + i), types = Object.keys(ETYPES);
+      for (let k = 0; k < sc.trash; k++) L.items.push({ type:types[k % types.length], x:sc.cam[0] + (R() - 0.5) * 440, y:clamp(sc.cam[1] + (R() - 0.5) * 230, SHORE + 14, WORLD_H - 20), vx:0, vy:0, age:0, delay:0, keep:true });
+    }
+  }
+  if (sc.actorsAdd) C.actors.push(...sc.actorsAdd.map(a => ({ anim:0, ...a })));
+  if (sc.camPlayer && G) C.cam = { x:G.player.x + 40, y:G.player.y - 10 };
+  else if (sc.cam) C.cam = { x:sc.cam[0], y:sc.cam[1] };
+  C.glow = !!sc.glow; if (sc.crabs) C.crabs = sc.crabs;
+  if (sc.music) playMusic(sc.music);
+  C.line = -1; cineLine();
+}
+function cineLine(){
+  const C = CINE, sc = C.scenes[C.i]; C.line++;
+  if (C.line >= sc.lines.length){ if (C.i + 1 < C.scenes.length) cineScene(C.i + 1); else cineEnd(); return; }
+  const ln = sc.lines[C.line], who = ln.who === 'player' ? (G ? G.player.id : 'tiago') : ln.who;
+  C.speaker = who;
+  if (ln.do) ln.do(C);
+  if (ln.mood){ if (who === 'todos') setMoods(C, HEROIS, ln.mood); else setMoods(C, [who], ln.mood); }
+  const a = actor(C, who), cnv = $('#dlg-face'), hasFace = who !== 'narr' && who !== 'todos';
+  $('#dlg-name').textContent = ln.name || (a && a.nome) || NOMES[who] || '';
+  cnv.hidden = !hasFace;
+  if (hasFace){ const mood = ln.mood || (a && a.mood) || 'alegre'; if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick); }
+  $('#dlg').classList.toggle('narr', who === 'narr');
+  C.text = ln.text; C.typed = 0; $('#dlg-text').textContent = '';
+}
+function cineNext(){
+  const C = CINE; if (!C) return;
+  if (C.typed < C.text.length){ C.typed = C.text.length; $('#dlg-text').textContent = C.text; }
+  else cineLine();
+}
+function cineEnd(){ const d = CINE && CINE.done; CINE = null; $('#cine').hidden = true; if (d) d(); }
+function cineSkip(){ if (CINE) cineEnd(); }
+const VOZ = { caretta:300, robert:170, marina:620, tiago:520, cida:440, leo:480, todos:560 };
+function talkBlip(who){
+  const f = VOZ[who]; if (!f || !sfxOn || !AC) return;
+  const now = AC.currentTime; voice('square', f * (0.95 + Math.random() * 0.1), now, 0.035, 0.012, 2500, master);
+}
+function cineUpdate(dt){
+  const C = CINE; L.time += dt;
+  if (C.typed < C.text.length){
+    const before = C.typed | 0; C.typed = Math.min(C.text.length, C.typed + dt * 42); const now = C.typed | 0;
+    if (now !== before){ $('#dlg-text').textContent = C.text.slice(0, now); if (now % 3 === 0 && C.text[now - 1] !== ' ') talkBlip(C.speaker); }
+  }
+  for (const a of C.actors){
+    a.anim = (a.anim || 0) + dt;
+    if (a.rise != null){ a.delay -= dt; if (a.delay <= 0) a.rise = Math.min(1, a.rise + dt * 1.5); }
+    if (a.tx != null){
+      const dx = a.tx - a.x, dy = a.ty - a.y, d = Math.hypot(dx, dy);
+      if (d > 1){ const sp = Math.min(d, 55 * dt); a.x += dx / d * sp; a.y += dy / d * sp; a.walking = true; if (Math.abs(dx) > 0.5) a.flip = dx < 0; }
+      else { a.walking = false; a.tx = null; if (a.leave) a.gone = true; }
+    }
+  }
+  C.actors = C.actors.filter(a => !a.gone);
+  for (const f of C.fx){
+    f.t += dt;
+    if (f.kind === 'toxic' && !f.hit && f.t >= f.dur){
+      f.hit = true; f.b.sick = true; f.b.mood = 'dor'; cam.shake = 0.35; sfx('hurt');
+      for (let k = 0; k < 24; k++) L.parts.push({ x:f.b.x, y:f.b.y - 10, vx:rand(-60, 60), vy:rand(-90, 10), life:rand(.4, .9), col:k % 2 ? '#8bd450' : '#4f8a2a', s:2 });
+    }
+  }
+  C.fx = C.fx.filter(f => f.t < f.dur + 0.3);
+  for (const q of L.parts){ q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 160 * dt; }
+  L.parts = L.parts.filter(q => q.life > 0);
+  for (const c of L.critters){ c.anim += dt; c.mood = C.crabs || 'alegre'; }
+}
+function sickOf(s){
+  if (!s._sick) s._sick = { ...s, img:mk(s.img.width, s.img.height, g => { g.drawImage(s.img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(120,210,70,.38)'; g.fillRect(0, 0, s.img.width, s.img.height); }) };
+  return s._sick;
+}
+function carettaPortrait(cnv, mood){
+  const g = cnv.getContext('2d'), s = SPR.caretta[0]; g.imageSmoothingEnabled = false;
+  g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 24, 5, 16, 16, 2, 2, 16, 16); drawFace(g, s.face.x - 22, s.face.y - 3, mood, s.face);
+}
+function speakerArrow(x, y, t){
+  const yy = Math.round(y - 5 - (((t * 4) | 0) % 2));
+  ctx.fillStyle = OUT; ctx.fillRect(x - 4, yy - 1, 9, 2); ctx.fillRect(x - 3, yy + 1, 7, 1); ctx.fillRect(x - 2, yy + 2, 5, 1); ctx.fillRect(x - 1, yy + 3, 3, 1);
+  ctx.fillStyle = '#ffd23f'; ctx.fillRect(x - 3, yy - 1, 7, 1); ctx.fillRect(x - 2, yy, 5, 1); ctx.fillRect(x - 1, yy + 1, 3, 1); ctx.fillRect(x, yy + 2, 1, 1);
+}
+function drawActor(a, x, y, t){
+  if (a.kind === 'char'){
+    const s0 = SPR.chars[a.id][a.walking ? ((a.anim * 8) | 0) % 4 : 0], s = a.sick ? sickOf(s0) : s0;
+    const bob = !a.walking && ((t * 2 + a.x * 0.01) | 0) % 2 ? 1 : 0;
+    const x0 = x - (s.w >> 1), y0 = y - s.h + 4 + bob;
+    shadow(x, y + 2, 14);
+    if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
+    else { ctx.drawImage(s.img, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
+    if (HEROIS.includes(a.id) && !a.sick) drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
+    if (a.sick || a.id === 'robert'){ ctx.fillStyle = '#8bd450'; const k = (t * 1.5 + a.x * 0.01) % 1; ctx.globalAlpha = 1 - k; ctx.fillRect(x - 7, Math.round(y0 + 6 - k * 10), 2, 2); ctx.fillRect(x + 6, Math.round(y0 + 12 - ((k + 0.5) % 1) * 10), 2, 2); ctx.globalAlpha = 1; }
+    return { top:y0 };
+  }
+  if (a.kind === 'caretta'){
+    const s = SPR.caretta[((a.anim * 2) | 0) % 2];
+    shadow(x, y + (s.h >> 1) - 3, s.w - 8);
+    drawSpr(s, x - (s.w >> 1), y - (s.h >> 1), a.mood);
+    return { top:y - (s.h >> 1) };
+  }
+  if (a.kind === 'enemy'){
+    const r = a.rise == null ? 1 : a.rise; if (r <= 0) return null;
+    const s = SPR[a.type][((a.anim * 5) | 0) % 2], yy = y - (s.h >> 1) + Math.round((1 - r) * 10);
+    ctx.globalAlpha = r; ctx.drawImage(s.img, x - (s.w >> 1), yy); drawFace(ctx, x - (s.w >> 1) + s.face.x, yy + s.face.y, 'zangado', s.face); ctx.globalAlpha = 1;
+    return { top:yy };
+  }
+  return null;
+}
+function drawCineOverlay(cx, cy, t){
+  const C = CINE; if (!C) return;
+  if (C.glow){
+    for (const it of L.items){ const x = Math.round(it.x - cx), y = Math.round(it.y - cy); if (x < -10 || y < -10 || x > VW + 10 || y > VH + 10) continue; ctx.fillStyle = `rgba(160,255,120,${0.16 + 0.12 * Math.sin(t * 4 + it.x)})`; ctx.beginPath(); ctx.arc(x, y, 7, 0, TAU); ctx.fill(); }
+    for (const a of C.actors) if (a.kind === 'enemy' && a.rise > 0){ ctx.fillStyle = `rgba(160,255,120,${0.25 * a.rise})`; ctx.beginPath(); ctx.arc(Math.round(a.x - cx), Math.round(a.y - cy), 12, 0, TAU); ctx.fill(); }
+  }
+  for (const f of C.fx) if (f.kind === 'toxic' && !f.hit){
+    const k = f.t / f.dur, x = Math.round(f.x0 + (f.b.x - f.x0) * k - cx), y = Math.round(f.y0 + (f.b.y - 12 - f.y0) * k - Math.sin(k * Math.PI) * 30 - cy);
+    ctx.fillStyle = '#2f5a18'; ctx.fillRect(x - 3, y - 3, 7, 7); ctx.fillStyle = '#8bd450'; ctx.fillRect(x - 2, y - 2, 5, 5); ctx.fillStyle = '#e6ffb0'; ctx.fillRect(x - 1, y - 2, 2, 1);
+  }
+}
+
 /* ============================ laço principal ============================ */
 let last = performance.now();
 function frame(now){
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (!cv.width || !cv.height || !light.width) resize();
-  if (state === 'play' && G) update(dt);
+  if (state === 'cutscene' && CINE) cineUpdate(dt);
+  else if (state === 'play' && G) update(dt);
   else if (L){ L.time += dt; if (!G) updateCritters(dt); }
   if (L && cv.width && light.width) render(dt);
   hud();
@@ -2327,6 +2666,7 @@ function frame(now){
 function togglePause(){ if (state === 'play') setState('pause'); else if (state === 'pause') setState('play', null); }
 addEventListener('keydown', e => {
   if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if (state === 'cutscene'){ if (['Space','Enter','ArrowRight'].includes(e.code)){ e.preventDefault(); cineNext(); } else if (e.code === 'Escape') cineSkip(); return; }
   keys[e.code] = true;
   if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code) && state === 'play') e.preventDefault();
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
@@ -2349,7 +2689,9 @@ $('#nick-form').addEventListener('submit', e => {
   const n = cleanNick($('#nick').value);
   if (n.length < 2){ $('#nick-err').hidden = false; $('#nick').focus(); return; }
   $('#nick-err').hidden = true; $('#nick').value = n; myNick = n; store('lp-nick', n);
-  initAudio(); playMusic('main'); buildSelect(); setState('select');
+  initAudio(); playMusic('main');
+  const goSelect = () => { store('lp-hist', true); L = makeLevel(0); playMusic('main'); buildSelect(); setState('select'); };
+  if (!load('lp-hist', false)) playCine(OPENING(), goSelect); else goSelect();
 });
 $('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); refreshSB(); };
 $('#btn-rank-back').onclick = () => toTitle();
@@ -2376,7 +2718,11 @@ document.addEventListener('touchend', e => { const now = Date.now(); if (now - l
 $('#btn-music').onclick = () => { initAudio(); toggleMusic(); };
 $('#btn-mute').onclick = () => { initAudio(); sfxOn = !sfxOn; $('#btn-mute').setAttribute('aria-pressed', sfxOn); };
 $('#btn-quit').onclick = () => endRun(); $('#btn-menu').onclick = () => endRun(); $('#btn-again').onclick = () => toTitle();
-$('#btn-next').onclick = () => { if (G.fase + 1 < FASES.length) showShop(); else showWin(); };
+$('#btn-next').onclick = () => { if (G.fase + 1 < FASES.length) showShop(); else playCine(FINAL_CINE(), () => { store('lp-marina-infectada', true); showWin(); }); };
+$('#btn-story').onclick = () => { initAudio(); playCine(OPENING(), () => { store('lp-hist', true); toTitle(); }); };
+$('#cine').addEventListener('click', e => { if (e.target.closest('#cine-skip')) return; cineNext(); });
+$('#cine-skip').onclick = e => { e.stopPropagation(); cineSkip(); };
+$('#btn-cure').onclick = () => { store('lp-marina-infectada', false); buildSelect(); };
 $('#btn-shop-go').onclick = () => startFase(G.fase + 1);
 $('#btn-retry').onclick = () => { restore(G.player, G.snap); G.score = G.scoreSnap; G.sep = G.sepSnap; startFase(G.fase); };
 function resetToMenu(){ $('#coach').hidden = true; G = null; L = makeLevel(0); toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); $('#banner').textContent = ''; playMusic('main'); }
