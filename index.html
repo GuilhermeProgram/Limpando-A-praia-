@@ -167,10 +167,17 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 @keyframes pisca{0%{opacity:1}50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.logo .in{animation:none}.logo .k{animation:none;opacity:1}}
 #cine{position:absolute;inset:0;cursor:pointer;touch-action:manipulation}
-#cine::before,#cine::after{content:"";position:absolute;left:0;right:0;height:min(6vh,40px);background:#000;pointer-events:none}
+#cine::before,#cine::after{content:"";position:absolute;left:0;right:0;height:min(9vh,60px);background:#000;pointer-events:none;z-index:1}
 #cine::before{top:0} #cine::after{bottom:0}
-#cine-skip{position:absolute;right:12px;top:calc(min(6vh,40px) + 8px + env(safe-area-inset-top,0px));z-index:2}
-#dlg{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(min(6vh,40px) + 10px + env(safe-area-inset-bottom,0px));width:min(780px,calc(100% - 24px));box-sizing:border-box;background:linear-gradient(#1d3a6b,#13284d);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 8px 0 rgba(0,0,0,.35);padding:12px 16px 16px;display:flex;gap:14px;align-items:flex-start;min-height:104px}
+#cine-skip{position:absolute;right:12px;top:calc(min(9vh,60px) + 8px + env(safe-area-inset-top,0px));z-index:3}
+#card{position:absolute;inset:0;display:grid;place-content:center;gap:12px;background:#000;text-align:center;padding:16px;z-index:2}
+#card-t,#card-s{animation:cardIn 1.1s ease both}
+#card-t{font-family:var(--f-body);font-weight:700;font-size:clamp(26px,6.5vw,62px);letter-spacing:.22em;color:var(--foam);text-wrap:balance}
+#card-s{font-family:var(--f-body);font-size:clamp(15px,2.8vw,24px);letter-spacing:.14em;color:var(--muted)}
+#card.red #card-t{color:#ff5a4f;text-shadow:0 0 22px rgba(255,60,40,.65)}
+@keyframes cardIn{from{opacity:0;letter-spacing:.5em}to{opacity:1}}
+#dlg.narr #dlg-text{font-style:italic;color:#e6e0ff}
+#dlg{position:absolute;z-index:2;left:50%;transform:translateX(-50%);bottom:calc(min(9vh,60px) + 10px + env(safe-area-inset-bottom,0px));width:min(780px,calc(100% - 24px));box-sizing:border-box;background:linear-gradient(#1d3a6b,#13284d);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 8px 0 rgba(0,0,0,.35);padding:12px 16px 16px;display:flex;gap:14px;align-items:flex-start;min-height:104px}
 #dlg.narr{background:linear-gradient(#2c2547,#1a1530)}
 #dlg-face{width:68px;height:68px;background:#2c4a7c;border:3px solid var(--foam);border-radius:50%;flex:none}
 #dlg .dt{min-width:0;flex:1}
@@ -338,6 +345,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     <div class="row"><button class="btn" id="coach-go" type="button" hidden>COMEÇAR A FASE 1</button><button class="mini-btn" id="coach-skip" type="button">PULAR TUTORIAL</button></div>
   </div>
   <div id="cine" hidden>
+    <div id="card" hidden><div id="card-t"></div><div id="card-s"></div></div>
     <button class="mini-btn" id="cine-skip" type="button">PULAR HISTÓRIA</button>
     <div id="dlg" aria-live="polite"><canvas id="dlg-face" class="px" width="20" height="20"></canvas><div class="dt"><b id="dlg-name"></b><p id="dlg-text"></p></div><span class="nx"></span></div>
   </div>
@@ -2193,6 +2201,7 @@ function render(dt){
     ctx.strokeStyle = 'rgba(255,248,231,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 22, 0, TAU); ctx.stroke();
     ctx.fillStyle = 'rgba(255,248,231,.7)'; ctx.beginPath(); ctx.arc(ox + kx, oy + ky, 8, 0, TAU); ctx.fill();
   }
+  if (CINE) cinePost();
 }
 function edgeArrow(bx, by, col, small){
   if (bx > 0 && by > 0 && bx < VW && by < VH) return;
@@ -2448,113 +2457,165 @@ function renderRank(){
 }
 
 /* ============================ história e cutscenes ============================
-   Mestra Caretta treina cinco aprendizes. Robert desiste, vira "o Descarte" e
-   desperta o lixo. Os quatro que ficam formam os Guardiões da Maré.
-   No final, Robert infecta a Marina, que deixa de ser jogável neste aparelho. */
-const NOMES = { narr:'Narração', caretta:'Mestra Caretta', robert:'Robert', todos:'Guardiões da Maré', marina:'Marina', tiago:'Tiago', cida:'Cida', leo:'Léo' };
+   Direção cinematográfica: close-ups com zoom, cartelas de capítulo, cor por clima
+   (sépia, cinza, vermelho), chuva, relâmpago, clarão, tremor e linhas de impacto.
+   Mestra Caretta treina cinco aprendizes; Robert desiste, vira "o Descarte" e
+   desperta o lixo; os quatro que ficam formam os Guardiões da Maré. No final,
+   Robert infecta a Marina, que deixa de ser jogável neste aparelho. */
+const NOMES = { narr:'', caretta:'Mestra Caretta', robert:'Robert', todos:'Guardiões da Maré', marina:'Marina', tiago:'Tiago', cida:'Cida', leo:'Léo' };
+const COR_NOME = { caretta:'#b5dd8a', robert:'#c9a2ff', todos:'#ffd23f', marina:'#ff9a6e', tiago:'#7fe0ff', cida:'#9be6b0', leo:'#e0c2ff' };
 const HEROIS = ['marina', 'tiago', 'cida', 'leo'];
 const STAGE_X = 590;   // área livre da praia usada como palco das cenas
 let CINE = null;
 
-function roster(y, ids, mood, dx = 34){
-  return ids.map((id, i) => ({ id, kind:'char', x:STAGE_X + (i - (ids.length - 1) / 2) * dx, y, mood:mood || 'alegre' }));
-}
-const carettaAt = (y, extra) => ({ id:'caretta', kind:'caretta', x:STAGE_X, y, mood:'alegre', ...(extra || {}) });
+const ch = (id, x, y, mood, extra) => ({ id, kind:'char', x:STAGE_X + x, y, mood:mood || 'alegre', ...(extra || {}) });
+const carettaAt = (x, y, extra) => ({ id:'caretta', kind:'caretta', x:STAGE_X + x, y, mood:'alegre', ...(extra || {}) });
 function actor(C, id){ return C.actors.find(a => a.id === id); }
 function walk(C, id, dx, dy, leave){ const a = actor(C, id); if (a){ a.tx = a.x + dx; a.ty = a.y + (dy || 0); a.leave = !!leave; } }
 function setMoods(C, ids, m){ for (const id of ids){ const a = actor(C, id); if (a) a.mood = m; } }
+function hop(C, ids){ for (const id of ids){ const a = actor(C, id); if (a) a.hop = 0.45; } }
+function tremble(C, id, t){ const a = actor(C, id); if (a) a.tremble = t || 1.2; }
 function riseMonsters(C, x, y){
-  const types = ['pet','lata','sacola','bituca','vidro','papelao','isopor','pet','lata'];
-  types.forEach((type, i) => { const a = i / types.length * TAU; C.actors.push({ id:'m' + i, kind:'enemy', type, x:x + Math.cos(a) * 80, y:y + Math.sin(a) * 46, rise:0, delay:i * 0.12, anim:Math.random() * 3 }); });
-  cam.shake = 0.4; sfx('boss');
+  const types = ['pet','lata','sacola','bituca','vidro','papelao','isopor','pet','lata','sacola'];
+  types.forEach((type, i) => { const a = i / types.length * TAU; C.actors.push({ id:'m' + i, kind:'enemy', type, x:x + Math.cos(a) * 84, y:y + Math.sin(a) * 48, rise:0, delay:0.2 + i * 0.1, anim:Math.random() * 3 }); });
 }
 function throwToxic(C, from, to){
   const a = actor(C, from), b = actor(C, to); if (!a || !b) return;
-  C.fx.push({ kind:'toxic', x0:a.x, y0:a.y - 12, b, t:0, dur:0.8, hit:false });
+  C.fx.push({ kind:'toxic', x0:a.x, y0:a.y - 12, b, t:0, dur:0.9, hit:false });
 }
 
+/* Cada fala pode ter: shot ('wide' | {f:id, z, dy} ), fx ('flash','shake','lines','thunder'), grade (cor da fala), do (ação). */
 const OPENING = () => [
-  { fase:0, music:'alegre', cam:[STAGE_X, 300], crabs:'alegre', actors:[], lines:[
-    { who:'narr', text:'Houve um tempo em que a Praia do Sol era só areia, mar e vida.' },
-    { who:'narr', text:'Os caranguejos passeavam na beira da água e as tartarugas desovavam em paz.' } ] },
-  { fase:0, music:'triste', cam:[STAGE_X, 360], crabs:'triste', trash:44, actors:[], lines:[
-    { who:'narr', text:'Mas, a cada verão, mais lixo ficava para trás: garrafas, sacolas, latinhas, bitucas...' },
-    { who:'narr', text:'E ninguém recolhia.' } ] },
-  { fase:0, music:'triste', cam:[STAGE_X, 400], crabs:'triste', trash:24, actors:roster(420, [...HEROIS, 'robert'], 'triste'), lines:[
-    { who:'narr', text:'Cinco jovens da cidade não aguentavam mais ver a praia assim.' },
-    { who:'marina', mood:'triste', text:'Hoje tirei uma tartaruga presa numa sacola. Até quando?' },
-    { who:'tiago', mood:'dor', text:'Cortei o pé num caco de vidro... na minha própria praia.' },
-    { who:'cida', mood:'zangado', text:'Metade do que jogam fora podia ser reciclado. Isso é trabalho e é renda!' },
-    { who:'leo', mood:'triste', text:'Todo ano eu conto menos animais. O lixo está vencendo.' },
-    { who:'robert', mood:'zangado', text:'Então a gente faz alguma coisa. Agora!' } ] },
-  { fase:0, music:'misteriosa', cam:[STAGE_X, 300], crabs:'alegre', actors:[...roster(380, [...HEROIS, 'robert'], 'surpreso'), carettaAt(SHORE + 14, { tx:STAGE_X, ty:SHORE + 62 })], lines:[
-    { who:'narr', text:'No fim da tarde, algo enorme saiu do mar...' },
-    { who:'caretta', text:'Eu sou Caretta. Guardo esta praia há mais de cem anos.' },
-    { who:'caretta', text:'Vi este oceano mudar. Vocês cinco sentem a mesma dor que eu.' },
-    { who:'caretta', text:'Venham comigo. Vou ensinar vocês a lutar pela praia.', do:C => setMoods(C, [...HEROIS, 'robert'], 'alegre') } ] },
-  { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre', actors:[...roster(380, [...HEROIS, 'robert'], 'alegre'), carettaAt(SHORE + 62)], lines:[
-    { who:'caretta', text:'Marina, a Espada de Brinquedo: coragem para enfrentar o lixo de perto.', do:C => setMoods(C, ['marina'], 'comemorando') },
-    { who:'caretta', text:'Tiago, o Lança-Esponja: mira para alcançar o que está longe.', do:C => setMoods(C, ['tiago'], 'comemorando') },
-    { who:'caretta', text:'Cida, o Lançador de Limpeza: a força da água que limpa tudo.', do:C => setMoods(C, ['cida'], 'comemorando') },
-    { who:'caretta', text:'Léo, o Frisbee Reciclado: o que vai, volta. Nada se perde.', do:C => setMoods(C, ['leo'], 'comemorando') },
-    { who:'caretta', text:'Robert... você é o mais rápido de todos. Mas força sem paciência vira raiva.', do:C => setMoods(C, ['robert'], 'zangado') },
-    { who:'caretta', text:'E a lição mais importante: separar o lixo na origem. Cada resíduo tem a sua lixeira.' } ] },
-  { fase:1, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:46, actors:roster(420, [...HEROIS, 'robert'], 'triste'), lines:[
-    { who:'narr', text:'Meses depois, num fim de tarde de domingo...' },
-    { who:'robert', mood:'zangado', text:'Olhem isso! Limpamos tudo ontem e já está sujo de novo!' },
-    { who:'cida', mood:'triste', text:'Robert, é assim mesmo. A gente limpa, ensina, e um dia eles aprendem.' },
-    { who:'robert', mood:'zangado', text:'Vocês limpam e eles sujam. Eu cansei! Se ninguém se importa, que o lixo tome conta de tudo!', do:C => walk(C, 'robert', 280, 30, true) },
-    { who:'marina', mood:'triste', text:'Robert, espera!' } ] },
-  { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:40, glow:true, actors:[{ id:'robert', kind:'char', x:STAGE_X, y:420, mood:'zangado' }], lines:[
-    { who:'narr', text:'Naquela noite, Robert usou tudo o que aprendeu... ao contrário.' },
-    { who:'robert', mood:'zangado', text:'Lixo esquecido, acorde! Se o mundo quer lixo, ele vai ter lixo!', do:C => riseMonsters(C, STAGE_X, 420) },
-    { who:'narr', text:'O lixo abandonado ganhou vida. Daquele dia em diante, ele passou a ser chamado de Robert, o Descarte.', do:C => { const a = actor(C, 'robert'); if (a){ a.nome = 'Robert, o Descarte'; a.mood = 'alegre'; } } } ] },
-  { fase:0, music:'heroica', cam:[STAGE_X, 320], crabs:'alegre', actors:[...roster(380, HEROIS, 'zangado', 40), carettaAt(SHORE + 62)], lines:[
-    { who:'caretta', text:'O lixo despertou. Agora é com vocês quatro.' },
-    { who:'marina', mood:'zangado', text:'Ninguém mexe com a nossa praia.' },
-    { who:'tiago', mood:'alegre', text:'Cada lixo na lixeira certa!' },
-    { who:'todos', mood:'comemorando', text:'Pela praia, pelo mar, pela vida: Guardiões da Maré!' } ] },
+  { fase:0, music:'alegre', cam:[STAGE_X, 300], crabs:'alegre', grade:'sepia', lines:[
+    { card:'PRAIA DO SOL', sub:'muitos verões atrás' },
+    { who:'narr', text:'Antes, a Praia do Sol cabia inteira num cartão-postal.' },
+    { who:'narr', text:'As tartarugas voltavam todo ano para desovar. Era isso que todo mundo chamava de casa.', shot:{ at:[STAGE_X - 120, 250], z:1.6 } } ] },
+
+  { fase:0, music:'triste', cam:[STAGE_X - 160, 360], crabs:'triste', trash:56, grade:'gray', lines:[
+    { card:'VINTE VERÕES DEPOIS' },
+    { who:'narr', text:'Ninguém percebeu quando começou.' },
+    { who:'narr', text:'Uma garrafa aqui. Uma sacola ali. Uma bituca enterrada na areia...', shot:{ at:[STAGE_X + 120, 380], z:1.5 } },
+    { who:'narr', text:'Até que a praia não era mais de ninguém.', shot:{ at:[STAGE_X, 360], z:1 } } ] },
+
+  { fase:0, music:'triste', cam:[STAGE_X, 340], crabs:'triste', trash:30, grade:'gray', rain:true,
+    actors:[ ch('marina', -170, SHORE + 44, 'triste'), ch('tiago', 160, SHORE + 56, 'dor', { flip:true }), ch('cida', -120, 430, 'zangado'), ch('leo', 140, 420, 'triste', { flip:true }), ch('robert', 0, 370, 'zangado') ], lines:[
+    { who:'narr', text:'Cinco pessoas da cidade carregavam a mesma ferida.', shot:'wide' },
+    { who:'marina', mood:'triste', text:'Ela tinha uma sacola enrolada no pescoço... Eu cheguei a tempo. Dessa vez.', shot:{ f:'marina', z:2.4 } },
+    { who:'tiago', mood:'dor', text:'Vinte anos surfando aqui. Hoje eu saí do mar sangrando por causa de um caco de vidro.', shot:{ f:'tiago', z:2.4 } },
+    { who:'cida', mood:'zangado', text:'Me olham torto quando eu passo com a carroça. Mas sou eu que separo o que eles largam.', shot:{ f:'cida', z:2.4 } },
+    { who:'leo', mood:'triste', text:'Ano passado eu contei quarenta ninhos de tartaruga. Este ano... onze.', shot:{ f:'leo', z:2.4 } },
+    { who:'robert', mood:'zangado', text:'Eu cansei de reclamar. Alguém tem que fazer alguma coisa.', shot:{ f:'robert', z:2.8 }, grade:'red', do:C => tremble(C, 'robert', 1) } ] },
+
+  { fase:1, music:'misteriosa', cam:[STAGE_X, 270], crabs:'alegre',
+    actors:[ ch('marina', -68, 330, 'triste'), ch('tiago', -34, 342, 'triste'), ch('robert', 0, 336, 'zangado'), ch('cida', 34, 342, 'triste', { flip:true }), ch('leo', 68, 330, 'triste', { flip:true }), carettaAt(0, SHORE + 6, { hidden:true }) ], lines:[
+    { card:'O CHAMADO' },
+    { who:'narr', text:'Naquela tarde, os cinco foram até o mar sem saber direito por quê.', shot:'wide' },
+    { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 62; setMoods(C, [...HEROIS, 'robert'], 'surpreso'); } },
+    { who:'caretta', text:'Faz cem anos que eu guardo esta praia.', shot:{ f:'caretta', z:2.6 } },
+    { who:'caretta', text:'E faz cem anos que eu espero alguém que se importe.', shot:{ f:'caretta', z:3 } },
+    { who:'tiago', mood:'surpreso', text:'Calma aí... uma tartaruga falando? Eu bati a cabeça no recife, né?', shot:{ f:'tiago', z:2.4 } },
+    { who:'caretta', text:'Vocês cinco sentiram a mesma dor que eu. Isso não é coincidência.', shot:{ f:'caretta', z:2.4 } },
+    { who:'caretta', text:'É um chamado.', shot:'wide', fx:'flash', do:C => setMoods(C, [...HEROIS, 'robert'], 'alegre') } ] },
+
+  { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre',
+    actors:[ ch('marina', -100, 380, 'alegre'), ch('tiago', -50, 396, 'alegre'), ch('robert', 0, 404, 'alegre'), ch('cida', 50, 396, 'alegre', { flip:true }), ch('leo', 100, 380, 'alegre', { flip:true }), carettaAt(0, SHORE + 64) ], lines:[
+    { card:'O TREINAMENTO' },
+    { who:'caretta', text:'Marina. Coragem para chegar perto do que todo mundo evita.', shot:{ f:'caretta', z:2.2 } },
+    { who:'marina', mood:'comemorando', text:'Pode deixar comigo!', shot:{ f:'marina', z:2.6 }, do:C => hop(C, ['marina']) },
+    { who:'caretta', text:'Tiago. Você lê as ondas como ninguém: acerte o que está longe.', shot:{ f:'caretta', z:2.2 } },
+    { who:'tiago', mood:'comemorando', text:'Agora sim. Isso eu sei fazer.', shot:{ f:'tiago', z:2.6 }, do:C => hop(C, ['tiago']) },
+    { who:'caretta', text:'Cida. Ninguém conhece o lixo melhor que você. Use a água a seu favor.', shot:{ f:'caretta', z:2.2 } },
+    { who:'cida', mood:'alegre', text:'Trinta anos separando o que os outros jogam fora. Finalmente alguém percebeu.', shot:{ f:'cida', z:2.6 } },
+    { who:'caretta', text:'Léo. O que vai, volta. Na natureza, nada se perde.', shot:{ f:'caretta', z:2.2 } },
+    { who:'leo', mood:'comemorando', text:'Tudo se transforma. Eu sei, eu sei.', shot:{ f:'leo', z:2.6 }, do:C => hop(C, ['leo']) },
+    { who:'caretta', text:'Robert... você é o mais rápido de todos.', shot:{ f:'robert', z:2.6 } },
+    { who:'robert', mood:'alegre', text:'Eu sei.', shot:{ f:'robert', z:2.8 } },
+    { who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.', shot:{ f:'caretta', z:2.8 }, do:C => setMoods(C, ['robert'], 'zangado') },
+    { who:'robert', mood:'zangado', text:'...', shot:{ f:'robert', z:3.2 }, grade:'red' },
+    { who:'caretta', text:'Lembrem: limpar é importante. Mas o segredo é separar o lixo na origem. Cada resíduo na sua lixeira.', shot:'wide' } ] },
+
+  { fase:1, music:'tensa', cam:[STAGE_X, 380], crabs:'triste', trash:50,
+    actors:[ ch('marina', -90, 392, 'triste'), ch('cida', -54, 402, 'triste'), ch('tiago', -120, 410, 'triste'), ch('leo', -70, 424, 'triste'), ch('robert', 30, 386, 'zangado', { flip:true }) ], lines:[
+    { card:'MESES DEPOIS', sub:'um domingo à tarde' },
+    { who:'robert', mood:'zangado', text:'Ontem esta praia estava limpa. LIMPA!', shot:{ f:'robert', z:2.4 }, fx:'shake', do:C => tremble(C, 'robert', 1.4) },
+    { who:'robert', mood:'zangado', text:'Olha isso. Olha!', shot:{ at:[STAGE_X + 40, 420], z:1.6 } },
+    { who:'cida', mood:'triste', text:'Robert, calma. A gente limpa de novo. A gente ensina. Um dia eles aprendem.', shot:{ f:'cida', z:2.4 } },
+    { who:'robert', mood:'zangado', text:'UM DIA? Quantos verões mais? Quantas tartarugas mais?!', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines' },
+    { who:'marina', mood:'triste', text:'Robert... a Caretta disse que...', shot:{ f:'marina', z:2.4 } },
+    { who:'robert', mood:'zangado', text:'A Caretta está aqui há cem anos e NADA mudou!', shot:{ f:'robert', z:3.2 }, grade:'red', fx:'shake' },
+    { who:'robert', mood:'triste', text:'Vocês limpam. Eles sujam. É sempre assim.', shot:{ f:'robert', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Se ninguém se importa com esta praia... então que o lixo fique com ela.', shot:'wide', do:C => walk(C, 'robert', 300, 20, true) },
+    { who:'marina', mood:'triste', text:'Robert, espera!', shot:{ f:'marina', z:2.2 } } ] },
+
+  { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:44, glow:true, thunder:true, rain:true,
+    actors:[ ch('robert', 0, 420, 'zangado') ], lines:[
+    { who:'narr', text:'Naquela noite, Robert voltou sozinho para a praia.', shot:'wide' },
+    { who:'robert', mood:'triste', text:'A Caretta me ensinou a ouvir o mar.', shot:{ f:'robert', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Mas eu aprendi a ouvir outra coisa. Tudo o que vocês jogaram fora...', shot:{ f:'robert', z:3.2 }, grade:'red' },
+    { who:'robert', mood:'zangado', text:'...ACORDE!', shot:'wide', fx:'thunder', do:C => riseMonsters(C, STAGE_X, 420) },
+    { who:'narr', text:'O lixo esquecido ganhou vida. E Robert ganhou outro nome.', shot:{ at:[STAGE_X, 410], z:1.4 } },
+    { card:'ROBERT, O DESCARTE', red:true } ] },
+
+  { fase:0, music:'heroica', cam:[STAGE_X, 330], crabs:'alegre',
+    actors:[ ch('cida', -66, 388, 'triste'), ch('marina', -22, 396, 'triste'), ch('tiago', 22, 396, 'triste', { flip:true }), ch('leo', 66, 388, 'triste', { flip:true }), carettaAt(0, SHORE + 62) ], lines:[
+    { card:'NA MANHÃ SEGUINTE' },
+    { who:'caretta', text:'O lixo despertou. E Robert escolheu o lado dele.', shot:{ f:'caretta', z:2.4 } },
+    { who:'leo', mood:'triste', text:'Ele era nosso amigo.', shot:{ f:'leo', z:2.6 } },
+    { who:'marina', mood:'zangado', text:'Ainda é. E é por isso que a gente vai trazer ele de volta.', shot:{ f:'marina', z:2.8 } },
+    { who:'cida', mood:'zangado', text:'E separar cada garrafa desta praia no caminho.', shot:{ f:'cida', z:2.6 } },
+    { who:'tiago', mood:'comemorando', text:'Então bora!', shot:{ f:'tiago', z:2.6 }, do:C => hop(C, ['tiago']) },
+    { who:'todos', mood:'comemorando', text:'Pela praia, pelo mar, pela vida: GUARDIÕES DA MARÉ!', shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
 ];
 
 /* Robert provoca antes de cada chefe (usa a praia da fase atual) */
 function robertEnters(){
   const p = G.player;
-  return { id:'robert', kind:'char', nome:'Robert, o Descarte', x:p.x + 170, y:p.y - 6, tx:p.x + 62, ty:p.y - 6, mood:'zangado', flip:true };
+  return { id:'robert', kind:'char', nome:'Robert, o Descarte', x:p.x + 170, y:p.y - 6, tx:p.x + 60, ty:p.y - 6, mood:'zangado', flip:true };
 }
 const BOSS_CINE = {
   0: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
-    { who:'robert', mood:'zangado', text:'Vocês recolheram umas garrafinhas... Agora vejam o que o resto virou!' },
-    { who:'player', mood:'zangado', text:'Robert! Você não vai sujar a nossa praia!' },
-    { who:'robert', mood:'alegre', text:'Lixo que sobrou, junte-se!', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+    { who:'robert', mood:'alegre', text:'Que bonitinho. Recolhendo garrafinha por garrafinha.', shot:{ f:'robert', z:2.4 } },
+    { who:'player', mood:'zangado', text:'Robert! Para com isso!', shot:{ f:'player', z:2.4 } },
+    { who:'robert', mood:'zangado', text:'Vocês ainda não entenderam. O lixo que deixaram para trás... já tem dono.', shot:{ f:'robert', z:3 }, grade:'red' },
+    { who:'robert', mood:'zangado', text:'Juntem-se!', shot:'wide', fx:'thunder', do:C => walk(C, 'robert', 240, 0, true) } ] }],
   1: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
-    { who:'robert', mood:'zangado', text:'Cada sacola que voa daqui acaba no mar. Vocês não vão dar conta!' },
-    { who:'player', mood:'zangado', text:'A gente dá conta, sim. Uma de cada vez!' },
-    { who:'robert', mood:'alegre', text:'Então tentem segurar isto!', do:C => walk(C, 'robert', 240, 0, true) } ] }],
-  2: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
-    { who:'robert', mood:'zangado', text:'Chega de brincadeira. Eu mesmo vou comandar o Lixão Gigante!' },
-    { who:'player', mood:'triste', text:'Robert, você ainda pode parar com isso!' },
-    { who:'robert', mood:'zangado', text:'Tarde demais, Guardiões!', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+    { who:'robert', mood:'zangado', text:'Sabe para onde vai cada sacola que o vento leva?', shot:{ f:'robert', z:2.6 } },
+    { who:'player', mood:'zangado', text:'Para o mar.', shot:{ f:'player', z:2.6 } },
+    { who:'robert', mood:'alegre', text:'Exatamente. E o mar devolve... em dobro.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+  2: () => [{ music:'tensa', camPlayer:true, thunder:true, actors:[robertEnters()], lines:[
+    { who:'robert', mood:'zangado', text:'Chega de brincadeira, Guardiões.', shot:{ f:'robert', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Eu mesmo vou comandar o Lixão Gigante.', shot:{ f:'robert', z:3.2 }, grade:'red' },
+    { who:'player', mood:'triste', text:'Robert, ainda dá tempo de parar!', shot:{ f:'player', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Tarde demais.', shot:'wide', fx:'thunder', do:C => walk(C, 'robert', 240, 0, true) } ] }],
 };
 
 const FINAL_CINE = () => [
-  { fase:0, music:'heroica', cam:[STAGE_X, 330], crabs:'alegre', actors:[...roster(390, HEROIS, 'comemorando', 40), carettaAt(SHORE + 62)], lines:[
-    { who:'narr', text:'O Lixão Gigante foi desmontado, e cada resíduo foi parar na lixeira certa.' },
-    { who:'caretta', text:'A praia mais limpa não é a que mais se limpa. É a que menos se suja.' },
-    { who:'todos', mood:'comemorando', text:'Conseguimos!' } ] },
-  { keep:true, music:'tensa', actorsAdd:[{ id:'robert', kind:'char', nome:'Robert, o Descarte', x:STAGE_X + 260, y:392, tx:STAGE_X + 120, ty:392, mood:'zangado', flip:true }], lines:[
-    { who:'robert', mood:'zangado', text:'Vocês acham que acabou? Enquanto existir descuido, eu volto.', do:C => setMoods(C, HEROIS, 'surpreso') },
-    { who:'robert', mood:'zangado', text:'Tomem um presente do fundo do oceano!', do:C => throwToxic(C, 'robert', 'marina') },
-    { who:'marina', mood:'dor', text:'Ahh! O que é isso?!' },
-    { who:'narr', text:'Uma gosma tóxica, feita do pior lixo do mar, atingiu Marina.', do:C => { setMoods(C, ['marina'], 'exausto'); setMoods(C, ['tiago','cida','leo'], 'triste'); } },
-    { who:'robert', mood:'alegre', text:'Até a próxima, Guardiões.', do:C => walk(C, 'robert', 320, 0, true) } ] },
-  { keep:true, music:'triste', lines:[
-    { who:'leo', mood:'triste', text:'Ela está ardendo em febre... é contaminação.' },
-    { who:'caretta', mood:'triste', text:'Só existe uma cura, e ela está no fundo do mar. Vamos precisar de todos vocês.' },
-    { who:'narr', text:'Marina não pode mais lutar. A história continua...' } ] },
+  { fase:0, music:'heroica', cam:[STAGE_X, 330], crabs:'alegre',
+    actors:[ ch('cida', -66, 388, 'comemorando'), ch('marina', -22, 396, 'comemorando'), ch('tiago', 22, 396, 'comemorando', { flip:true }), ch('leo', 66, 388, 'comemorando', { flip:true }), carettaAt(0, SHORE + 62) ], lines:[
+    { card:'A PRAIA DO SOL', sub:'limpa outra vez' },
+    { who:'caretta', text:'Vocês conseguiram.', shot:{ f:'caretta', z:2.4 } },
+    { who:'caretta', text:'A praia mais limpa não é a que mais se limpa. É a que menos se suja.', shot:{ f:'caretta', z:2.8 } },
+    { who:'todos', mood:'comemorando', text:'Conseguimos!', shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
+  { keep:true, music:'tensa', thunder:true, actorsAdd:[ ch('robert', 260, 392, 'alegre', { tx:STAGE_X + 120, ty:392, flip:true, nome:'Robert, o Descarte' }) ], lines:[
+    { who:'robert', mood:'alegre', text:'Que bonito. Uma praia limpa... por uma semana.', shot:{ f:'robert', z:2.6 }, do:C => setMoods(C, HEROIS, 'surpreso') },
+    { who:'marina', mood:'zangado', text:'Robert, acabou. Volta para a gente.', shot:{ f:'marina', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Voltar? Eu nunca saí. Eu só parei de fingir que adianta.', shot:{ f:'robert', z:3 }, grade:'red' },
+    { who:'robert', mood:'zangado', text:'Isto aqui é para você lembrar de mim.', shot:{ f:'robert', z:3.2 }, grade:'red', fx:'lines', do:C => throwToxic(C, 'robert', 'marina') },
+    { who:'marina', mood:'dor', text:'AHH...!', shot:{ f:'marina', z:3 }, fx:'shake' },
+    { who:'robert', mood:'alegre', text:'Até a próxima, Guardiões.', shot:'wide', do:C => { setMoods(C, ['marina'], 'exausto'); walk(C, 'robert', 320, 0, true); } } ] },
+  { keep:true, music:'triste', grade:'gray', rain:true, lines:[
+    { who:'leo', mood:'triste', text:'Ela está queimando de febre... isso é contaminação.', shot:{ f:'marina', z:2.6 }, do:C => setMoods(C, ['tiago','cida','leo'], 'triste') },
+    { who:'tiago', mood:'zangado', text:'ROBERT!', shot:{ f:'tiago', z:3 }, fx:'lines' },
+    { who:'caretta', mood:'triste', text:'Ainda há uma chance. No fundo do mar existe uma cura.', shot:{ f:'caretta', z:2.4 } },
+    { who:'caretta', mood:'triste', text:'Mas o caminho é longo... e o Descarte estará esperando.', shot:'wide' },
+    { card:'CONTINUA...' } ] },
 ];
 
+/* ---------- motor das cenas ---------- */
 function playCine(scenes, done){
-  CINE = { scenes, i:0, line:-1, actors:[], fx:[], cam:{ x:STAGE_X, y:300 }, text:'', typed:0, done, crabs:'alegre', speaker:null };
+  CINE = { scenes, i:0, line:-1, actors:[], fx:[], text:'', typed:0, wait:0, hold:0, done, crabs:'alegre', speaker:null,
+           view:{ x:STAGE_X, y:300, z:1 }, goal:{ x:STAGE_X, y:300, z:1 }, focus:null, cam:{ x:STAGE_X, y:300 },
+           flash:0, lines:0, fade:1, light:0, rainDrops:[], grade:null, lineGrade:null, card:null };
   toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); bannerT = 0; $('#banner').textContent = '';
   for (const k in keys) keys[k] = false; joy = null;
   $('#cine').hidden = false; setState('cutscene', null);
@@ -2567,70 +2628,127 @@ function cineScene(i){
     C.actors = (sc.actors || []).map(a => ({ anim:Math.random() * 3, ...a }));
     C.fx = [];
     if (sc.trash){
-      const R = mulberry(17 + i), types = Object.keys(ETYPES);
-      for (let k = 0; k < sc.trash; k++) L.items.push({ type:types[k % types.length], x:sc.cam[0] + (R() - 0.5) * 440, y:clamp(sc.cam[1] + (R() - 0.5) * 230, SHORE + 14, WORLD_H - 20), vx:0, vy:0, age:0, delay:0, keep:true });
+      const R = mulberry(17 + i), types = Object.keys(ETYPES), cx0 = sc.cam ? sc.cam[0] : STAGE_X, cy0 = sc.cam ? sc.cam[1] : 360;
+      for (let k = 0; k < sc.trash; k++) L.items.push({ type:types[k % types.length], x:cx0 + (R() - 0.5) * 520, y:clamp(cy0 + (R() - 0.5) * 260, SHORE + 14, WORLD_H - 20), vx:0, vy:0, age:0, delay:0, keep:true });
     }
+    C.fade = 1;
   }
   if (sc.actorsAdd) C.actors.push(...sc.actorsAdd.map(a => ({ anim:0, ...a })));
-  if (sc.camPlayer && G) C.cam = { x:G.player.x + 40, y:G.player.y - 10 };
-  else if (sc.cam) C.cam = { x:sc.cam[0], y:sc.cam[1] };
-  C.glow = !!sc.glow; if (sc.crabs) C.crabs = sc.crabs;
+  if (sc.camPlayer && G) C.wide = { x:G.player.x + 40, y:G.player.y - 10 };
+  else if (sc.cam) C.wide = { x:sc.cam[0], y:sc.cam[1] };
+  C.goal = { ...C.wide, z:1 }; if (!sc.keep) C.view = { ...C.wide, z:1 };
+  C.focus = null;
+  C.glow = !!sc.glow; C.rain = !!sc.rain; C.thunder = !!sc.thunder; C.grade = sc.grade || null;
+  if (sc.crabs) C.crabs = sc.crabs;
+  if (C.rain && !C.rainDrops.length) for (let k = 0; k < 90; k++) C.rainDrops.push({ x:Math.random() * VW, y:Math.random() * VH, v:180 + Math.random() * 120 });
   if (sc.music) playMusic(sc.music);
   C.line = -1; cineLine();
+}
+function setShot(C, shot){
+  if (!shot || shot === 'wide'){ C.focus = null; C.goal = { ...C.wide, z:1 }; return; }
+  if (shot.at){ C.focus = null; C.goal = { x:shot.at[0], y:shot.at[1], z:shot.z || 1.6 }; return; }
+  C.focus = shot.f; C.goal.z = shot.z || 2.2; C.focusDy = shot.dy ?? -14;
 }
 function cineLine(){
   const C = CINE, sc = C.scenes[C.i]; C.line++;
   if (C.line >= sc.lines.length){ if (C.i + 1 < C.scenes.length) cineScene(C.i + 1); else cineEnd(); return; }
-  const ln = sc.lines[C.line], who = ln.who === 'player' ? (G ? G.player.id : 'tiago') : ln.who;
+  const ln = sc.lines[C.line];
+  C.wait = 0; C.hold = 0; C.lineGrade = ln.grade || null;
+  if (ln.card){
+    C.card = { t:0, dur:ln.sub ? 2.4 : 1.9 };
+    $('#card-t').textContent = ln.card; $('#card-s').textContent = ln.sub || '';
+    $('#card').classList.toggle('red', !!ln.red); $('#card').hidden = false; $('#dlg').hidden = true;
+    C.text = ''; C.typed = 0; C.speaker = null;
+    if (ln.red){ sfx('boss'); }
+    return;
+  }
+  C.card = null; $('#card').hidden = true; $('#dlg').hidden = false;
+  const who = ln.who === 'player' ? (G ? G.player.id : 'tiago') : ln.who;
   C.speaker = who;
   if (ln.do) ln.do(C);
   if (ln.mood){ if (who === 'todos') setMoods(C, HEROIS, ln.mood); else setMoods(C, [who], ln.mood); }
+  let shot = ln.shot;
+  if (shot === undefined) shot = C.focus ? { f:C.focus, z:C.goal.z } : 'wide';   // sem indicação: mantém o enquadramento
+  else if (shot && shot.f === 'player') shot = { ...shot, f:'__player' };
+  setShot(C, shot);
+  if (ln.fx === 'flash') C.flash = 1;
+  if (ln.fx === 'shake') cam.shake = 0.45;
+  if (ln.fx === 'lines') C.lines = 1.4;
+  if (ln.fx === 'thunder'){ C.flash = 1; C.light = 0.5; cam.shake = 0.5; sfx('boss'); }
   const a = actor(C, who), cnv = $('#dlg-face'), hasFace = who !== 'narr' && who !== 'todos';
   $('#dlg-name').textContent = ln.name || (a && a.nome) || NOMES[who] || '';
+  $('#dlg-name').style.color = COR_NOME[who] || '';
   cnv.hidden = !hasFace;
   if (hasFace){ const mood = ln.mood || (a && a.mood) || 'alegre'; if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick); }
   $('#dlg').classList.toggle('narr', who === 'narr');
-  C.text = ln.text; C.typed = 0; C.wait = 0; $('#dlg-text').textContent = '';
+  C.text = ln.text; C.typed = 0; $('#dlg-text').textContent = '';
 }
 function cineNext(){
   const C = CINE; if (!C) return;
+  if (C.card){ cineLine(); return; }
   if (C.typed < C.text.length){ C.typed = C.text.length; $('#dlg-text').textContent = C.text; }
   else cineLine();
 }
-function cineEnd(){ const d = CINE && CINE.done; CINE = null; $('#cine').hidden = true; if (d) d(); }
+function cineEnd(){ const d = CINE && CINE.done; CINE = null; $('#cine').hidden = true; $('#card').hidden = true; $('#dlg').hidden = false; if (d) d(); }
 function cineSkip(){ if (CINE) cineEnd(); }
 const VOZ = { caretta:300, robert:170, marina:620, tiago:520, cida:440, leo:480, todos:560 };
 function talkBlip(who){
   const f = VOZ[who]; if (!f || !sfxOn || !AC) return;
-  const now = AC.currentTime; voice('square', f * (0.95 + Math.random() * 0.1), now, 0.035, 0.012, 2500, master);
+  voice('square', f * (0.95 + Math.random() * 0.1), AC.currentTime, 0.035, 0.012, 2500, master);
 }
 function cineUpdate(dt){
   const C = CINE; L.time += dt;
-  if (C.typed < C.text.length){
-    const before = C.typed | 0; C.typed = Math.min(C.text.length, C.typed + dt * 50); const now = C.typed | 0;
-    if (now !== before){ $('#dlg-text').textContent = C.text.slice(0, now); if (now % 3 === 0 && C.text[now - 1] !== ' ') talkBlip(C.speaker); }
-  } else { C.wait = (C.wait || 0) + dt; if (C.wait > 0.9 + C.text.length * 0.016){ cineLine(); if (!CINE || CINE !== C) return; } }
+  // texto letra por letra, com pausas dramáticas na pontuação
+  if (C.card){ C.card.t += dt; if (C.card.t > C.card.dur){ cineLine(); if (CINE !== C) return; } }
+  else if (C.typed < C.text.length){
+    if (C.hold > 0) C.hold -= dt;
+    else {
+      const before = C.typed | 0; C.typed = Math.min(C.text.length, C.typed + dt * 55); const now = C.typed | 0;
+      if (now !== before){
+        $('#dlg-text').textContent = C.text.slice(0, now);
+        const chr = C.text[now - 1];
+        if ('.!?'.includes(chr) && now < C.text.length) C.hold = C.text[now] === '.' ? 0.08 : 0.24;
+        else if (chr === ',') C.hold = 0.07;
+        if (now % 3 === 0 && chr !== ' ') talkBlip(C.speaker);
+      }
+    }
+  } else { C.wait += dt; if (C.wait > 0.75 + C.text.length * 0.011){ cineLine(); if (CINE !== C) return; } }
+  // atores
   for (const a of C.actors){
     a.anim = (a.anim || 0) + dt;
+    if (a.hop > 0) a.hop -= dt;
+    if (a.tremble > 0) a.tremble -= dt;
     if (a.rise != null){ a.delay -= dt; if (a.delay <= 0) a.rise = Math.min(1, a.rise + dt * 1.5); }
     if (a.tx != null){
       const dx = a.tx - a.x, dy = a.ty - a.y, d = Math.hypot(dx, dy);
-      if (d > 1){ const sp = Math.min(d, 55 * dt); a.x += dx / d * sp; a.y += dy / d * sp; a.walking = true; if (Math.abs(dx) > 0.5) a.flip = dx < 0; }
+      if (d > 1){ const sp = Math.min(d, (a.kind === 'caretta' ? 26 : 58) * dt); a.x += dx / d * sp; a.y += dy / d * sp; a.walking = a.kind === 'char'; if (Math.abs(dx) > 0.5) a.flip = dx < 0; }
       else { a.walking = false; a.tx = null; if (a.leave) a.gone = true; }
     }
   }
   C.actors = C.actors.filter(a => !a.gone);
+  // efeitos
   for (const f of C.fx){
     f.t += dt;
     if (f.kind === 'toxic' && !f.hit && f.t >= f.dur){
-      f.hit = true; f.b.sick = true; f.b.mood = 'dor'; cam.shake = 0.35; sfx('hurt');
-      for (let k = 0; k < 24; k++) L.parts.push({ x:f.b.x, y:f.b.y - 10, vx:rand(-60, 60), vy:rand(-90, 10), life:rand(.4, .9), col:k % 2 ? '#8bd450' : '#4f8a2a', s:2 });
+      f.hit = true; f.b.sick = true; f.b.mood = 'dor'; f.b.tremble = 1.5; cam.shake = 0.5; C.flash = 1; sfx('hurt');
+      for (let k = 0; k < 30; k++) L.parts.push({ x:f.b.x, y:f.b.y - 10, vx:rand(-70, 70), vy:rand(-100, 10), life:rand(.4, 1), col:k % 2 ? '#8bd450' : '#4f8a2a', s:2 });
     }
   }
   C.fx = C.fx.filter(f => f.t < f.dur + 0.3);
   for (const q of L.parts){ q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 160 * dt; }
   L.parts = L.parts.filter(q => q.life > 0);
   for (const c of L.critters){ c.anim += dt; c.mood = C.crabs || 'alegre'; }
+  // câmera: segue o foco com suavidade
+  if (C.focus){
+    const f = C.focus === '__player' ? (G && G.player) : actor(C, C.focus);
+    if (f){ C.goal.x = f.x; C.goal.y = f.y + (C.focusDy ?? -14); }
+  }
+  const k = 1 - Math.exp(-dt * 2.8);
+  C.view.x += (C.goal.x - C.view.x) * k; C.view.y += (C.goal.y - C.view.y) * k; C.view.z += (C.goal.z - C.view.z) * k;
+  C.cam = { x:C.view.x, y:C.view.y };
+  C.flash = Math.max(0, C.flash - dt * 2.5); C.lines = Math.max(0, C.lines - dt); C.fade = Math.max(0, C.fade - dt * 1.6);
+  if (C.thunder){ C.light -= dt; if (C.light < -2.5 - Math.random() * 3){ C.light = 0.35; C.flash = Math.max(C.flash, 0.7); } }
+  if (C.rain) for (const r of C.rainDrops){ r.y += r.v * dt; r.x -= r.v * 0.25 * dt; if (r.y > VH){ r.y = -6; r.x = Math.random() * (VW + 60); } }
 }
 function sickOf(s){
   if (!s._sick) s._sick = { ...s, img:mk(s.img.width, s.img.height, g => { g.drawImage(s.img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(120,210,70,.38)'; g.fillRect(0, 0, s.img.width, s.img.height); }) };
@@ -2641,16 +2759,20 @@ function carettaPortrait(cnv, mood){
   g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 24, 5, 16, 16, 2, 2, 16, 16); drawFace(g, s.face.x - 22, s.face.y - 3, mood, s.face);
 }
 function speakerArrow(x, y, t){
+  if (CINE && CINE.view.z > 1.4) return;   // no close-up a câmera já mostra quem fala
   const yy = Math.round(y - 5 - (((t * 4) | 0) % 2));
   ctx.fillStyle = OUT; ctx.fillRect(x - 4, yy - 1, 9, 2); ctx.fillRect(x - 3, yy + 1, 7, 1); ctx.fillRect(x - 2, yy + 2, 5, 1); ctx.fillRect(x - 1, yy + 3, 3, 1);
   ctx.fillStyle = '#ffd23f'; ctx.fillRect(x - 3, yy - 1, 7, 1); ctx.fillRect(x - 2, yy, 5, 1); ctx.fillRect(x - 1, yy + 1, 3, 1); ctx.fillRect(x, yy + 2, 1, 1);
 }
 function drawActor(a, x, y, t){
+  if (a.hidden) return null;
+  const jx = a.tremble > 0 ? Math.round(rand(-1, 1)) : 0, jy = a.hop > 0 ? -Math.round(Math.sin((1 - a.hop / 0.45) * Math.PI) * 6) : 0;
+  x += jx; y += jy;
   if (a.kind === 'char'){
     const s0 = SPR.chars[a.id][a.walking ? ((a.anim * 8) | 0) % 4 : 0], s = a.sick ? sickOf(s0) : s0;
     const bob = !a.walking && ((t * 2 + a.x * 0.01) | 0) % 2 ? 1 : 0;
     const x0 = x - (s.w >> 1), y0 = y - s.h + 4 + bob;
-    shadow(x, y + 2, 14);
+    shadow(x - jx, y - jy + 2, 14);
     if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
     else { ctx.drawImage(s.img, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
     if (HEROIS.includes(a.id) && !a.sick) drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
@@ -2681,6 +2803,32 @@ function drawCineOverlay(cx, cy, t){
     const k = f.t / f.dur, x = Math.round(f.x0 + (f.b.x - f.x0) * k - cx), y = Math.round(f.y0 + (f.b.y - 12 - f.y0) * k - Math.sin(k * Math.PI) * 30 - cy);
     ctx.fillStyle = '#2f5a18'; ctx.fillRect(x - 3, y - 3, 7, 7); ctx.fillStyle = '#8bd450'; ctx.fillRect(x - 2, y - 2, 5, 5); ctx.fillStyle = '#e6ffb0'; ctx.fillRect(x - 1, y - 2, 2, 1);
   }
+}
+/* pós-processamento da cena: zoom de close-up, cor, chuva, clarão, vinheta e linhas de impacto */
+const zbuf = document.createElement('canvas'), zctx = zbuf.getContext('2d');
+function cinePost(){
+  const C = CINE; if (!C) return;
+  const t = L.time, z = C.view.z;
+  if (z > 1.02){
+    if (zbuf.width !== VW || zbuf.height !== VH){ zbuf.width = VW; zbuf.height = VH; }
+    zctx.imageSmoothingEnabled = false; zctx.clearRect(0, 0, VW, VH); zctx.drawImage(cv, 0, 0);
+    const w = VW / z, h = VH / z, fx = C.view.x - cam.x, fy = C.view.y - cam.y;
+    const sx = clamp(fx - w / 2, 0, VW - w), sy = clamp(fy - h / 2, 0, VH - h);
+    ctx.imageSmoothingEnabled = false; ctx.drawImage(zbuf, sx, sy, w, h, 0, 0, VW, VH);
+  }
+  const grade = C.lineGrade || C.grade;
+  if (grade === 'gray'){ ctx.save(); ctx.globalCompositeOperation = 'saturation'; ctx.fillStyle = 'rgba(128,128,128,.8)'; ctx.fillRect(0, 0, VW, VH); ctx.restore(); ctx.fillStyle = 'rgba(30,40,70,.18)'; ctx.fillRect(0, 0, VW, VH); }
+  else if (grade === 'sepia'){ ctx.save(); ctx.globalCompositeOperation = 'color'; ctx.fillStyle = 'rgba(176,132,82,.7)'; ctx.fillRect(0, 0, VW, VH); ctx.restore(); }
+  else if (grade === 'red'){ ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgba(255,120,110,.75)'; ctx.fillRect(0, 0, VW, VH); ctx.restore(); }
+  if (C.rain){ ctx.fillStyle = 'rgba(190,220,255,.45)'; for (const r of C.rainDrops) ctx.fillRect(Math.round(r.x), Math.round(r.y), 1, 4); }
+  if (C.lines > 0){
+    const cx = VW / 2, cy = VH / 2, R = Math.hypot(VW, VH) / 2; ctx.strokeStyle = `rgba(255,255,255,${0.5 * Math.min(1, C.lines)})`; ctx.lineWidth = 1;
+    for (let k = 0; k < 40; k++){ const a = Math.random() * TAU, r0 = R * (0.45 + Math.random() * 0.2); ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.stroke(); }
+  }
+  const vg = ctx.createRadialGradient(VW / 2, VH / 2, Math.min(VW, VH) * 0.35, VW / 2, VH / 2, Math.hypot(VW, VH) * 0.6);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, VW, VH);
+  if (C.flash > 0){ ctx.fillStyle = `rgba(255,255,255,${C.flash * 0.75})`; ctx.fillRect(0, 0, VW, VH); }
+  if (C.fade > 0){ ctx.fillStyle = `rgba(0,0,0,${Math.min(1, C.fade)})`; ctx.fillRect(0, 0, VW, VH); }
 }
 
 /* abertura automática e logo do jogo */
