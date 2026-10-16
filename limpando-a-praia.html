@@ -326,40 +326,96 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   .char .rl,.char .burst,.char .moods,.char .stats,#scr-select .panel > p.muted,.lead,.how{display:none}
   .actions{position:sticky;bottom:-14px;z-index:2;background:linear-gradient(rgba(19,32,61,0),#13203d 35%);padding-block:10px 4px}
 }
-/* menu principal */
-.screen.title{background:linear-gradient(180deg,rgba(9,15,32,.05),rgba(9,15,32,.55) 70%);overflow-x:hidden}
-.screen.title::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.55) 0 2px,transparent 3px) 0 0/90px 120px,radial-gradient(circle,rgba(143,224,255,.45) 0 3px,transparent 4px) 40px 60px/130px 170px;animation:bolhas 14s linear infinite;opacity:.6}
-@keyframes bolhas{to{background-position:0 -1200px,40px -1700px}}
-.menu{position:relative;width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
-.mlogo{display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-size:clamp(28px,7vw,62px);line-height:1.15}
-.mlogo span{display:inline-block;color:var(--sun);text-shadow:0 5px 0 #b23a2f,0 10px 0 var(--deep),0 0 30px rgba(255,210,63,.4);animation:boia 3s ease-in-out infinite}
-.mlogo .w2{color:#8fe0ff;text-shadow:0 5px 0 #1d5a8a,0 10px 0 var(--deep),0 0 30px rgba(143,224,255,.35);animation-delay:-1.5s}
-@keyframes boia{50%{transform:translateY(-6px) rotate(-1.5deg)}}
-.msub{font-family:var(--f-body);font-weight:700;letter-spacing:.2em;color:var(--foam);font-size:clamp(14px,2.6vw,20px);background:rgba(11,20,40,.75);padding:4px 16px;border:2px solid var(--foam);border-radius:999px}
-.mcast{display:flex;gap:6px;align-items:flex-end;justify-content:center;min-height:72px}
-.mcast canvas{width:52px;height:72px;animation:pulo 1.4s ease-in-out infinite;cursor:pointer}
-@keyframes pulo{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-12px)}}
-.mplay{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap;background:var(--panel);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 6px 0 rgba(0,0,0,.3);padding:12px 14px;width:100%;box-sizing:border-box;text-align:left}
-.btn.big{font-size:14px;padding:16px 28px;animation:brilho 1.6s ease-in-out infinite}
-@keyframes brilho{50%{box-shadow:inset -4px -4px 0 rgba(0,0,0,.22),0 4px 0 #8a6a00,0 0 24px rgba(255,210,63,.75)}}
-.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;width:100%}
-.mcard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;min-width:0;background:linear-gradient(#22406f,#162a4d);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 5px 0 rgba(0,0,0,.35);transition:transform .12s}
-.mcard:hover{transform:translateY(-3px) rotate(-1deg)}
-.mcard:active{transform:translateY(2px)}
-.mcard:focus-visible{outline:3px dashed var(--sun);outline-offset:4px}
-.mcard canvas{width:52px;height:52px;background:#2c4a7c;border-radius:50%;border:2px solid rgba(255,248,231,.6)}
-.mcard b{font-family:var(--f-body);font-weight:700;font-size:17px;letter-spacing:.08em;color:var(--sun)}
-.mcard span{font-size:13px;color:var(--muted);line-height:1.2}
-.mcard.dlc{background:linear-gradient(#3a2457,#1f1433);border-color:#c9a2ff}
-.mcard.dlc b{color:#c9a2ff}
-.mcard.dlc.locked{filter:grayscale(.75);opacity:.8}
-.mcard.dlc:not(.locked){animation:dlcPulso 2s ease-in-out infinite}
-@keyframes dlcPulso{50%{box-shadow:0 0 0 3px var(--deep),0 0 24px #8bd450}}
-.mcard.nope{animation:nao .35s}
-@keyframes nao{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.mhow{width:100%;text-align:left;display:flex;flex-direction:column;gap:10px;background:var(--panel);border:3px solid var(--foam);border-radius:10px;padding:12px;box-sizing:border-box}
-.mfoot{font-size:13px;color:var(--muted)}
 .ttl{font-family:var(--f-body)!important;font-weight:700;font-size:clamp(20px,3.2vw,28px)!important;letter-spacing:.08em}
+/* menu principal no estilo cinematográfico: lista à esquerda, detalhe à direita, praia ao fundo */
+.screen.gow{place-items:stretch;padding:0;background:radial-gradient(ellipse at 72% 45%,rgba(0,0,0,0) 30%,rgba(0,0,0,.5) 100%),linear-gradient(90deg,rgba(4,8,18,.97) 0%,rgba(4,8,18,.88) 34%,rgba(4,8,18,.4) 62%,rgba(4,8,18,.12) 100%)}
+.gow-wrap{position:relative;display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);align-items:center;gap:clamp(16px,5vw,80px);min-height:100%;box-sizing:border-box;padding:calc(24px + env(safe-area-inset-top,0px)) clamp(16px,5vw,72px) calc(56px + env(safe-area-inset-bottom,0px))}
+.gow-left{display:flex;flex-direction:column;gap:14px;min-width:0}
+.brand{display:flex;flex-direction:column;gap:10px;margin-bottom:4px}
+.brand canvas{width:240px;height:72px}
+.brand .t{font-family:var(--f-display);font-size:clamp(24px,3.4vw,40px);line-height:1.25;color:var(--sun);text-shadow:0 4px 0 #b23a2f,0 8px 0 #05070f;margin:0}
+.brand .s{font-weight:700;font-size:clamp(14px,1.6vw,17px);letter-spacing:.34em;color:#8fe0ff}
+.profile{display:flex;align-items:center;gap:12px;border-block:1px solid rgba(255,210,63,.35);padding:8px 0;max-width:380px}
+.profile label{font-family:var(--f-display);font-size:8px;color:var(--sun);letter-spacing:.1em;flex:none}
+.profile input{flex:1;min-width:0;font-family:var(--f-body);font-weight:700;font-size:18px;background:transparent;color:var(--foam);border:0;border-bottom:2px dashed rgba(255,248,231,.35);border-radius:0;padding:4px 2px}
+.profile input::placeholder{color:#6f81a3}
+.profile input:focus-visible{outline:none;border-bottom-color:var(--sun)}
+.mlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.mitem{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:8px 12px 8px 28px;font-family:var(--f-body);font-weight:700;font-size:clamp(19px,2.1vw,24px);letter-spacing:.18em;color:#9aaac6;transition:color .15s,padding .15s}
+.mitem::before{content:"";position:absolute;left:8px;top:50%;width:8px;height:8px;background:var(--sun);box-shadow:0 0 10px var(--sun);transform:translateY(-50%) rotate(45deg) scale(0);transition:transform .15s}
+.mitem::after{content:"";position:absolute;left:28px;right:0;bottom:2px;height:2px;background:linear-gradient(90deg,var(--sun),rgba(255,210,63,0));transform:scaleX(0);transform-origin:left;transition:transform .22s}
+.mitem:hover,.mitem:focus{color:var(--foam);padding-left:36px;outline:none;text-shadow:0 0 14px rgba(255,210,63,.35)}
+.mitem:hover::before,.mitem:focus::before{transform:translateY(-50%) rotate(45deg) scale(1)}
+.mitem:hover::after,.mitem:focus::after{transform:scaleX(1)}
+.mitem.main{color:var(--sun)}
+.mitem small{font-family:var(--f-display);font-size:7px;letter-spacing:.06em;padding:4px 6px;background:#8bd450;color:var(--ink)}
+.mitem.lock{color:#5f6b84}
+.mitem.lock small{background:#5f6b84;color:#0b1428}
+.mitem.nope{animation:nao .35s}
+@keyframes nao{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.gow-right{justify-self:end;width:min(100%,430px);box-sizing:border-box;display:flex;flex-direction:column;gap:12px;padding:20px 22px;background:linear-gradient(rgba(6,12,28,.84),rgba(6,12,28,.94));border:1px solid rgba(255,210,63,.45);box-shadow:inset 0 0 0 4px rgba(6,12,28,.9),inset 0 0 0 5px rgba(255,210,63,.18)}
+.gow-right canvas{width:100%;height:auto;aspect-ratio:2/1;background:radial-gradient(ellipse at 50% 92%,rgba(255,210,63,.16),rgba(0,0,0,0) 62%)}
+.gow-right h3{font-family:var(--f-body);font-weight:700;font-size:20px;letter-spacing:.2em;color:var(--sun);display:flex;align-items:center;gap:12px}
+.gow-right h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,210,63,.6),rgba(255,210,63,0))}
+.gow-right p{font-size:18px;color:#d8e2f5}
+.gow-hint{position:absolute;left:0;right:0;bottom:0;display:flex;gap:24px;justify-content:flex-end;flex-wrap:wrap;padding:10px clamp(16px,5vw,72px) calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.6));font-size:15px;color:var(--muted);pointer-events:none}
+/* enciclopédia */
+.page{box-sizing:border-box;width:100%;max-width:1100px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top,0px)) clamp(16px,4vw,48px) calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.page-h{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid rgba(255,210,63,.4);padding-bottom:10px}
+.page-h h2{font-family:var(--f-body);font-weight:700;font-size:clamp(22px,3.2vw,34px);letter-spacing:.2em;color:var(--foam)}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}
+.tab{all:unset;cursor:pointer;font-weight:700;font-size:16px;letter-spacing:.12em;padding:8px 12px;color:var(--muted);border-bottom:3px solid transparent}
+.tab:hover{color:var(--foam)}
+.tab[aria-selected="true"]{color:var(--sun);border-bottom-color:var(--sun)}
+.tab:focus-visible{outline:2px dashed var(--sun);outline-offset:2px}
+.codex{display:grid;grid-template-columns:minmax(200px,270px) minmax(0,1fr);gap:16px;align-items:start}
+.clist{display:flex;flex-direction:column;gap:4px;min-width:0}
+.citem{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;padding:6px 10px;background:rgba(8,14,30,.86);border-left:4px solid transparent;min-width:0}
+.citem canvas{width:36px;height:36px;background:#2c4a7c;border-radius:50%;flex:none}
+.citem span{min-width:0}
+.citem b{font-weight:700;font-size:17px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.citem small{font-size:13px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.citem:hover{background:rgba(255,255,255,.07)}
+.citem[aria-selected="true"]{border-left-color:var(--sun);background:rgba(255,210,63,.1)}
+.citem:focus-visible{outline:2px dashed var(--sun);outline-offset:2px}
+.cdet,.prose{box-sizing:border-box;background:rgba(8,14,30,.9);border:1px solid rgba(255,210,63,.35);padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cdet .art{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap;padding:12px 8px 6px;background:radial-gradient(ellipse at 50% 100%,rgba(255,210,63,.13),rgba(0,0,0,0) 70%)}
+.cdet .art figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cdet .art figcaption{font-size:13px;color:var(--muted)}
+.cdet .pap{font-weight:700;font-size:14px;color:var(--sun);letter-spacing:.14em}
+.cdet h3{font-family:var(--f-body);font-weight:700;font-size:26px;color:var(--foam);letter-spacing:.08em}
+.cdet p,.prose p,.prose li{font-size:18px}
+.cdet ul,.prose ul{margin:0;padding-left:20px;color:#cfe0ff}
+.cdet li{font-size:16px}
+.cdet .moods{justify-content:flex-start}
+.prose{max-width:84ch}
+.prose h3{color:var(--sun);margin-top:4px}
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.howto div{background:rgba(0,0,0,.3);padding:10px 12px;border-left:4px solid var(--sea);font-size:16px}
+.howto b{font-family:var(--f-display);font-size:8px;color:var(--sun);display:block;margin-bottom:6px}
+@media (max-width:640px){
+  .screen.gow{background:rgba(4,8,18,.9)}
+  .gow-wrap{grid-template-columns:1fr;align-items:start;padding-bottom:24px;gap:10px}
+  .gow-right,.gow-hint{display:none}
+  .brand canvas{width:180px;height:54px}
+  .mitem{font-size:19px;padding-block:7px}
+  .codex{grid-template-columns:1fr}
+  .clist{flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  .citem{flex:none}
+  .citem small{display:none}
+  .cdet .art canvas{max-width:40vw;height:auto!important}
+}
+@media (max-height:500px) and (orientation:landscape){
+  .gow-wrap{padding-top:10px;padding-bottom:36px;gap:20px}
+  .brand canvas{display:none}
+  .brand .t{font-size:20px}
+  .mlist{display:grid;grid-template-columns:1fr 1fr}
+  .mitem{font-size:16px;padding-block:5px}
+  .gow-right canvas{display:none}
+  .gow-hint{display:none}
+}
+@media (pointer:coarse){.gow-hint{display:none}}
+@media (prefers-reduced-motion:reduce){.mitem,.mitem::before,.mitem::after{transition:none}.mitem.nope{animation:none}}
 /* capítulos */
 .chaps{display:flex;flex-direction:column;gap:12px}
 .chaps h3{margin:4px 0 0}
@@ -373,9 +429,6 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .chap .n{font-family:var(--f-display);font-size:8px;color:var(--sun)}
 .chap.dlcc{border-left-color:#8bd450}
 .jump{display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,.2);padding:10px 12px}
-@media (max-width:640px){.mcast canvas{width:40px;height:56px}.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.mcard b{font-size:15px}.mcard canvas{width:42px;height:42px}.mcard.dlc{grid-column:1/-1}}
-@media (max-height:500px) and (orientation:landscape){.mcast{display:none}.mgrid{grid-template-columns:repeat(5,minmax(0,1fr))}.mcard{padding:8px 4px}.mcard canvas{width:36px;height:36px}.mcard span{display:none}}
-@media (prefers-reduced-motion:reduce){.mlogo span,.mcast canvas,.btn.big,.mcard.dlc,.screen.title::before{animation:none}}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}.btn:hover{transform:none}#btn-burst,#burstbar.full{animation:none}}
 </style>
 
@@ -440,36 +493,46 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     </div>
   </section>
 
-  <section class="screen title" id="scr-title" hidden>
-    <div class="menu">
-      <div class="mlogo" aria-label="Limpando a Praia"><span>LIMPANDO</span><span class="w2">A PRAIA</span></div>
-      <div class="msub">GUARDIÕES DA MARÉ</div>
-      <div class="mcast" id="menu-cast" aria-hidden="true"></div>
-      <form class="mplay" id="nick-form" novalidate>
-        <div class="field"><label for="nick">SEU NICK NO RANKING</label><input id="nick" name="nick" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Ex.: Tubarão123"></div>
-        <button class="btn big" id="btn-play" type="submit">JOGAR!</button>
-      </form>
-      <p class="err" id="nick-err" hidden>Digite um nick de 2 a 16 caracteres para entrar no ranking.</p>
-      <div class="mgrid">
-        <button class="mcard" id="btn-story" type="button"><canvas class="px" data-icon="story" width="20" height="20"></canvas><b>HISTÓRIA</b><span>Capítulos e cenas</span></button>
-        <button class="mcard" id="btn-how" type="button" aria-expanded="false"><canvas class="px" data-icon="how" width="20" height="20"></canvas><b>COMO JOGAR</b><span>Controles e lixeiras</span></button>
-        <button class="mcard" id="btn-rank" type="button"><canvas class="px" data-icon="rank" width="20" height="20"></canvas><b>RANKING</b><span>Melhores e piores</span></button>
-        <button class="mcard" id="btn-opts" type="button"><canvas class="px" data-icon="opts" width="20" height="20"></canvas><b>OPÇÕES</b><span>Som, texto e mais</span></button>
-        <button class="mcard dlc locked" id="btn-dlc" type="button"><canvas class="px" data-icon="dlc" width="20" height="20"></canvas><b>DLC: O DESCARTE</b><span id="dlc-sub">Termine a história para liberar</span></button>
-      </div>
-      <div class="mhow" id="title-how" hidden>
-        <p>Monstros feitos de lixo invadiram a areia. Derrote-os, recolha o que sobrar na mochila e leve cada resíduo até a lixeira certa. Lixo jogado volta a virar monstro, e no fim da fase tudo o que sobrou vira um chefe gigante.</p>
-        <p class="muted only-mobile">No celular: arraste o dedo para andar. O botão BURST aparece quando o poder estiver carregado.</p>
-        <div class="how">
-          <div><b>MOVER</b><kbd>W A S D</kbd> ou setas. No celular, arraste o dedo.</div>
-          <div><b>ATACAR</b>Suas armas atacam sozinhas. Cada classe tem a sua.</div>
-          <div><b>RECOLHER</b>Passe perto do lixo para guardar na mochila. Ela tem limite!</div>
-          <div><b>SEPARAR</b>Encoste na lixeira da cor certa para depositar e ganhar experiência.</div>
-          <div><b>BURST</b><kbd>ESPAÇO</kbd> solta o poder da classe quando a barra enche.</div>
+  <section class="screen gow" id="scr-title" hidden>
+    <div class="gow-wrap">
+      <div class="gow-left">
+        <div class="brand">
+          <canvas id="m-cast" class="px" width="120" height="36" aria-hidden="true"></canvas>
+          <h1 class="t">LIMPANDO<br>A PRAIA</h1>
+          <span class="s">GUARDIÕES DA MARÉ</span>
         </div>
-        <div id="title-bins"></div>
+        <form class="profile" id="nick-form" novalidate>
+          <label for="nick">JOGADOR</label>
+          <input id="nick" name="nick" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Digite seu nick">
+        </form>
+        <p class="err" id="nick-err" hidden>Digite um nick de 2 a 16 caracteres para entrar no ranking.</p>
+        <nav aria-label="Menu principal">
+          <ul class="mlist" id="mlist">
+            <li><button class="mitem main" id="btn-play" type="submit" form="nick-form" data-k="jogar">JOGAR</button></li>
+            <li><button class="mitem" id="btn-story" type="button" data-k="historia">HISTÓRIA</button></li>
+            <li><button class="mitem" id="btn-dlc" type="button" data-k="dlc">O DESCARTE <small id="dlc-sub">DLC</small></button></li>
+            <li><button class="mitem" id="btn-codex" type="button" data-k="personagens">PERSONAGENS</button></li>
+            <li><button class="mitem" id="btn-about" type="button" data-k="sobre">SOBRE O JOGO</button></li>
+            <li><button class="mitem" id="btn-rank" type="button" data-k="ranking">RANKING</button></li>
+            <li><button class="mitem" id="btn-opts" type="button" data-k="opcoes">OPÇÕES</button></li>
+            <li><button class="mitem" id="btn-cred" type="button" data-k="creditos">CRÉDITOS</button></li>
+          </ul>
+        </nav>
       </div>
-      <p class="mfoot">Jogo educativo · Conscientização socioambiental</p>
+      <aside class="gow-right" aria-live="polite">
+        <canvas id="m-art" class="px" width="128" height="64" aria-hidden="true"></canvas>
+        <h3 id="m-dt"></h3>
+        <p id="m-dp"></p>
+      </aside>
+    </div>
+    <div class="gow-hint" aria-hidden="true"><span><kbd>W</kbd> <kbd>S</kbd> ou setas: escolher</span><span><kbd>ENTER</kbd> confirmar</span></div>
+  </section>
+
+  <section class="screen gow" id="scr-codex" hidden>
+    <div class="page">
+      <div class="page-h"><button class="mini-btn" id="codex-back" type="button">VOLTAR</button><h2>ENCICLOPÉDIA DA PRAIA</h2></div>
+      <div class="tabs" role="tablist" aria-label="Seções da enciclopédia" id="codex-tabs"></div>
+      <div id="codex-body"></div>
     </div>
   </section>
 
@@ -1054,12 +1117,12 @@ function buildSprites(){
     const cp = { ...c.pal, ...CASUAL_PAL[c.id] }; delete cp.W; delete cp.w; delete cp.Y; delete cp.y;
     SPR.casual[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f, []), cp), { x:6, y:8, style:'big' }));
   }
-  const ROBERT_PAL = { H:'#3b2a55', h:'#22183a', L:'#5a4380', S:'#e0b896', s:'#b08a6c', A:'#4a3a6a', a:'#2c2142', B:'#8bd450', C:'#8bd450', P:'#2a2438', p:'#1a1626', K:'#1a1a22', k:'#3a3a48' };
-  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn']), { ...ROBERT_PAL, X:'#2c2142', x:'#1a1428', G:'#8bd450' }), { x:6, y:8, style:'big' }));
+  const ROBERT_PAL = { H:'#33363d', h:'#1b1c21', L:'#4a4e57', S:'#e0b896', s:'#b08a6c', A:'#2c2f35', a:'#1c1e22', B:'#5b6068', C:'#4a3f35', P:'#26282d', p:'#16171a', K:'#1c1916', k:'#38312a', V:'#33363d' };
+  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['coat']), { ...ROBERT_PAL, X:'#3a3d39', x:'#232624', G:'#6f7d5c' }), { x:6, y:8, style:'big' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
   SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
-  SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['cape']), { ...ROBERT_BASE, A:'#f39c34', a:'#b86a1c', B:'#ffffff', C:'#ffd23f', P:'#2a2a33', p:'#1a1a22', K:'#f4f4f8', k:'#ffffff', X:'#f39c34', x:'#b86a1c', G:'#ffd23f' }), { x:6, y:8, style:'big' }));
+  SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['cape']), { ...ROBERT_BASE, A:'#3e5466', a:'#2a3a48', B:'#d6dbe1', C:'#8a7650', P:'#2a2c33', p:'#1a1b20', K:'#3a3a42', k:'#5a5a64', X:'#56606a', x:'#363d45', G:'#c2a15e' }), { x:6, y:8, style:'big' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
     B:'#f2efe6', b:'#c9c4b4', T:'#6b3f1a', t:'#3f2410', Y:'#b77a38', z:'#4f2e12',
@@ -1567,15 +1630,15 @@ function startFase(f){
   playMusic(FASES[f].musica);
   showIntro();
 }
-const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits','chapters'];
+const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits','chapters','codex'];
 function show(id){
   for (const s of screens) $('#scr-' + s).hidden = s !== id;
-  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits','chapters'].includes(id)) || state === 'cutscene';
+  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits','chapters','codex'].includes(id)) || state === 'cutscene';
   if (id === 'title') paintMenu();
 }
 function setState(s, scr){
   state = s; const id = scr === undefined ? s : scr; show(id);
-  const b = id === 'title' ? $('#nick') : (document.querySelector('#scr-' + id + ' .choice') || document.querySelector('#scr-' + id + ' .btn:not(.ghost):not([hidden])') || document.querySelector('#scr-' + id + ' .btn')); if (b) setTimeout(() => b.focus({ preventScroll:true }), 30);
+  const b = id === 'title' ? $('#btn-play') : id === 'codex' ? document.querySelector('#codex-tabs [aria-selected="true"]') : (document.querySelector('#scr-' + id + ' .choice') || document.querySelector('#scr-' + id + ' .btn:not(.ghost):not([hidden])') || document.querySelector('#scr-' + id + ' .btn')); if (b) setTimeout(() => b.focus({ preventScroll:true }), 30);
 }
 function binsHTML(){
   const ex = { plastico:'Garrafa PET, sacola, isopor', papel:'Caixa de papelão, papel limpo', vidro:'Garrafa e pote de vidro', metal:'Latinha de alumínio', rejeito:'Bituca e lixo sujo' };
@@ -3361,6 +3424,8 @@ addEventListener('keydown', e => {
   keys[e.code] = true;
   if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code) && state === 'play') e.preventDefault();
   if (state === 'opts'){ if (e.code === 'Escape') closeOpts(); return; }
+  if (['title','codex','chapters'].includes(state) && ['ArrowDown','ArrowUp','KeyW','KeyS'].includes(e.code)){ e.preventDefault(); menuNav(['ArrowDown','KeyS'].includes(e.code) ? 1 : -1); return; }
+  if (state === 'codex'){ if (e.code === 'Escape') toTitle(); return; }
   if (state === 'chapters'){ if (e.code === 'Escape') toTitle(); return; }
   if (state === 'credits'){ if (['Escape','Space','Enter'].includes(e.code)){ e.preventDefault(); endCredits(); } return; }
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
@@ -3393,32 +3458,186 @@ $('#nick-form').addEventListener('submit', e => {
 $('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); refreshSB(); };
 $('#btn-rank-back').onclick = () => toTitle();
 $('#btn-win-rank').onclick = () => goRank();
-$('#btn-how').onclick = () => { const b = $('#title-how'); b.hidden = !b.hidden; $('#btn-how').setAttribute('aria-expanded', !b.hidden); if (!b.hidden) b.scrollIntoView({ behavior:'smooth', block:'nearest' }); };
+$('#btn-codex').onclick = () => { initAudio(); openCodex('personagens'); };
+$('#btn-about').onclick = () => { initAudio(); openCodex('comojogar'); };
+$('#btn-cred').onclick = () => { initAudio(); rollCredits(toTitle); };
+$('#codex-back').onclick = () => toTitle();
+$('#mlist').addEventListener('focusin', e => { const b = e.target.closest('.mitem'); if (b) menuDetail(b.dataset.k); });
+$('#mlist').addEventListener('pointerover', e => { const b = e.target.closest('.mitem'); if (b && document.activeElement !== b){ b.focus({ preventScroll:true }); uiTick(); } });
 $('#btn-dlc').onclick = startDLC;
 $('#chap-back').onclick = () => toTitle();
 $('#opt-apres').addEventListener('change', e => { store('lp-apresentacao', e.target.checked); openChapters(); });
-// menu: personagens pulando e ícones dos cartões
+/* ============================ menu principal ============================
+   Lista à esquerda (teclado, mouse ou toque) e um painel à direita que
+   descreve a opção em foco, com uma cena em pixel art. */
+const MENU_INFO = {
+  jogar:      () => ['NOVA PARTIDA', 'Escolha um Guardião e limpe as três praias. Derrote os monstros de lixo, separe cada resíduo na lixeira certa e enfrente os chefes gigantes.'],
+  historia:   () => ['CAPÍTULOS', 'Assista a qualquer cena da história ou pule direto para uma fase. Bom para apresentar o projeto em sala.'],
+  dlc:        () => dlcUnlocked()
+    ? ['O DESCARTE · DLC', 'Depois da cena pós-créditos, o Robert treina no lixão com o Chorume. Jogue com ele e o Martelo Compactador.']
+    : ['O DESCARTE · BLOQUEADO', 'Termine a história principal para liberar o capítulo do Robert. Em História, o Modo apresentação libera sem precisar terminar.'],
+  personagens:() => ['PERSONAGENS', 'Os Guardiões da Maré, a Mestra Caretta e quem está do outro lado: história, roupas, armas, poderes e expressões.'],
+  sobre:      () => ['SOBRE O JOGO', 'Como jogar, os monstros de lixo, as cores da coleta seletiva e a ideia do projeto integrador.'],
+  ranking:    () => ['RANKING DA PRAIA', 'As melhores e as piores pontuações, e os votos de quem já jogou.'],
+  opcoes:     () => ['OPÇÕES', 'Volume, velocidade do texto, modo daltônico, tremor de tela e tela cheia.'],
+  creditos:   () => ['CRÉDITOS', 'A equipe, o elenco e as referências do projeto.'],
+};
+function uiTick(){ if (!AC || !sfxOn) return; voice('square', 880, AC.currentTime, 0.03, 0.018, 3000, sfxBus); }
+function menuNav(dir){
+  const scr = $('#scr-' + state); if (!scr) return;
+  const items = [...scr.querySelectorAll('.mitem, .citem, .chap')].filter(b => b.offsetParent !== null && !b.disabled);
+  if (!items.length) return;
+  const i = items.indexOf(document.activeElement);
+  items[i < 0 ? 0 : (i + dir + items.length) % items.length].focus();
+  uiTick();
+}
+function menuDetail(k){
+  const info = MENU_INFO[k]; if (!info) return;
+  const [t, d] = info(); $('#m-dt').textContent = t; $('#m-dp').textContent = d; drawMenuArt(k);
+}
+// desenha um sprite com o pé na linha "base"
+function putSpr(g, s, x, base, mood, held, sil){
+  const y = base - s.h;
+  g.drawImage(sil ? silOf(s).img : s.img, x, y);
+  if (!sil && s.face && mood) drawFace(g, x + s.face.x, y + s.face.y, mood, s.face);
+  if (!sil && held) drawHeld(g, held, x + 14, y + 17, 0, false, 0);
+}
+function drawMenuArt(k){
+  const c = $('#m-art'), g = c.getContext('2d'), base = c.height - 3; g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
+  g.fillStyle = 'rgba(246,216,154,.22)'; g.fillRect(6, base, c.width - 12, 1);
+  const heroes = (m, x0, held) => HEROIS.forEach((id, i) => putSpr(g, SPR.chars[id][0], x0 + i * 26, base, m, held ? id : null));
+  if (k === 'jogar') heroes('alegre', 12, true);
+  else if (k === 'historia'){ putSpr(g, SPR.casual.marina[0], 22, base, 'surpreso'); putSpr(g, SPR.caretta[0], 52, base, 'alegre'); putSpr(g, SPR.casual.robert[0], 86, base, 'preocupado'); }
+  else if (k === 'dlc'){ const ok = dlcUnlocked(); putSpr(g, SPR.chars.robert[0], 38, base, 'zangado', 'robert', !ok); putSpr(g, SPR.chars.chorume[0], 72, base, 'zangado', null, !ok); }
+  else if (k === 'personagens'){ putSpr(g, SPR.caretta[0], 4, base, 'alegre'); HEROIS.forEach((id, i) => putSpr(g, SPR.chars[id][0], 30 + i * 19, base, 'alegre')); putSpr(g, SPR.chars.robert[0], 106, base, 'zangado'); }
+  else if (k === 'sobre' || k === 'opcoes') Object.keys(MATS).forEach((m, i) => { const s = SPR.bin[m]; g.drawImage(s.img, 12 + i * 22, base - s.h); });
+  else if (k === 'ranking') heroes('comemorando', 12, true);
+  else if (k === 'creditos'){ putSpr(g, SPR.caretta[0], 6, base, 'alegre'); HEROIS.forEach((id, i) => putSpr(g, SPR.chars[id][0], 34 + i * 23, base, 'comemorando')); }
+}
 function paintMenu(){
-  const cast = $('#menu-cast'), list = ['caretta', ...HEROIS, ...(dlcUnlocked() ? ['robert'] : [])];
-  cast.replaceChildren();
-  list.forEach((id, i) => {
-    const s = id === 'caretta' ? SPR.caretta[0] : SPR.chars[id][0], c = document.createElement('canvas'); c.className = 'px'; c.width = 26; c.height = 36;
-    const g = c.getContext('2d'); g.imageSmoothingEnabled = false; const ox = (26 - s.w) >> 1, oy = 36 - s.h;
-    g.drawImage(s.img, ox, oy); drawFace(g, ox + s.face.x, oy + s.face.y, villainMood(id, 'alegre'), s.face);
-    if (HEROIS.includes(id) || id === 'robert') drawHeld(g, id, ox + 14, oy + 17, 0, false, 0);
-    c.style.animationDelay = (i * 0.14) + 's';
-    c.onclick = () => { initAudio(); sfx('deposit'); };
-    cast.append(c);
-  });
-  const icon = (k, f) => { const c = document.querySelector('#scr-title canvas[data-icon="' + k + '"]'); const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, 20, 20); f(c, g); };
-  icon('story', c => carettaPortrait(c, 'alegre'));
-  icon('how', (c, g) => g.drawImage(SPR.bin.plastico.img, 1, -1));
-  icon('rank', c => portraitCanvas(c, 'tiago', 'comemorando'));
-  icon('opts', (c, g) => { g.fillStyle = '#c9d0db'; for (let a = 0; a < 8; a++){ const x = 10 + Math.cos(a * TAU / 8) * 6, y = 10 + Math.sin(a * TAU / 8) * 6; g.fillRect(Math.round(x) - 1, Math.round(y) - 1, 3, 3); } g.beginPath(); g.arc(10, 10, 5, 0, TAU); g.fill(); g.fillStyle = '#2c4a7c'; g.beginPath(); g.arc(10, 10, 2, 0, TAU); g.fill(); });
+  const c = $('#m-cast'), g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
+  let x = 1;
+  for (const id of ['caretta', ...HEROIS]){ const s = id === 'caretta' ? SPR.caretta[0] : SPR.chars[id][0]; putSpr(g, s, x, c.height, 'alegre', id === 'caretta' ? null : id); x += s.w + 3; }
   const open = dlcUnlocked();
-  icon('dlc', (c, g) => { portraitCanvas(c, 'robert', 'zangado'); if (!open){ g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(20,14,30,.75)'; g.fillRect(0, 0, 20, 20); g.globalCompositeOperation = 'source-over'; g.fillStyle = '#ffd23f'; g.fillRect(7, 11, 7, 6); g.fillRect(8, 7, 1, 4); g.fillRect(12, 7, 1, 4); g.fillRect(8, 7, 5, 1); } });
-  $('#btn-dlc').classList.toggle('locked', !open);
-  $('#dlc-sub').textContent = open ? 'Jogue com o Robert e o martelo' : 'Termine a história para liberar';
+  $('#btn-dlc').classList.toggle('lock', !open);
+  $('#dlc-sub').textContent = open ? 'DLC' : 'BLOQUEADO';
+  const f = document.activeElement && document.activeElement.closest && document.activeElement.closest('.mitem');
+  menuDetail(f ? f.dataset.k : 'jogar');
+}
+
+/* ============================ enciclopédia ============================ */
+const ELENCO = [
+  { id:'marina', nome:'Marina', papel:'A SALVA-VIDAS', bio:'Corre na direção do perigo quando todo mundo foge. Foi a primeira a aceitar o chamado da Caretta e é quem mantém o grupo unido.', ficha:['Classe: Guerreira', 'Arma: Espada de Brinquedo', 'Poder: Tornado de Espuma'] },
+  { id:'tiago', nome:'Tiago', papel:'O SURFISTA', bio:'Conhece cada onda da costa e não leva quase nada a sério, menos a mira. Nunca deixa uma garrafa boiando no mar.', ficha:['Classe: Atirador', 'Arma: Lança-Esponja', 'Poder: Chuva de Esponjas'] },
+  { id:'cida', nome:'Cida', papel:'A CATADORA DE RECICLÁVEIS', bio:'Trinta anos separando o que os outros jogam fora. Ninguém conhece o lixo melhor que ela.', ficha:['Classe: Alquimista', 'Arma: Lançador de Limpeza', 'Poder: Maré Limpa'] },
+  { id:'leo', nome:'Léo', papel:'O BIÓLOGO MARINHO', bio:'Sabe o nome científico de cada bicho da praia e repete que, na natureza, nada se perde: tudo se transforma.', ficha:['Classe: Coletor', 'Arma: Frisbee Reciclado', 'Poder: Ímã Reciclador'] },
+  { id:'caretta', nome:'Mestra Caretta', papel:'A GUARDIÃ DA PRAIA', bio:'Uma tartaruga-cabeçuda que guarda a praia há mais de cem anos. Treinou os Guardiões da Maré, mas escondeu deles de onde vem a força.', ficha:['Inspirada na Caretta caretta, espécie ameaçada que desova no litoral brasileiro'] },
+  { id:'robert', nome:'Robert', papel:'O APRENDIZ QUE DESISTIU', bio:'O mais rápido dos cinco aprendizes. Cansou de ver a praia suja de novo, deixou o lixo esquecido tomar conta dele e virou o Descarte.', ficha:['Arma na DLC: Martelo Compactador', 'Poder: Terremoto de Sucata'] },
+  { id:'chorume', nome:'Chorume', papel:'O PRIMEIRO APRENDIZ', secreto:true, bio:'Há cinquenta anos também foi aprendiz da Caretta. Hoje vive no lixão e escorre por baixo de tudo o que a cidade esquece.', ficha:['Chorume é o líquido tóxico que escorre do lixo acumulado. Ele contamina o solo, os rios e o mar.'] },
+];
+const ABAS = [['personagens', 'PERSONAGENS'], ['monstros', 'MONSTROS'], ['lixeiras', 'COLETA SELETIVA'], ['comojogar', 'COMO JOGAR'], ['projeto', 'O PROJETO']];
+let codexAba = 'personagens', codexSel = 0;
+function openCodex(aba){ codexAba = aba; codexSel = 0; renderCodex(); setState('codex'); }
+function bigSprite(s, mood, k, held, sil){
+  const c = document.createElement('canvas'); c.className = 'px'; c.width = s.w + 18; c.height = s.h + 2;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false; putSpr(g, s, 2, c.height, mood, held, sil);
+  c.style.width = c.width * k + 'px'; c.style.height = c.height * k + 'px'; return c;
+}
+function figure(canvas, cap){ const f = document.createElement('figure'); f.append(canvas); if (cap){ const fc = document.createElement('figcaption'); fc.textContent = cap; f.append(fc); } return f; }
+function iconSprite(s, mood, sil){
+  const c = document.createElement('canvas'); c.className = 'px'; c.width = 24; c.height = 24;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false; const k = Math.min(1, 22 / s.w, 22 / s.h), w = Math.round(s.w * k), h = Math.round(s.h * k);
+  g.drawImage(sil ? silOf(s).img : s.img, (24 - w) >> 1, (24 - h) >> 1, w, h);
+  if (k === 1 && s.face && mood && !sil) drawFace(g, ((24 - w) >> 1) + s.face.x, ((24 - h) >> 1) + s.face.y, mood, s.face);
+  return c;
+}
+function charIcon(e, sil){
+  const c = document.createElement('canvas'); c.className = 'px'; c.width = 20; c.height = 20;
+  if (e.id === 'caretta') carettaPortrait(c, 'alegre'); else portraitCanvas(c, e.id, villainMood(e.id, 'alegre'));
+  if (sil){ const g = c.getContext('2d'); g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#1a1220'; g.fillRect(0, 0, 20, 20); }
+  return c;
+}
+function codexEntries(){
+  if (codexAba === 'personagens') return ELENCO.map(e => ({ ...e, sil:e.secreto && !dlcUnlocked() }));
+  const ms = Object.entries(ETYPES).map(([k, E]) => ({ k, nome:E.nome, papel:'LIXEIRA ' + MATS[E.mat].lixeira.toUpperCase() + ' · ' + MATS[E.mat].nome.toUpperCase(), bio:E.fato, ficha:[`Vida ${E.hp} · Velocidade ${E.spd} · Dano ${E.dmg}`], s:SPR[k][0] }));
+  const bs = Object.entries(BOSSES).map(([k, B], i) => ({ k, nome:B.nome.charAt(0) + B.nome.slice(1).toLowerCase(), papel:'CHEFE DA FASE ' + (i + 1) + ' · ' + FASES[i].nome.toUpperCase(), bio:'Nasce de todo o lixo que sobrou na areia: quanto mais sujeira, mais forte ele fica. ' + B.fato, ficha:['Vida base: ' + B.hp, 'Quando cai, solta: ' + [...new Set(B.restos)].map(r => ETYPES[r].nome).join(', ')], s:SPR[k][0], chefe:true }));
+  return [...ms, ...bs];
+}
+function renderCodex(){
+  const tabs = $('#codex-tabs'); tabs.replaceChildren();
+  for (const [k, t] of ABAS){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', k === codexAba); b.textContent = t;
+    b.onclick = () => { codexAba = k; codexSel = 0; renderCodex(); uiTick(); tabs.querySelector('[aria-selected="true"]').focus(); };
+    tabs.append(b);
+  }
+  const body = $('#codex-body'); body.replaceChildren();
+  if (codexAba === 'personagens' || codexAba === 'monstros'){
+    const wrap = document.createElement('div'); wrap.className = 'codex';
+    const list = document.createElement('div'); list.className = 'clist';
+    const det = document.createElement('div'); det.className = 'cdet'; det.setAttribute('aria-live', 'polite');
+    codexEntries().forEach((e, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'citem'; b.setAttribute('aria-selected', i === codexSel);
+      b.append(codexAba === 'personagens' ? charIcon(e, e.sil) : iconSprite(e.s, 'zangado'));
+      const tx = document.createElement('span'); const nb = document.createElement('b'); nb.textContent = e.sil ? '???' : e.nome; const sm = document.createElement('small'); sm.textContent = e.sil ? 'Termine a história' : e.papel.toLowerCase(); tx.append(nb, sm); b.append(tx);
+      b.onclick = () => { codexSel = i; list.querySelectorAll('.citem').forEach((x, j) => x.setAttribute('aria-selected', j === i)); renderDetail(det, e); };
+      b.addEventListener('focus', () => b.click());
+      list.append(b);
+    });
+    wrap.append(list, det); body.append(wrap);
+    renderDetail(det, codexEntries()[codexSel]);
+    return;
+  }
+  const prose = document.createElement('div'); prose.className = 'prose';
+  if (codexAba === 'lixeiras'){
+    prose.innerHTML = `<h3>AS CORES DA COLETA SELETIVA</h3><p>Cada material tem uma lixeira. No jogo, você só ganha experiência quando encosta na lixeira certa.</p><div class="bins">${binsHTML()}</div>
+      <h3>DICAS</h3><ul><li>Lave e seque as embalagens antes de separar: papel molhado ou sujo de gordura não serve para reciclar.</li><li>Amasse latinhas e garrafas PET: ocupam menos espaço no caminhão e na cooperativa.</li><li>Bituca de cigarro e lixo sujo vão no lixo comum (cinza), nunca na areia.</li><li>Reduzir vem antes de reciclar: uma garrafinha reutilizável substitui muitas descartáveis.</li></ul>`;
+    body.append(prose); paintBinCanvases(prose); return;
+  }
+  if (codexAba === 'comojogar'){
+    prose.innerHTML = `<h3>CONTROLES</h3><div class="howto">
+        <div><b>MOVER</b><kbd>W A S D</kbd> ou setas. No celular, arraste o dedo.</div>
+        <div><b>ATACAR</b>As armas atacam sozinhas. Cada classe tem a sua.</div>
+        <div><b>RECOLHER</b>Passe perto do lixo para guardar na mochila. Ela tem limite!</div>
+        <div><b>SEPARAR</b>Encoste na lixeira da cor certa para depositar e ganhar experiência.</div>
+        <div><b>BURST</b><kbd>ESPAÇO</kbd> ou o botão BURST solta o poder especial quando a barra enche.</div>
+        <div><b>PAUSA</b><kbd>P</kbd> ou <kbd>ESC</kbd>. A tecla <kbd>M</kbd> liga e desliga a música.</div></div>
+      <h3>REGRAS DA PRAIA</h3><ul><li>Lixo largado no chão por muito tempo volta a virar monstro.</li><li>Ao bater a meta de recicláveis, todo o lixo que sobrou se junta em um chefe gigante. Quanto mais sujeira, mais forte ele nasce.</li><li>A cada nível, escolha uma melhoria. Arma no nível 5 mais o item certo evolui.</li><li>Entre as fases, troque os créditos de reciclagem na cooperativa.</li></ul>`;
+    body.append(prose); return;
+  }
+  const tot = Object.values(MUTIRAO.itens).reduce((a, b) => a + b, 0);
+  prose.innerHTML = `<h3>A IDEIA</h3><p>Limpando a Praia faz parte de uma atividade integradora sobre conscientização socioambiental: preservar as praias e descartar o lixo do jeito certo.</p>
+    <h3>DUAS AÇÕES</h3><ul><li><b>Mutirão de limpeza:</b> a turma recolhe e registra o lixo de uma praia de verdade.</li><li><b>O jogo:</b> transforma esse lixo em monstros e ensina a separar cada resíduo na lixeira certa.</li></ul>
+    <h3>O QUE O JOGO ENSINA</h3><ul><li>As cores da coleta seletiva.</li><li>Quanto tempo cada resíduo leva para se decompor e como ele machuca os animais marinhos.</li><li>Que o lixo largado volta: com a maré, com o vento e no chefe gigante.</li><li>Que separar gera renda para as cooperativas de catadores.</li></ul>
+    <h3>A HISTÓRIA POR TRÁS</h3><p>A força dos Guardiões vem do próprio lixo: separado e reciclado, o descaso vira força. Esquecido, ele apodrece e corrompe quem perdeu a esperança, como aconteceu com o Robert.</p>
+    <h3>REFERÊNCIAS</h3><p>Política Nacional de Resíduos Sólidos (Lei 12.305/2010) · ODS 14 da ONU: Vida na Água</p>
+    ${tot > 0 ? `<h3>NOSSO MUTIRÃO</h3><p>${[MUTIRAO.local, MUTIRAO.data, MUTIRAO.voluntarios ? MUTIRAO.voluntarios + ' voluntários' : '', MUTIRAO.quilos ? MUTIRAO.quilos + ' kg recolhidos' : '', tot + ' itens registrados'].filter(Boolean).join(' · ')}</p>` : ''}`;
+  body.append(prose);
+}
+function renderDetail(det, e){
+  det.replaceChildren();
+  const art = document.createElement('div'); art.className = 'art';
+  const moodsOf = id => id === 'robert' || id === 'chorume' ? ['zangado', 'triste', 'preocupado'] : id === 'caretta' ? ['alegre', 'triste', 'preocupado', 'surpreso', 'zangado'] : ['alegre', 'triste', 'zangado', 'dor', 'comemorando', 'surpreso'];
+  if (codexAba === 'personagens'){
+    if (e.sil) art.append(figure(bigSprite(SPR.chars[e.id][0], null, 4, null, true), '???'));
+    else if (HEROIS.includes(e.id)){ art.append(figure(bigSprite(SPR.casual[e.id][0], 'alegre', 4), 'Roupa comum'), figure(bigSprite(SPR.chars[e.id][0], 'comemorando', 4, e.id), 'Traje de herói')); }
+    else if (e.id === 'caretta') art.append(figure(bigSprite(SPR.caretta[0], 'alegre', 4), 'Mestra Caretta'));
+    else if (e.id === 'robert') art.append(figure(bigSprite(SPR.casual.robert[0], 'preocupado', 4), 'Roupa comum'), figure(bigSprite(SPR.robertHero[0], 'triste', 4), 'Aprendiz'), figure(bigSprite(SPR.chars.robert[0], 'zangado', 4, 'robert'), 'O Descarte'));
+    else art.append(figure(bigSprite(SPR.chars[e.id][0], 'zangado', 4), 'Chorume'));
+  } else art.append(figure(bigSprite(e.s, 'zangado', e.chefe ? 2 : 4)));
+  const pap = document.createElement('div'); pap.className = 'pap'; pap.textContent = e.sil ? 'SEGREDO' : e.papel;
+  const h = document.createElement('h3'); h.textContent = e.sil ? '???' : e.nome;
+  const p = document.createElement('p'); p.textContent = e.sil ? 'Termine a história principal para descobrir quem é.' : e.bio;
+  det.append(art, pap, h, p);
+  if (!e.sil && e.ficha){ const ul = document.createElement('ul'); for (const f of e.ficha){ const li = document.createElement('li'); li.textContent = f; ul.append(li); } det.append(ul); }
+  if (codexAba === 'personagens' && !e.sil){
+    const m = document.createElement('div'); m.className = 'moods';
+    for (const md of moodsOf(e.id)){
+      const fig = document.createElement('figure'), c = document.createElement('canvas'); c.className = 'px'; c.width = 20; c.height = 20;
+      if (e.id === 'caretta') carettaPortrait(c, md); else portraitCanvas(c, e.id, md);
+      fig.append(c); const cap = document.createElement('figcaption'); cap.textContent = ({ dor:'Dor', comemorando:'Festa', surpreso:'Surpresa' })[md] || MOOD_LABEL[md]; fig.append(cap); m.append(fig);
+    }
+    det.append(m);
+  }
 }
 $('#btn-back').onclick = () => setState('title');
 $('#btn-start').onclick = () => { initAudio(); newRun(); };
@@ -3476,7 +3695,6 @@ function boot(){
   resize(); buildSprites();
   L = makeLevel(0);
   $('#pause-bins').innerHTML = binsHTML(); paintBinCanvases($('#pause-bins'));
-  $('#title-bins').innerHTML = `<h3 style="margin-bottom:8px">ONDE VAI CADA LIXO</h3><div class="bins">${binsHTML()}</div>`; paintBinCanvases($('#title-bins'));
   myNick = cleanNick(load('lp-nick', '')); $('#nick').value = myNick;
   setState('start');
   initRank();

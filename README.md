@@ -38,13 +38,19 @@ A **Mestra Caretta**, uma tartaruga-marinha que guarda a praia há mais de cem a
 
 Depois disso, a Caretta confessa que mentiu: a força dos Guardiões não vem do mar, e sim do lixo. Todo resíduo carrega o descaso de quem jogou fora. Separado e reciclado, esse descaso vira força. Esquecido, ele apodrece e corrompe quem está sem esperança, e foi o que aconteceu com Robert e, cinquenta anos antes, com outro aprendiz dela. Mesmo com a mentira revelada, o grupo se une para **salvar o Robert**, porque cada resíduo separado na lixeira certa enfraquece o Descarte.
 
-Os personagens começam a história com roupas comuns e ganham **trajes de herói** (capas, tiara, visor, sobretudo) quando recebem o poder da Caretta. A roupa do Robert escurece quando ele se corrompe.
+Os personagens começam a história com roupas comuns e ganham **trajes de herói** (capas, tiara, visor, sobretudo) quando recebem o poder da Caretta. Quando se corrompe, o Robert troca a capa de aprendiz por um sobretudo escuro e capuz, em tons de cinza.
 
 - A abertura aparece quando a pessoa entra no jogo (dá para desligar nas Opções).
 - O botão **HISTÓRIA** do menu abre os **Capítulos**: dá para assistir a qualquer cena separada (abertura, antes de cada chefe, final, créditos e pós-créditos) ou **pular direto para a fase 1, 2 ou 3** com o personagem escolhido, já com a força que ele teria naquela fase. Ideal para apresentar em sala. Pontuações de fases puladas não entram no ranking.
 - Antes de cada chefe, Robert aparece provocando.
 - No final, Robert ataca a Marina com uma gosma tóxica. A partir daí, a Marina fica infectada e não pode mais ser escolhida naquele aparelho. A seleção de personagem tem a opção **Reiniciar a história** para ela voltar.
 - Cada momento tem uma música própria: alegre, triste, tensa, misteriosa e heroica. Cada fase também tem a sua trilha.
+
+## Menu e Enciclopédia
+
+O menu principal segue o estilo dos jogos cinematográficos: a lista de opções fica à esquerda (dá para navegar com W/S, setas, mouse ou toque) e um painel à direita descreve a opção em foco. As opções são Jogar, História (capítulos), O Descarte (DLC), Personagens, Sobre o jogo, Ranking, Opções e Créditos.
+
+Personagens e Sobre o jogo abrem a **Enciclopédia da Praia**, com cinco abas: Personagens (biografia, roupas, arma, poder e expressões), Monstros (cada resíduo, a lixeira certa e os chefes), Coleta seletiva, Como jogar e O projeto. O Chorume só aparece na enciclopédia depois que a história principal termina.
 
 ## Personagens
 
