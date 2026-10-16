@@ -36,6 +36,10 @@ Lixo largado por muito tempo volta a virar monstro.
 
 A **Mestra Caretta**, uma tartaruga-marinha que guarda a praia há mais de cem anos, treina cinco jovens para defender o litoral. O nome vem da *Caretta caretta*, a tartaruga-cabeçuda, espécie ameaçada que desova no Brasil. Um dos aprendizes, **Robert**, cansa de ver a praia suja de novo, vira **Robert, o Descarte**, e desperta o lixo abandonado. Os quatro que ficam formam os **Guardiões da Maré**.
 
+Depois disso, a Caretta confessa que mentiu: a força dos Guardiões não vem do mar, e sim do lixo. Todo resíduo carrega o descaso de quem jogou fora. Separado e reciclado, esse descaso vira força. Esquecido, ele apodrece e corrompe quem está sem esperança, e foi o que aconteceu com Robert e, cinquenta anos antes, com outro aprendiz dela. Mesmo com a mentira revelada, o grupo se une para **salvar o Robert**, porque cada resíduo separado na lixeira certa enfraquece o Descarte.
+
+Os personagens começam a história com roupas comuns e ganham **trajes de herói** (capas, tiara, visor, sobretudo) quando recebem o poder da Caretta. A roupa do Robert escurece quando ele se corrompe.
+
 - A abertura aparece na primeira vez que a pessoa joga e pode ser revista pelo botão **HISTÓRIA** do menu.
 - Antes de cada chefe, Robert aparece provocando.
 - No final, Robert ataca a Marina com uma gosma tóxica. A partir daí, a Marina fica infectada e não pode mais ser escolhida naquele aparelho. A seleção de personagem tem a opção **Reiniciar a história** para ela voltar.

@@ -833,7 +833,7 @@ const RAMP = {
   rock:['#3a2a26','#5b4339','#7d6250','#a2866c','#c7ad8c'],
 };
 
-function charRows(style, frame){
+function charRows(style, frame, extras){
   const r = [
     '......hhhh......',
     '....hhHHHHhh....',
@@ -889,6 +889,17 @@ function charRows(style, frame){
     for (let y = 13; y < 20; y++){ put(0, y, 'y'); put(1, y, y % 3 ? 'Y' : 'y'); put(2, y, 'Y'); put(3, y, 'y'); }
     put(1, 12, 'y'); put(2, 12, 'y');
   }
+  const ex = extras || [];
+  if (ex.includes('cape') || ex.includes('torn')){
+    for (let y = 13; y <= 21; y++){ put(1, y, 'X'); put(2, y, y % 3 === 0 ? 'x' : 'X'); if (y >= 16) put(0, y, y % 2 ? 'x' : 'X'); }
+    put(0, 22, 'x'); put(1, 22, 'X'); put(2, 22, 'x');
+    put(4, 13, 'G'); put(11, 13, 'G');
+    if (ex.includes('torn')){ put(0, 17, '.'); put(2, 19, '.'); put(0, 21, '.'); put(1, 22, '.'); }
+  }
+  if (ex.includes('coat')){ for (let y = 17; y <= 21; y++){ put(3, y, y === 21 ? 'x' : 'X'); put(12, y, y === 21 ? 'x' : 'X'); } put(4, 13, 'G'); put(11, 13, 'G'); put(9, 4, 'V'); put(10, 4, 'V'); }
+  if (ex.includes('tiara')){ put(6, 2, 'G'); put(7, 1, 'G'); put(8, 2, 'G'); put(7, 2, 'G'); }
+  if (ex.includes('visor')){ put(9, 5, 'V'); put(10, 5, 'V'); put(11, 5, 'V'); }
+  if (ex.includes('feather')){ put(11, 0, 'G'); put(12, 0, 'G'); put(12, 1, 'G'); put(13, 0, 'G'); }
   return g.map(a => a.join(''));
 }
 
@@ -906,9 +917,31 @@ function makeEnemy(w, h, body, face, feet, arms){
 
 function buildSprites(){
   SPR.chars = {};
-  for (const c of CLASSES) SPR.chars[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f), c.pal), { x:6, y:8, style:'big' }));
+  // traje de herói (usado no jogo) e roupa comum (antes de receber o poder)
+  const HERO_EXTRA = { marina:['cape','tiara'], tiago:['cape','visor'], cida:['coat'], leo:['cape','feather'] };
+  const HERO_PAL = {
+    marina:{ A:'#f4f4f8', a:'#c3c3d2', B:'#d93a3a', C:'#ffd23f', P:'#d93a3a', p:'#9b2228', K:'#ffd23f', k:'#fff1a8', X:'#d93a3a', x:'#8f1d24', G:'#ffd23f' },
+    tiago: { A:'#1d6fb8', a:'#124a7d', B:'#7fe0ff', P:'#2bb3c0', p:'#167b88', K:'#e9fbff', k:'#ffffff', X:'#2bb3c0', x:'#167b88', G:'#ffd23f', V:'#ffe066' },
+    cida:  { A:'#2f8f4f', a:'#1d5e33', P:'#3b3f58', p:'#262a3d', X:'#2f8f4f', x:'#1d5e33', G:'#ffd23f', V:'#7fe0ff' },
+    leo:   { A:'#6a4cc4', a:'#47328a', B:'#ffd23f', X:'#7b5cd6', x:'#4a3590', G:'#ffd23f' },
+  };
+  const CASUAL_PAL = {
+    marina:{ A:'#e8e2d0', a:'#b9b2a0', B:'#e8e2d0', C:'#7a5a3a', P:'#3d5a8a', p:'#2b4066', K:'#8a5a3a', k:'#b07a4a' },
+    tiago: { A:'#f2c14e', a:'#c49a2e', B:'#f2c14e', C:'#e0b84a', P:'#d9534f', p:'#a33a37', K:'#3a3a4a', k:'#6a6a7a' },
+    cida:  { A:'#7a8a9a', a:'#56636f', B:'#7a8a9a', C:'#8a6a4a', c:'#6a4e34', P:'#4a5a6a', p:'#344250' },
+    leo:   { A:'#9aa06a', a:'#6f7548', B:'#d9d0b0', C:'#b8a070', c:'#8a7448' },
+  };
+  SPR.casual = {};
+  for (const c of CLASSES){
+    SPR.chars[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f, HERO_EXTRA[c.id]), { ...c.pal, ...HERO_PAL[c.id] }), { x:6, y:8, style:'big' }));
+    const cp = { ...c.pal, ...CASUAL_PAL[c.id] }; delete cp.W; delete cp.w; delete cp.Y; delete cp.y;
+    SPR.casual[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f, []), cp), { x:6, y:8, style:'big' }));
+  }
   const ROBERT_PAL = { H:'#3b2a55', h:'#22183a', L:'#5a4380', S:'#e0b896', s:'#b08a6c', A:'#4a3a6a', a:'#2c2142', B:'#8bd450', C:'#8bd450', P:'#2a2438', p:'#1a1626', K:'#1a1a22', k:'#3a3a48' };
-  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f), ROBERT_PAL), { x:6, y:8, style:'big' }));
+  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn']), { ...ROBERT_PAL, X:'#2c2142', x:'#1a1428', G:'#8bd450' }), { x:6, y:8, style:'big' }));
+  const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
+  SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
+  SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['cape']), { ...ROBERT_BASE, A:'#f39c34', a:'#b86a1c', B:'#ffffff', C:'#ffd23f', P:'#2a2a33', p:'#1a1a22', K:'#f4f4f8', k:'#ffffff', X:'#f39c34', x:'#b86a1c', G:'#ffd23f' }), { x:6, y:8, style:'big' }));
   const turtleSkin = ['#3d5a2a','#5f8a3c','#86b85a','#b5dd8a'];
   SPR.caretta = [0, 1].map(f => wrap(mk(38, 26, g => {
     paintEllipsoid(g, 8, 6 + f, 6, 3.2, turtleSkin); paintEllipsoid(g, 8, 20 - f, 6, 3.2, turtleSkin);
@@ -1406,8 +1439,8 @@ function binsHTML(){
   return Object.entries(MATS).map(([k, m]) => `<div class="bin"><canvas class="px" data-bin="${k}" width="18" height="24"></canvas><span><b>${m.lixeira}: ${m.nome}</b><br>${ex[k]}</span></div>`).join('');
 }
 function paintBinCanvases(root){ root.querySelectorAll('canvas[data-bin]').forEach(c => c.getContext('2d').drawImage(SPR.bin[c.dataset.bin].img, 0, 0)); }
-function portraitCanvas(cnv, id, mood, sick){
-  const g = cnv.getContext('2d'), s = sick ? sickOf(SPR.chars[id][0]) : SPR.chars[id][0]; g.imageSmoothingEnabled = false;
+function portraitCanvas(cnv, id, mood, sick, set){
+  const base = (set || SPR.chars[id])[0], g = cnv.getContext('2d'), s = sick ? sickOf(base) : base; g.imageSmoothingEnabled = false;
   g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 0, 0, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x + 1, s.face.y + 3, mood, s.face);
 }
 function buildSelect(){
@@ -2511,6 +2544,15 @@ function walk(C, id, dx, dy, leave){ const a = actor(C, id); if (a){ a.tx = a.x 
 function setMoods(C, ids, m){ for (const id of ids){ const a = actor(C, id); if (a) a.mood = m; } }
 function hop(C, ids){ for (const id of ids){ const a = actor(C, id); if (a) a.hop = 0.45; } }
 function tremble(C, id, t){ const a = actor(C, id); if (a) a.tremble = t || 1.2; }
+const CASUAL = { outfit:'casual' };
+function spriteSet(a){ if (a.outfit === 'casual') return SPR.casual[a.id]; if (a.outfit === 'hero' && a.id === 'robert') return SPR.robertHero; return SPR.chars[a.id]; }
+function silOf(s){
+  if (!s._sil) s._sil = { ...s, img:mk(s.img.width, s.img.height, g => { g.drawImage(s.img, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#1a1220'; g.fillRect(0, 0, s.img.width, s.img.height); }) };
+  return s._sil;
+}
+function burst(C, a, cols){ for (let k = 0; k < 34; k++){ const ang = Math.random() * TAU, sp = rand(30, 110); L.parts.push({ x:a.x, y:a.y - 12, vx:Math.cos(ang) * sp, vy:Math.sin(ang) * sp - 40, life:rand(.5, 1.1), col:cols[k % cols.length], s:2 }); } }
+function transform(C, id){ const a = actor(C, id); if (!a) return; a.outfit = 'hero'; a.hop = 0.45; C.flash = 1; burst(C, a, ['#ffd23f','#ffffff','#7fe0ff']); sfx('lvl'); }
+function corrupt(C, id){ const a = actor(C, id); if (!a) return; a.outfit = null; a.tremble = 1.5; a.nome = 'Robert, o Descarte'; burst(C, a, ['#8bd450','#4f8a2a','#2c2142']); }
 function riseMonsters(C, x, y){
   const types = ['pet','lata','sacola','bituca','vidro','papelao','isopor','pet','lata','sacola'];
   types.forEach((type, i) => { const a = i / types.length * TAU; C.actors.push({ id:'m' + i, kind:'enemy', type, x:x + Math.cos(a) * 84, y:y + Math.sin(a) * 48, rise:0, delay:0.2 + i * 0.1, anim:Math.random() * 3 }); });
@@ -2534,7 +2576,7 @@ const OPENING = () => [
     { who:'narr', text:'Até que a praia não era mais de ninguém.', shot:{ at:[STAGE_X, 360], z:1 } } ] },
 
   { fase:0, music:'triste', cam:[STAGE_X, 340], crabs:'triste', trash:30, grade:'gray', rain:true,
-    actors:[ ch('marina', -170, SHORE + 44, 'triste'), ch('tiago', 160, SHORE + 56, 'dor', { flip:true }), ch('cida', -120, 430, 'zangado'), ch('leo', 140, 420, 'triste', { flip:true }), ch('robert', 0, 370, 'zangado') ], lines:[
+    actors:[ ch('marina', -170, SHORE + 44, 'triste', CASUAL), ch('tiago', 160, SHORE + 56, 'dor', { flip:true, ...CASUAL }), ch('cida', -120, 430, 'zangado', CASUAL), ch('leo', 140, 420, 'triste', { flip:true, ...CASUAL }), ch('robert', 0, 370, 'zangado', CASUAL) ], lines:[
     { who:'narr', text:'Cinco pessoas da cidade carregavam a mesma ferida.', shot:'wide' },
     { who:'marina', mood:'triste', text:'Ela tinha uma sacola enrolada no pescoço... Eu cheguei a tempo. Dessa vez.', shot:{ f:'marina', z:2.4 } },
     { who:'tiago', mood:'dor', text:'Vinte anos surfando aqui. Hoje eu saí do mar sangrando por causa de um caco de vidro.', shot:{ f:'tiago', z:2.4 } },
@@ -2543,7 +2585,7 @@ const OPENING = () => [
     { who:'robert', mood:'zangado', text:'Eu cansei de reclamar. Alguém tem que fazer alguma coisa.', shot:{ f:'robert', z:2.8 }, grade:'red', do:C => tremble(C, 'robert', 1) } ] },
 
   { fase:1, music:'misteriosa', cam:[STAGE_X, 270], crabs:'alegre',
-    actors:[ ch('marina', -68, 330, 'triste'), ch('tiago', -34, 342, 'triste'), ch('robert', 0, 336, 'zangado'), ch('cida', 34, 342, 'triste', { flip:true }), ch('leo', 68, 330, 'triste', { flip:true }), carettaAt(0, SHORE + 6, { hidden:true }) ], lines:[
+    actors:[ ch('marina', -68, 330, 'triste', CASUAL), ch('tiago', -34, 342, 'triste', CASUAL), ch('robert', 0, 336, 'zangado', CASUAL), ch('cida', 34, 342, 'triste', { flip:true, ...CASUAL }), ch('leo', 68, 330, 'triste', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 6, { hidden:true }) ], lines:[
     { card:'O CHAMADO' },
     { who:'narr', text:'Naquela tarde, os cinco foram até o mar sem saber direito por quê.', shot:'wide' },
     { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 62; setMoods(C, [...HEROIS, 'robert'], 'surpreso'); } },
@@ -2551,27 +2593,28 @@ const OPENING = () => [
     { who:'caretta', text:'E faz cem anos que eu espero alguém que se importe.', shot:{ f:'caretta', z:3 } },
     { who:'tiago', mood:'surpreso', text:'Calma aí... uma tartaruga falando? Eu bati a cabeça no recife, né?', shot:{ f:'tiago', z:2.4 } },
     { who:'caretta', text:'Vocês cinco sentiram a mesma dor que eu. Isso não é coincidência.', shot:{ f:'caretta', z:2.4 } },
+    { who:'caretta', text:'O mar vai dar força a vocês.', shot:{ f:'caretta', z:2.8 } },
     { who:'caretta', text:'É um chamado.', shot:'wide', fx:'flash', do:C => setMoods(C, [...HEROIS, 'robert'], 'alegre') } ] },
 
   { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre',
-    actors:[ ch('marina', -100, 380, 'alegre'), ch('tiago', -50, 396, 'alegre'), ch('robert', 0, 404, 'alegre'), ch('cida', 50, 396, 'alegre', { flip:true }), ch('leo', 100, 380, 'alegre', { flip:true }), carettaAt(0, SHORE + 64) ], lines:[
+    actors:[ ch('marina', -100, 380, 'alegre', CASUAL), ch('tiago', -50, 396, 'alegre', CASUAL), ch('robert', 0, 404, 'alegre', CASUAL), ch('cida', 50, 396, 'alegre', { flip:true, ...CASUAL }), ch('leo', 100, 380, 'alegre', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 64) ], lines:[
     { card:'O TREINAMENTO' },
     { who:'caretta', text:'Marina. Coragem para chegar perto do que todo mundo evita.', shot:{ f:'caretta', z:2.2 } },
-    { who:'marina', mood:'comemorando', text:'Pode deixar comigo!', shot:{ f:'marina', z:2.6 }, do:C => hop(C, ['marina']) },
+    { who:'marina', mood:'comemorando', text:'Pode deixar comigo!', shot:{ f:'marina', z:2.6 }, do:C => transform(C, 'marina') },
     { who:'caretta', text:'Tiago. Você lê as ondas como ninguém: acerte o que está longe.', shot:{ f:'caretta', z:2.2 } },
-    { who:'tiago', mood:'comemorando', text:'Agora sim. Isso eu sei fazer.', shot:{ f:'tiago', z:2.6 }, do:C => hop(C, ['tiago']) },
+    { who:'tiago', mood:'comemorando', text:'Agora sim. Isso eu sei fazer.', shot:{ f:'tiago', z:2.6 }, do:C => transform(C, 'tiago') },
     { who:'caretta', text:'Cida. Ninguém conhece o lixo melhor que você. Use a água a seu favor.', shot:{ f:'caretta', z:2.2 } },
-    { who:'cida', mood:'alegre', text:'Trinta anos separando o que os outros jogam fora. Finalmente alguém percebeu.', shot:{ f:'cida', z:2.6 } },
+    { who:'cida', mood:'alegre', text:'Trinta anos separando o que os outros jogam fora. Finalmente alguém percebeu.', shot:{ f:'cida', z:2.6 }, do:C => transform(C, 'cida') },
     { who:'caretta', text:'Léo. O que vai, volta. Na natureza, nada se perde.', shot:{ f:'caretta', z:2.2 } },
-    { who:'leo', mood:'comemorando', text:'Tudo se transforma. Eu sei, eu sei.', shot:{ f:'leo', z:2.6 }, do:C => hop(C, ['leo']) },
+    { who:'leo', mood:'comemorando', text:'Tudo se transforma. Eu sei, eu sei.', shot:{ f:'leo', z:2.6 }, do:C => transform(C, 'leo') },
     { who:'caretta', text:'Robert... você é o mais rápido de todos.', shot:{ f:'robert', z:2.6 } },
-    { who:'robert', mood:'alegre', text:'Eu sei.', shot:{ f:'robert', z:2.8 } },
+    { who:'robert', mood:'alegre', text:'Eu sei.', shot:{ f:'robert', z:2.8 }, do:C => transform(C, 'robert') },
     { who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.', shot:{ f:'caretta', z:2.8 }, do:C => setMoods(C, ['robert'], 'zangado') },
     { who:'robert', mood:'zangado', text:'...', shot:{ f:'robert', z:3.2 }, grade:'red' },
     { who:'caretta', text:'Lembrem: limpar é importante. Mas o segredo é separar o lixo na origem. Cada resíduo na sua lixeira.', shot:'wide' } ] },
 
   { fase:1, music:'tensa', cam:[STAGE_X, 380], crabs:'triste', trash:50,
-    actors:[ ch('marina', -90, 392, 'triste'), ch('cida', -54, 402, 'triste'), ch('tiago', -120, 410, 'triste'), ch('leo', -70, 424, 'triste'), ch('robert', 30, 386, 'zangado', { flip:true }) ], lines:[
+    actors:[ ch('marina', -90, 392, 'triste'), ch('cida', -54, 402, 'triste'), ch('tiago', -120, 410, 'triste'), ch('leo', -70, 424, 'triste'), ch('robert', 30, 386, 'zangado', { flip:true, outfit:'hero' }) ], lines:[
     { card:'MESES DEPOIS', sub:'um domingo à tarde' },
     { who:'robert', mood:'zangado', text:'Ontem esta praia estava limpa. LIMPA!', shot:{ f:'robert', z:2.4 }, fx:'shake', do:C => tremble(C, 'robert', 1.4) },
     { who:'robert', mood:'zangado', text:'Olha isso. Olha!', shot:{ at:[STAGE_X + 40, 420], z:1.6 } },
@@ -2584,23 +2627,43 @@ const OPENING = () => [
     { who:'marina', mood:'triste', text:'Robert, espera!', shot:{ f:'marina', z:2.2 } } ] },
 
   { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:44, glow:true, thunder:true, rain:true,
-    actors:[ ch('robert', 0, 420, 'zangado') ], lines:[
+    actors:[ ch('robert', 0, 420, 'zangado', { outfit:'hero' }) ], lines:[
     { who:'narr', text:'Naquela noite, Robert voltou sozinho para a praia.', shot:'wide' },
     { who:'robert', mood:'triste', text:'A Caretta me ensinou a ouvir o mar.', shot:{ f:'robert', z:2.6 } },
     { who:'robert', mood:'zangado', text:'Mas eu aprendi a ouvir outra coisa. Tudo o que vocês jogaram fora...', shot:{ f:'robert', z:3.2 }, grade:'red' },
-    { who:'robert', mood:'zangado', text:'...ACORDE!', shot:'wide', fx:'thunder', do:C => riseMonsters(C, STAGE_X, 420) },
-    { who:'narr', text:'O lixo esquecido ganhou vida. E Robert ganhou outro nome.', shot:{ at:[STAGE_X, 410], z:1.4 } },
+    { who:'robert', mood:'zangado', text:'...ACORDE!', shot:'wide', fx:'thunder', do:C => { riseMonsters(C, STAGE_X, 420); corrupt(C, 'robert'); } },
+    { who:'narr', text:'O lixo esquecido ganhou vida. A roupa de Robert escureceu. E ele ganhou outro nome.', shot:{ f:'robert', z:2.2 } },
     { card:'ROBERT, O DESCARTE', red:true } ] },
 
-  { fase:0, music:'heroica', cam:[STAGE_X, 330], crabs:'alegre',
+  { fase:0, music:'misteriosa', cam:[STAGE_X, 330], crabs:'triste',
     actors:[ ch('cida', -66, 388, 'triste'), ch('marina', -22, 396, 'triste'), ch('tiago', 22, 396, 'triste', { flip:true }), ch('leo', 66, 388, 'triste', { flip:true }), carettaAt(0, SHORE + 62) ], lines:[
     { card:'NA MANHÃ SEGUINTE' },
-    { who:'caretta', text:'O lixo despertou. E Robert escolheu o lado dele.', shot:{ f:'caretta', z:2.4 } },
-    { who:'leo', mood:'triste', text:'Ele era nosso amigo.', shot:{ f:'leo', z:2.6 } },
-    { who:'marina', mood:'zangado', text:'Ainda é. E é por isso que a gente vai trazer ele de volta.', shot:{ f:'marina', z:2.8 } },
-    { who:'cida', mood:'zangado', text:'E separar cada garrafa desta praia no caminho.', shot:{ f:'cida', z:2.6 } },
-    { who:'tiago', mood:'comemorando', text:'Então bora!', shot:{ f:'tiago', z:2.6 }, do:C => hop(C, ['tiago']) },
-    { who:'todos', mood:'comemorando', text:'Pela praia, pelo mar, pela vida: GUARDIÕES DA MARÉ!', shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
+    { who:'leo', mood:'triste', text:'O Robert... virou aquilo. Como isso é possível?', shot:{ f:'leo', z:2.4 } },
+    { who:'caretta', mood:'triste', text:'Eu preciso contar uma coisa a vocês. Algo que eu escondi desde o primeiro dia.', shot:{ f:'caretta', z:2.6 } },
+    { who:'tiago', mood:'surpreso', text:'Escondeu? Escondeu o quê?', shot:{ f:'tiago', z:2.4 } },
+    { who:'caretta', mood:'triste', text:'Eu disse que a força de vocês vinha do mar.', shot:{ f:'caretta', z:2.8 } },
+    { who:'caretta', mood:'triste', text:'Eu menti.', shot:{ f:'caretta', z:3.4 }, music:'triste', grade:'gray', do:C => setMoods(C, HEROIS, 'surpreso') },
+    { who:'caretta', mood:'triste', text:'Ela vem do lixo.', shot:'wide', fx:'shake' },
+    { who:'caretta', mood:'triste', text:'Todo resíduo carrega o descaso de quem jogou fora. Separado e reciclado, esse descaso vira força. Foi isso que eu dei a vocês.', shot:{ f:'caretta', z:2.4 } },
+    { who:'caretta', mood:'triste', text:'Mas o lixo esquecido apodrece. E o descaso apodrecido procura um coração cansado para morar.', shot:{ f:'caretta', z:2.8 }, grade:'gray' } ] },
+
+  { fase:0, music:'triste', cam:[STAGE_X, 330], crabs:'triste', grade:'sepia', trash:20,
+    actors:[ ch('robert', 30, 392, 'triste', { silhouette:true, flip:true }), carettaAt(-40, SHORE + 70) ], lines:[
+    { card:'CINQUENTA ANOS ATRÁS' },
+    { who:'caretta', mood:'triste', text:'Eu já tive outro aprendiz. Ele também se cansou de ver a praia suja.', shot:{ f:'robert', z:2.4 } },
+    { who:'caretta', mood:'triste', text:'Eu não consegui salvá-lo. E prometi a mim mesma que ninguém nunca mais saberia de onde vem esta força.', shot:'wide', do:C => walk(C, 'robert', 260, 0, true) } ] },
+
+  { fase:0, music:'triste', cam:[STAGE_X, 330], crabs:'triste',
+    actors:[ ch('cida', -66, 388, 'zangado'), ch('marina', -22, 396, 'triste'), ch('tiago', 22, 396, 'zangado', { flip:true }), ch('leo', 66, 388, 'triste', { flip:true }), carettaAt(0, SHORE + 62, { mood:'triste' }) ], lines:[
+    { who:'cida', mood:'zangado', text:'Você mentiu para a gente esse tempo todo!', shot:{ f:'cida', z:2.8 }, fx:'shake' },
+    { who:'tiago', mood:'zangado', text:'E deixou o Robert carregar isso sozinho!', shot:{ f:'tiago', z:2.6 } },
+    { who:'caretta', mood:'triste', text:'Eu tive medo. Medo de perder vocês como perdi ele.', shot:{ f:'caretta', z:2.8 } },
+    { who:'leo', mood:'triste', text:'Então o Robert não escolheu isso. Ele foi contaminado.', shot:{ f:'leo', z:2.4 } },
+    { who:'marina', mood:'zangado', text:'Mentira ou não... o Robert é um de nós.', shot:{ f:'marina', z:3 }, music:'heroica', do:C => setMoods(C, ['tiago','cida','leo'], 'surpreso') },
+    { who:'marina', mood:'zangado', text:'A gente não vai lutar contra ele. A gente vai trazer ele de volta.', shot:{ f:'marina', z:2.6 } },
+    { who:'caretta', mood:'alegre', text:'Cada resíduo separado na lixeira certa enfraquece o Descarte. Limpem a praia... e talvez Robert volte a ser quem era.', shot:{ f:'caretta', z:2.4 } },
+    { who:'tiago', mood:'comemorando', text:'Então é isso. Bora salvar aquele cabeça-dura!', shot:{ f:'tiago', z:2.6 }, do:C => { hop(C, ['tiago']); setMoods(C, ['cida','leo'], 'alegre'); } },
+    { who:'todos', mood:'comemorando', text:'Pela praia, pelo mar, pelo Robert: GUARDIÕES DA MARÉ!', shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
 ];
 
 /* Robert provoca antes de cada chefe (usa a praia da fase atual) */
@@ -2701,6 +2764,7 @@ function cineLine(){
   C.card = null; $('#card').hidden = true; $('#dlg').hidden = false;
   const who = ln.who === 'player' ? (G ? G.player.id : 'tiago') : ln.who;
   C.speaker = who;
+  if (ln.music) playMusic(ln.music);
   if (ln.do) ln.do(C);
   if (ln.mood){ if (who === 'todos') setMoods(C, HEROIS, ln.mood); else setMoods(C, [who], ln.mood); }
   let shot = ln.shot;
@@ -2715,7 +2779,7 @@ function cineLine(){
   $('#dlg-name').textContent = ln.name || (a && a.nome) || NOMES[who] || '';
   $('#dlg-name').style.color = COR_NOME[who] || '';
   cnv.hidden = !hasFace;
-  if (hasFace){ const mood = ln.mood || (a && a.mood) || 'alegre'; if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick); }
+  if (hasFace){ const mood = ln.mood || (a && a.mood) || 'alegre'; if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick, a ? spriteSet(a) : null); }
   $('#dlg').classList.toggle('narr', who === 'narr');
   C.text = ln.text; C.typed = 0; $('#dlg-text').textContent = '';
 }
@@ -2805,13 +2869,13 @@ function drawActor(a, x, y, t){
   const jx = a.tremble > 0 ? Math.round(rand(-1, 1)) : 0, jy = a.hop > 0 ? -Math.round(Math.sin((1 - a.hop / 0.45) * Math.PI) * 6) : 0;
   x += jx; y += jy;
   if (a.kind === 'char'){
-    const s0 = SPR.chars[a.id][a.walking ? ((a.anim * 8) | 0) % 4 : 0], s = a.sick ? sickOf(s0) : s0;
+    const s0 = spriteSet(a)[a.walking ? ((a.anim * 8) | 0) % 4 : 0], s = a.silhouette ? silOf(s0) : a.sick ? sickOf(s0) : s0;
     const bob = !a.walking && ((t * 2 + a.x * 0.01) | 0) % 2 ? 1 : 0;
     const x0 = x - (s.w >> 1), y0 = y - s.h + 4 + bob;
     shadow(x - jx, y - jy + 2, 14);
-    if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
-    else { ctx.drawImage(s.img, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
-    if (HEROIS.includes(a.id) && !a.sick) drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
+    if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); if (!a.silhouette) drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
+    else { ctx.drawImage(s.img, x0, y0); if (!a.silhouette) drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
+    if (HEROIS.includes(a.id) && !a.sick && a.outfit !== 'casual') drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
     if (a.sick || a.id === 'robert'){ ctx.fillStyle = '#8bd450'; const k = (t * 1.5 + a.x * 0.01) % 1; ctx.globalAlpha = 1 - k; ctx.fillRect(x - 7, Math.round(y0 + 6 - k * 10), 2, 2); ctx.fillRect(x + 6, Math.round(y0 + 12 - ((k + 0.5) % 1) * 10), 2, 2); ctx.globalAlpha = 1; }
     return { top:y0 };
   }
