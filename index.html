@@ -973,17 +973,43 @@ function buildSprites(){
   SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
   SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
   SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['cape']), { ...ROBERT_BASE, A:'#f39c34', a:'#b86a1c', B:'#ffffff', C:'#ffd23f', P:'#2a2a33', p:'#1a1a22', K:'#f4f4f8', k:'#ffffff', X:'#f39c34', x:'#b86a1c', G:'#ffd23f' }), { x:6, y:8, style:'big' }));
-  const turtleSkin = ['#3d5a2a','#5f8a3c','#86b85a','#b5dd8a'];
-  SPR.caretta = [0, 1].map(f => wrap(mk(38, 26, g => {
-    paintEllipsoid(g, 8, 6 + f, 6, 3.2, turtleSkin); paintEllipsoid(g, 8, 20 - f, 6, 3.2, turtleSkin);
-    paintEllipsoid(g, 24, 5 - f, 5, 3, turtleSkin); paintEllipsoid(g, 24, 21 + f, 5, 3, turtleSkin);
-    paintEllipsoid(g, 16, 13, 12, 9.5, ['#4a2e14','#7a4a1e','#a8692c','#cf9248','#e9b874']);
-    g.fillStyle = 'rgba(58,34,14,.75)';
-    for (let a = 0; a < 6; a++) for (let r = 4; r < 9; r++) g.fillRect(Math.round(16 + Math.cos(a * Math.PI / 3 + 0.5) * r * 1.2), Math.round(13 + Math.sin(a * Math.PI / 3 + 0.5) * r * 0.85), 1, 1);
-    for (let a = 0; a < TAU; a += 0.12) g.fillRect(Math.round(16 + Math.cos(a) * 4.5), Math.round(13 + Math.sin(a) * 3.4), 1, 1);
-    paintEllipsoid(g, 31, 13, 6.4, 5.6, turtleSkin);
-    g.fillStyle = '#f2f2ea'; g.fillRect(28, 9, 2, 1); g.fillRect(32, 9, 2, 1);
-  }), { x:28, y:11, style:'small' }));
+  // Mestra Caretta: tartaruga em pé, casco nas costas, túnica, faixa de alga e cajado de coral
+  const CARETTA_ROWS = [
+    '.......GGGGG........',
+    '.....GGgSSSgGG...oo.',
+    '....GgSSsSSSMgG.oOOo',
+    '...GgMSssSSSMSgGoEEo',
+    '...GSSSsSSMSSSSG.oO.',
+    '..GWWwWWWWwWWWWG..D.',
+    '..GSSSSSSSSSSSSG..D.',
+    '..GSSSSSSSSSSSSG..D.',
+    '..GSSSSSSSSSSSSG..D.',
+    '..GgSSSSSSSSSSgG..D.',
+    '..tGSSSSSSSSSSGt..D.',
+    '.tTGgsSSSSSSsgGTt.D.',
+    '.tTYGgSSSSSSgGYTt.D.',
+    '.tTYYGGgggggGYYTt.D.',
+    '..tTTRRgggRRTTt...D.',
+    '.tTYRRrUUUUrRRYTt.D.',
+    '.tTYRRrUuuUrRRYTt.D.',
+    '.tTYgRrUUUUrRRYTtSS.',
+    '.tTYSRrUuuUrRRYTt.D.',
+    '.tTYRQQQQQQQQRYTt.D.',
+    '..tTRRRRQqRRRRTt..D.',
+    '..tyRRRrRRrRRRyt..D.',
+    '...tRRRrRRrRRRt...D.',
+    '...RRRRrRRrRRRR...D.',
+    '...rRRRRRRRRRRr...D.',
+  ];
+  const CARETTA_FEET = ['....gSS...SSg.....D.', '...GGgg...GGgg....dd'];
+  const CARETTA_PAL = { G:'#2f5a24', g:'#4f7d34', S:'#86b85a', s:'#b5dd8a', M:'#5f8a3c', W:'#3fa86b', w:'#2b7a4c',
+    T:'#7a4a1e', t:'#4a2e14', Y:'#cf9248', y:'#a8692c', U:'#e9d68a', u:'#c4ab5a', R:'#2a7f8f', r:'#1b5560',
+    Q:'#ffd23f', q:'#d9a21f', D:'#8a5a2e', d:'#5a3a1c', O:'#ff6f61', o:'#ff9a8a', E:'#e8fbff' };
+  SPR.caretta = [0, 1].map(f => {
+    const rows = [...CARETTA_ROWS, ...(f ? ['....gSS....SSg....D.', '...GGgg....GGgg...dd'] : CARETTA_FEET)];
+    if (f){ rows[3] = rows[3].replace('oEEo', 'oEsO'); }   // brilho da pérola
+    return wrap(fromRows(rows, CARETTA_PAL), { x:6, y:8, style:'big' });
+  });
 
   const petBody = (g) => {
     const prof = [2.6,2.6,2.6,2.2,2.2,2.2,3,4,5,5.8,6.3,6.3,6.3,6.3,6.3,6.3,6.3,6.3,6.1,5.6];
@@ -2569,7 +2595,8 @@ const STAGE_X = 590;   // área livre da praia usada como palco das cenas
 let CINE = null;
 
 const ch = (id, x, y, mood, extra) => ({ id, kind:'char', x:STAGE_X + x, y, mood:mood || 'alegre', ...(extra || {}) });
-const carettaAt = (x, y, extra) => ({ id:'caretta', kind:'caretta', x:STAGE_X + x, y, mood:'alegre', ...(extra || {}) });
+// y é o centro antigo; a Caretta em pé é desenhada a partir dos pés
+const carettaAt = (x, y, extra) => ({ id:'caretta', kind:'caretta', x:STAGE_X + x, y:y + 14, mood:'alegre', ...(extra || {}) });
 function actor(C, id){ return C.actors.find(a => a.id === id); }
 function walk(C, id, dx, dy, leave){ const a = actor(C, id); if (a){ a.tx = a.x + dx; a.ty = a.y + (dy || 0); a.leave = !!leave; } }
 // Robert e Chorume só ficam zangados, tristes ou preocupados
@@ -2622,7 +2649,7 @@ const OPENING = () => [
     actors:[ ch('marina', -68, 330, 'triste', CASUAL), ch('tiago', -34, 342, 'triste', CASUAL), ch('robert', 0, 336, 'zangado', CASUAL), ch('cida', 34, 342, 'triste', { flip:true, ...CASUAL }), ch('leo', 68, 330, 'triste', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 6, { hidden:true }) ], lines:[
     { card:'O CHAMADO' },
     { who:'narr', text:'Naquela tarde, os cinco foram até o mar sem saber direito por quê.', shot:'wide' },
-    { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 62; setMoods(C, HEROIS, 'surpreso'); setMoods(C, ['robert'], 'preocupado'); } },
+    { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 76; setMoods(C, HEROIS, 'surpreso'); setMoods(C, ['robert'], 'preocupado'); } },
     { who:'caretta', text:'Faz cem anos que eu guardo esta praia.', shot:{ f:'caretta', z:2.6 } },
     { who:'caretta', text:'E faz cem anos que eu espero alguém que se importe.', shot:{ f:'caretta', z:3 } },
     { who:'tiago', mood:'surpreso', text:'Calma aí... uma tartaruga falando? Eu bati a cabeça no recife, né?', shot:{ f:'tiago', z:2.4 } },
@@ -2890,7 +2917,7 @@ function sickOf(s){
 }
 function carettaPortrait(cnv, mood){
   const g = cnv.getContext('2d'), s = SPR.caretta[0]; g.imageSmoothingEnabled = false;
-  g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 24, 5, 16, 16, 2, 2, 16, 16); drawFace(g, s.face.x - 22, s.face.y - 3, mood, s.face);
+  g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 2, 0, 17, 17, 1, 3, 17, 17); drawFace(g, s.face.x - 1, s.face.y + 3, mood, s.face);
 }
 function speakerArrow(x, y, t){
   if (CINE && CINE.view.z > 1.4) return;   // no close-up a câmera já mostra quem fala
@@ -2914,10 +2941,12 @@ function drawActor(a, x, y, t){
     return { top:y0 };
   }
   if (a.kind === 'caretta'){
-    const s = SPR.caretta[((a.anim * 2) | 0) % 2];
-    shadow(x, y + (s.h >> 1) - 3, s.w - 8);
-    drawSpr(s, x - (s.w >> 1), y - (s.h >> 1), a.mood);
-    return { top:y - (s.h >> 1) };
+    const s = SPR.caretta[((t * 1.5 + a.x * 0.01) | 0) % 2];
+    const x0 = x - (s.w >> 1), y0 = y - s.h + 4;
+    shadow(x - jx, y - jy + 2, 16);
+    if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
+    else drawSpr(s, x0, y0, a.mood);
+    return { top:y0 };
   }
   if (a.kind === 'enemy'){
     const r = a.rise == null ? 1 : a.rise; if (r <= 0) return null;
