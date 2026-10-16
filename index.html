@@ -156,6 +156,19 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .field input::placeholder{color:#6f81a3}
 .field input:focus-visible{outline:3px dashed var(--sun);outline-offset:3px}
 .err{color:#ffb0a8;font-size:16px}
+.screen.credits{background:#05070f;place-items:stretch;overflow:hidden;padding:0;cursor:pointer}
+.roll{position:absolute;left:0;right:0;top:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:30px;padding:0 16px 60px;text-align:center;animation:roll 34s linear forwards}
+.roll h1{font-size:clamp(26px,6vw,56px)}
+.roll .sub{font-family:var(--f-body);font-weight:700;font-size:clamp(16px,3vw,24px);color:#8fe0ff;letter-spacing:.16em}
+.roll section{display:flex;flex-direction:column;gap:6px;max-width:min(60ch,100%);box-sizing:border-box}
+.roll h3{font-family:var(--f-display);font-size:10px;color:var(--sun);letter-spacing:.12em;margin-bottom:6px}
+.roll p{font-size:19px;color:var(--foam)}
+.roll p small{color:var(--muted);font-size:16px}
+.roll .q{font-style:italic;font-size:21px;color:#e6e0ff}
+.roll .fim{font-family:var(--f-display);font-size:12px;color:var(--sun)}
+@keyframes roll{to{transform:translateY(calc(-100% - 100vh))}}
+#credits-skip{position:absolute;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:2}
+@media (prefers-reduced-motion:reduce){.roll{animation-duration:60s}}
 .slot .sig{position:absolute;right:-4px;bottom:-5px;font-family:var(--f-display);font-size:6px;font-style:normal;background:var(--foam);color:var(--ink);padding:0 1px;line-height:1.2}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:rgba(0,0,0,.25);padding:10px 12px}
@@ -447,6 +460,11 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     </div>
   </section>
 
+  <section class="screen credits" id="scr-credits" hidden>
+    <button class="mini-btn" id="credits-skip" type="button">PULAR</button>
+    <div class="roll" id="roll"></div>
+  </section>
+
   <section class="screen" id="scr-opts" hidden>
     <div class="panel">
       <h2 style="font-family:var(--f-body);font-weight:700;font-size:clamp(20px,3.2vw,28px);letter-spacing:.08em">OPÇÕES</h2>
@@ -557,6 +575,17 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 const SUPABASE = {
   url: 'https://vqzaylqqckldcedrxjwd.supabase.co',
   chave: 'sb_publishable_ZPl2M9FTVO2f8UjebfDoqA_BL-cSI1j',
+};
+
+/* =====================================================================
+   CRÉDITOS FINAIS — preencha com os dados do grupo.
+   Enquanto "equipe" estiver vazia, aparece "Equipe do projeto integrador".
+   ===================================================================== */
+const CREDITOS = {
+  equipe: [],          // ex.: ['Guilherme Leite', 'Nome da colega']
+  curso: '',           // ex.: 'Análise e Desenvolvimento de Sistemas'
+  instituicao: '',     // ex.: 'Nome da faculdade'
+  professor: '',       // ex.: 'Prof. Nome'
 };
 
 const MUTIRAO = {
@@ -899,6 +928,7 @@ function charRows(style, frame, extras){
   if (ex.includes('coat')){ for (let y = 17; y <= 21; y++){ put(3, y, y === 21 ? 'x' : 'X'); put(12, y, y === 21 ? 'x' : 'X'); } put(4, 13, 'G'); put(11, 13, 'G'); put(9, 4, 'V'); put(10, 4, 'V'); }
   if (ex.includes('tiara')){ put(6, 2, 'G'); put(7, 1, 'G'); put(8, 2, 'G'); put(7, 2, 'G'); }
   if (ex.includes('visor')){ put(9, 5, 'V'); put(10, 5, 'V'); put(11, 5, 'V'); }
+  if (ex.includes('beard')){ for (const [x, y] of [[6,12],[7,12],[8,12],[9,12],[6,13],[7,13],[8,13],[9,13],[7,14],[8,14],[7,15]]) put(x, y, 'Q'); }
   if (ex.includes('feather')){ put(11, 0, 'G'); put(12, 0, 'G'); put(12, 1, 'G'); put(13, 0, 'G'); }
   return g.map(a => a.join(''));
 }
@@ -941,6 +971,7 @@ function buildSprites(){
   SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn']), { ...ROBERT_PAL, X:'#2c2142', x:'#1a1428', G:'#8bd450' }), { x:6, y:8, style:'big' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
+  SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
   SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['cape']), { ...ROBERT_BASE, A:'#f39c34', a:'#b86a1c', B:'#ffffff', C:'#ffd23f', P:'#2a2a33', p:'#1a1a22', K:'#f4f4f8', k:'#ffffff', X:'#f39c34', x:'#b86a1c', G:'#ffd23f' }), { x:6, y:8, style:'big' }));
   const turtleSkin = ['#3d5a2a','#5f8a3c','#86b85a','#b5dd8a'];
   SPR.caretta = [0, 1].map(f => wrap(mk(38, 26, g => {
@@ -1425,10 +1456,10 @@ function startFase(f){
   playMusic(FASES[f].musica);
   showIntro();
 }
-const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts'];
+const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits'];
 function show(id){
   for (const s of screens) $('#scr-' + s).hidden = s !== id;
-  $('#hud').hidden = !(G && !['start','logo','title','select','rank'].includes(id)) || state === 'cutscene';
+  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits'].includes(id)) || state === 'cutscene';
 }
 function setState(s, scr){
   state = s; const id = scr === undefined ? s : scr; show(id);
@@ -2531,8 +2562,8 @@ function renderRank(){
    Mestra Caretta treina cinco aprendizes; Robert desiste, vira "o Descarte" e
    desperta o lixo; os quatro que ficam formam os Guardiões da Maré. No final,
    Robert infecta a Marina, que deixa de ser jogável neste aparelho. */
-const NOMES = { narr:'', caretta:'Mestra Caretta', robert:'Robert', todos:'Guardiões da Maré', marina:'Marina', tiago:'Tiago', cida:'Cida', leo:'Léo' };
-const COR_NOME = { caretta:'#b5dd8a', robert:'#c9a2ff', todos:'#ffd23f', marina:'#ff9a6e', tiago:'#7fe0ff', cida:'#9be6b0', leo:'#e0c2ff' };
+const NOMES = { chorume:'???', narr:'', caretta:'Mestra Caretta', robert:'Robert', todos:'Guardiões da Maré', marina:'Marina', tiago:'Tiago', cida:'Cida', leo:'Léo' };
+const COR_NOME = { chorume:'#a8ff5a', caretta:'#b5dd8a', robert:'#c9a2ff', todos:'#ffd23f', marina:'#ff9a6e', tiago:'#7fe0ff', cida:'#9be6b0', leo:'#e0c2ff' };
 const HEROIS = ['marina', 'tiago', 'cida', 'leo'];
 const STAGE_X = 590;   // área livre da praia usada como palco das cenas
 let CINE = null;
@@ -2791,7 +2822,7 @@ function cineNext(){
 }
 function cineEnd(){ const d = CINE && CINE.done; CINE = null; $('#cine').hidden = true; $('#card').hidden = true; $('#dlg').hidden = false; if (d) d(); }
 function cineSkip(){ if (CINE) cineEnd(); }
-const VOZ = { caretta:300, robert:170, marina:620, tiago:520, cida:440, leo:480, todos:560 };
+const VOZ = { chorume:110, caretta:300, robert:170, marina:620, tiago:520, cida:440, leo:480, todos:560 };
 function talkBlip(who){
   const f = VOZ[who]; if (!f || !sfxOn || !AC) return;
   voice('square', f * (0.95 + Math.random() * 0.1), AC.currentTime, 0.035, 0.012, 2500, sfxBus);
@@ -2931,6 +2962,53 @@ function cinePost(){
   if (C.fade > 0){ ctx.fillStyle = `rgba(0,0,0,${Math.min(1, C.fade)})`; ctx.fillRect(0, 0, VW, VH); }
 }
 
+/* cena pós-créditos: Robert encontra o antigo aprendiz da Caretta */
+const POST_CREDITS = () => [
+  { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:90, glow:true, thunder:true,
+    actors:[ ch('robert', -170, 410, 'zangado', { tx:STAGE_X - 30, ty:410, nome:'Robert, o Descarte' }), ch('chorume', 60, 400, 'zangado', { flip:true, hidden:true }) ], lines:[
+    { card:'EM ALGUM LUGAR', sub:'longe da praia...' },
+    { who:'narr', text:'O maior lixão da região. Montanhas de tudo o que a cidade decidiu esquecer.', shot:'wide' },
+    { who:'robert', mood:'zangado', text:'Cinquenta anos... A tartaruga achou que ninguém nunca ia descobrir.', shot:{ f:'robert', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Eu sei que você está aqui. O primeiro aprendiz.', shot:{ f:'robert', z:2.8 }, grade:'red' },
+    { who:'narr', text:'O lixo começou a se mexer.', shot:{ at:[STAGE_X + 60, 390], z:2 }, fx:'thunder', do:C => { const a = actor(C, 'chorume'); a.hidden = false; a.tremble = 1.2; burst(C, a, ['#8bd450','#4f8a2a','#3d4a2a']); } },
+    { who:'chorume', mood:'triste', text:'Faz muito tempo que ninguém me procura, garoto.', shot:{ f:'chorume', z:2.8 } },
+    { who:'robert', mood:'zangado', text:'Ela mentiu para todo mundo. Para você também.', shot:{ f:'robert', z:2.6 } },
+    { who:'chorume', mood:'zangado', text:'A Caretta sempre achou que dava para salvar o mundo separando garrafinhas.', shot:{ f:'chorume', z:2.6 } },
+    { who:'chorume', mood:'triste', text:'Eu também tentei. Por anos. E eles continuaram jogando tudo fora.', shot:{ f:'chorume', z:3 }, grade:'gray' },
+    { who:'robert', mood:'zangado', text:'Então me ensina o que ela não teve coragem de ensinar.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines' },
+    { who:'chorume', mood:'alegre', text:'Antes eu tinha um nome. Hoje, quem escorre por baixo de cada lixão... sou eu.', shot:{ f:'chorume', z:3.2 }, do:C => { const a = actor(C, 'chorume'); a.nome = 'Chorume'; } },
+    { card:'CHORUME', red:true },
+    { who:'chorume', mood:'alegre', text:'Juntos, garoto... vamos cobrir este mundo de lixo.', shot:{ f:'chorume', z:2.6 }, grade:'red' },
+    { who:'robert', mood:'alegre', text:'Até não sobrar nenhuma praia para limpar.', shot:{ f:'robert', z:2.6 }, grade:'red' },
+    { who:'narr', text:'E, pela primeira vez em cinquenta anos, o lixão inteiro brilhou.', shot:'wide', fx:'thunder', do:C => riseMonsters(C, STAGE_X, 405) },
+    { card:'OS GUARDIÕES DA MARÉ VOLTARÃO' } ] },
+];
+
+/* créditos finais rolando */
+let creditsDone = null;
+function creditsHTML(){
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  const eq = CREDITOS.equipe.length ? CREDITOS.equipe.map(n => `<p>${esc(n)}</p>`).join('') : '<p>Equipe do projeto integrador</p>';
+  const extra = [CREDITOS.curso, CREDITOS.instituicao].filter(Boolean).map(esc).join(' · ');
+  return `<h1>LIMPANDO<br>A PRAIA</h1><div class="sub">GUARDIÕES DA MARÉ</div>
+    <section><h3>PROJETO INTEGRADOR</h3><p>Conscientização socioambiental sobre a preservação das praias e o descarte correto de resíduos.</p>${extra ? `<p><small>${extra}</small></p>` : ''}</section>
+    <section><h3>EQUIPE</h3>${eq}${CREDITOS.professor ? `<p><small>Orientação: ${esc(CREDITOS.professor)}</small></p>` : ''}</section>
+    <section><h3>ELENCO</h3><p>Marina <small>· a salva-vidas</small></p><p>Tiago <small>· o surfista</small></p><p>Cida <small>· a catadora de recicláveis</small></p><p>Léo <small>· o biólogo marinho</small></p><p>Mestra Caretta <small>· a guardiã da praia</small></p><p>Robert <small>· o Descarte</small></p></section>
+    <section><h3>INSPIRAÇÃO</h3><p>A Mestra Caretta homenageia a <em>Caretta caretta</em>, a tartaruga-cabeçuda, espécie ameaçada que desova no litoral brasileiro.</p></section>
+    <section><h3>REFERÊNCIAS</h3><p>Política Nacional de Resíduos Sólidos: Lei 12.305/2010</p><p>ODS 14 da ONU: Vida na Água</p></section>
+    <section><h3>VOCÊ SABIA?</h3><p>Chorume é o líquido tóxico que escorre do lixo acumulado. Ele contamina o solo, os rios e o mar.</p></section>
+    <section><p class="q">"A praia mais limpa não é a que mais se limpa. É a que menos se suja."</p></section>
+    <p class="fim">OBRIGADO POR JOGAR</p>`;
+}
+function rollCredits(done){
+  creditsDone = done;
+  const r = $('#roll'); r.innerHTML = creditsHTML();
+  r.style.animation = 'none'; void r.offsetWidth; r.style.animation = '';
+  r.onanimationend = endCredits;
+  playMusic('heroica'); setState('credits');
+}
+function endCredits(){ if (state !== 'credits' || !creditsDone) return; const d = creditsDone; creditsDone = null; d(); }
+
 /* abertura automática e logo do jogo */
 function startOpening(){ playCine(OPENING(), showLogo); }
 function beginGame(){ if (state !== 'start') return; initAudio(); applyVolumes(); if (OPTS.historia) startOpening(); else showLogo(); }
@@ -3013,6 +3091,7 @@ addEventListener('keydown', e => {
   keys[e.code] = true;
   if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code) && state === 'play') e.preventDefault();
   if (state === 'opts'){ if (e.code === 'Escape') closeOpts(); return; }
+  if (state === 'credits'){ if (['Escape','Space','Enter'].includes(e.code)){ e.preventDefault(); endCredits(); } return; }
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
   if (e.code === 'Space' && state === 'play') useBurst();
   if (e.code === 'KeyM') toggleMusic();
@@ -3062,7 +3141,9 @@ document.addEventListener('touchend', e => { const now = Date.now(); if (now - l
 $('#btn-music').onclick = () => { initAudio(); toggleMusic(); };
 $('#btn-mute').onclick = () => { initAudio(); sfxOn = !sfxOn; $('#btn-mute').setAttribute('aria-pressed', sfxOn); };
 $('#btn-quit').onclick = () => endRun(); $('#btn-menu').onclick = () => endRun(); $('#btn-again').onclick = () => toTitle();
-$('#btn-next').onclick = () => { if (G.fase + 1 < FASES.length) showShop(); else playCine(FINAL_CINE(), () => { store('lp-marina-infectada', true); showWin(); }); };
+$('#btn-next').onclick = () => { if (G.fase + 1 < FASES.length) showShop(); else playCine(FINAL_CINE(), () => { store('lp-marina-infectada', true); rollCredits(() => playCine(POST_CREDITS(), showWin)); }); };
+$('#credits-skip').onclick = e => { e.stopPropagation(); endCredits(); };
+$('#scr-credits').onclick = endCredits;
 $('#btn-story').onclick = () => { initAudio(); startOpening(); };
 $('#btn-begin').onclick = beginGame;
 $('#btn-opts').onclick = openOpts;

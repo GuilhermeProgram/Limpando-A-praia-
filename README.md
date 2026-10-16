@@ -56,6 +56,12 @@ Os personagens começam a história com roupas comuns e ganham **trajes de heró
 
 O rosto do personagem muda conforme a partida: alegre, com dor ao levar dano, comemorando ao separar o lixo, surpreso quando o chefe aparece, triste ou exausto com pouca vida, preocupado com a mochila cheia e com sono quando fica parado.
 
+## Créditos finais e cena pós-créditos
+
+Depois do final, os créditos sobem com o elenco, a equipe e as referências. Em seguida vem uma cena pós-créditos: num lixão, Robert encontra o antigo aprendiz que a Caretta escondeu, o **Chorume** (nome do líquido tóxico que escorre do lixo acumulado), e os dois prometem cobrir o mundo de lixo.
+
+Para colocar o nome do grupo nos créditos, preencha o bloco `CREDITOS` no começo do `<script>` do `limpando-a-praia.html` (equipe, curso, instituição e professor) e rode `node gerar-index.js`.
+
 ## Dados do mutirão
 
 No começo do `<script>` do `index.html` existe o bloco `MUTIRAO`. Preencha com os números reais da limpeza (local, data, voluntários, quilos e quantidade de cada item). Assim, a tela final do jogo mostra os resultados do mutirão ao lado do total recolhido no jogo.
