@@ -8,13 +8,17 @@
 create table if not exists public.scores (
   id        bigint generated always as identity primary key,
   nick      text        not null check (char_length(nick) between 2 and 16),
-  classe    text        not null check (classe in ('Marina', 'Tiago', 'Cida', 'Léo')),
+  classe    text        not null check (classe in ('Marina', 'Tiago', 'Cida', 'Léo', 'Robert')),
   pontos    integer     not null check (pontos between 0 and 200000),
   fase      smallint    not null check (fase between 1 and 3),
   venceu    boolean     not null default false,
   separados integer     not null default 0 check (separados between 0 and 5000),
   criado_em timestamptz not null default now()
 );
+
+-- DLC: libera o Robert no ranking (para tabelas criadas antes da DLC)
+alter table public.scores drop constraint if exists scores_classe_check;
+alter table public.scores add constraint scores_classe_check check (classe in ('Marina', 'Tiago', 'Cida', 'Léo', 'Robert'));
 
 alter table public.scores enable row level security;
 

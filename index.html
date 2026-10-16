@@ -333,6 +333,56 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   .char .rl,.char .burst,.char .moods,.char .stats,#scr-select .panel > p.muted,.lead,.how{display:none}
   .actions{position:sticky;bottom:-14px;z-index:2;background:linear-gradient(rgba(19,32,61,0),#13203d 35%);padding-block:10px 4px}
 }
+/* menu principal */
+.screen.title{background:linear-gradient(180deg,rgba(9,15,32,.05),rgba(9,15,32,.55) 70%);overflow-x:hidden}
+.screen.title::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.55) 0 2px,transparent 3px) 0 0/90px 120px,radial-gradient(circle,rgba(143,224,255,.45) 0 3px,transparent 4px) 40px 60px/130px 170px;animation:bolhas 14s linear infinite;opacity:.6}
+@keyframes bolhas{to{background-position:0 -1200px,40px -1700px}}
+.menu{position:relative;width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.mlogo{display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-size:clamp(28px,7vw,62px);line-height:1.15}
+.mlogo span{display:inline-block;color:var(--sun);text-shadow:0 5px 0 #b23a2f,0 10px 0 var(--deep),0 0 30px rgba(255,210,63,.4);animation:boia 3s ease-in-out infinite}
+.mlogo .w2{color:#8fe0ff;text-shadow:0 5px 0 #1d5a8a,0 10px 0 var(--deep),0 0 30px rgba(143,224,255,.35);animation-delay:-1.5s}
+@keyframes boia{50%{transform:translateY(-6px) rotate(-1.5deg)}}
+.msub{font-family:var(--f-body);font-weight:700;letter-spacing:.2em;color:var(--foam);font-size:clamp(14px,2.6vw,20px);background:rgba(11,20,40,.75);padding:4px 16px;border:2px solid var(--foam);border-radius:999px}
+.mcast{display:flex;gap:6px;align-items:flex-end;justify-content:center;min-height:72px}
+.mcast canvas{width:52px;height:72px;animation:pulo 1.4s ease-in-out infinite;cursor:pointer}
+@keyframes pulo{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-12px)}}
+.mplay{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap;background:var(--panel);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 6px 0 rgba(0,0,0,.3);padding:12px 14px;width:100%;box-sizing:border-box;text-align:left}
+.btn.big{font-size:14px;padding:16px 28px;animation:brilho 1.6s ease-in-out infinite}
+@keyframes brilho{50%{box-shadow:inset -4px -4px 0 rgba(0,0,0,.22),0 4px 0 #8a6a00,0 0 24px rgba(255,210,63,.75)}}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;width:100%}
+.mcard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;min-width:0;background:linear-gradient(#22406f,#162a4d);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 5px 0 rgba(0,0,0,.35);transition:transform .12s}
+.mcard:hover{transform:translateY(-3px) rotate(-1deg)}
+.mcard:active{transform:translateY(2px)}
+.mcard:focus-visible{outline:3px dashed var(--sun);outline-offset:4px}
+.mcard canvas{width:52px;height:52px;background:#2c4a7c;border-radius:50%;border:2px solid rgba(255,248,231,.6)}
+.mcard b{font-family:var(--f-body);font-weight:700;font-size:17px;letter-spacing:.08em;color:var(--sun)}
+.mcard span{font-size:13px;color:var(--muted);line-height:1.2}
+.mcard.dlc{background:linear-gradient(#3a2457,#1f1433);border-color:#c9a2ff}
+.mcard.dlc b{color:#c9a2ff}
+.mcard.dlc.locked{filter:grayscale(.75);opacity:.8}
+.mcard.dlc:not(.locked){animation:dlcPulso 2s ease-in-out infinite}
+@keyframes dlcPulso{50%{box-shadow:0 0 0 3px var(--deep),0 0 24px #8bd450}}
+.mcard.nope{animation:nao .35s}
+@keyframes nao{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.mhow{width:100%;text-align:left;display:flex;flex-direction:column;gap:10px;background:var(--panel);border:3px solid var(--foam);border-radius:10px;padding:12px;box-sizing:border-box}
+.mfoot{font-size:13px;color:var(--muted)}
+.ttl{font-family:var(--f-body)!important;font-weight:700;font-size:clamp(20px,3.2vw,28px)!important;letter-spacing:.08em}
+/* capítulos */
+.chaps{display:flex;flex-direction:column;gap:12px}
+.chaps h3{margin:4px 0 0}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.chap{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.28);border:2px solid rgba(255,248,231,.35);border-left:5px solid var(--sea);padding:8px 10px;min-width:0}
+.chap:hover{background:rgba(255,255,255,.07);border-color:var(--foam)}
+.chap:focus-visible{outline:3px dashed var(--sun);outline-offset:2px}
+.chap canvas{width:40px;height:40px;background:#2c4a7c;border-radius:50%;flex:none}
+.chap b{display:block;font-weight:700;font-size:16px}
+.chap small{display:block;font-size:13px;color:var(--muted)}
+.chap .n{font-family:var(--f-display);font-size:8px;color:var(--sun)}
+.chap.dlcc{border-left-color:#8bd450}
+.jump{display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,.2);padding:10px 12px}
+@media (max-width:640px){.mcast canvas{width:40px;height:56px}.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.mcard b{font-size:15px}.mcard canvas{width:42px;height:42px}.mcard.dlc{grid-column:1/-1}}
+@media (max-height:500px) and (orientation:landscape){.mcast{display:none}.mgrid{grid-template-columns:repeat(5,minmax(0,1fr))}.mcard{padding:8px 4px}.mcard canvas{width:36px;height:36px}.mcard span{display:none}}
+@media (prefers-reduced-motion:reduce){.mlogo span,.mcast canvas,.btn.big,.mcard.dlc,.screen.title::before{animation:none}}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}.btn:hover{transform:none}#btn-burst,#burstbar.full{animation:none}}
 </style>
 </head>
@@ -398,31 +448,51 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     </div>
   </section>
 
-  <section class="screen" id="scr-title" hidden>
-    <div class="panel">
-      <span class="tag" style="align-self:flex-start">JOGO EDUCATIVO · CONSCIENTIZAÇÃO SOCIOAMBIENTAL</span>
-      <h1>LIMPANDO<br>A PRAIA</h1>
-      <p class="lead">Monstros feitos de lixo invadiram a areia. Derrote-os, recolha o que sobrar na mochila e leve cada resíduo até a lixeira certa da coleta seletiva. Se o lixo ficar jogado, ele volta a virar monstro, e no fim da fase tudo o que sobrou se junta em um chefe gigante.</p>
-      <p class="muted only-mobile">No celular: arraste o dedo para andar. As armas atacam sozinhas e o botão BURST aparece quando o poder estiver carregado.</p>
-      <div class="how">
-        <div><b>MOVER</b><kbd>W A S D</kbd> ou setas. No celular, arraste o dedo.</div>
-        <div><b>ATACAR</b>Suas armas atacam sozinhas. Cada classe tem a sua.</div>
-        <div><b>RECOLHER</b>Passe perto do lixo para guardar na mochila. Ela tem limite!</div>
-        <div><b>SEPARAR</b>Encoste na lixeira da cor certa para depositar e ganhar experiência.</div>
-        <div><b>BURST</b><kbd>ESPAÇO</kbd> solta o poder da classe quando a barra enche.</div>
-      </div>
-      <form class="nickrow" id="nick-form" novalidate>
+  <section class="screen title" id="scr-title" hidden>
+    <div class="menu">
+      <div class="mlogo" aria-label="Limpando a Praia"><span>LIMPANDO</span><span class="w2">A PRAIA</span></div>
+      <div class="msub">GUARDIÕES DA MARÉ</div>
+      <div class="mcast" id="menu-cast" aria-hidden="true"></div>
+      <form class="mplay" id="nick-form" novalidate>
         <div class="field"><label for="nick">SEU NICK NO RANKING</label><input id="nick" name="nick" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Ex.: Tubarão123"></div>
-        <button class="btn" id="btn-play" type="submit">JOGAR</button>
+        <button class="btn big" id="btn-play" type="submit">JOGAR!</button>
       </form>
       <p class="err" id="nick-err" hidden>Digite um nick de 2 a 16 caracteres para entrar no ranking.</p>
-      <div class="row">
-        <button class="btn ghost" id="btn-story" type="button">HISTÓRIA</button>
-        <button class="btn ghost" id="btn-opts" type="button">OPÇÕES</button>
-        <button class="btn ghost" id="btn-rank" type="button">RANKING</button>
-        <button class="btn ghost" id="btn-howbins" type="button">CORES DA COLETA SELETIVA</button>
+      <div class="mgrid">
+        <button class="mcard" id="btn-story" type="button"><canvas class="px" data-icon="story" width="20" height="20"></canvas><b>HISTÓRIA</b><span>Capítulos e cenas</span></button>
+        <button class="mcard" id="btn-how" type="button" aria-expanded="false"><canvas class="px" data-icon="how" width="20" height="20"></canvas><b>COMO JOGAR</b><span>Controles e lixeiras</span></button>
+        <button class="mcard" id="btn-rank" type="button"><canvas class="px" data-icon="rank" width="20" height="20"></canvas><b>RANKING</b><span>Melhores e piores</span></button>
+        <button class="mcard" id="btn-opts" type="button"><canvas class="px" data-icon="opts" width="20" height="20"></canvas><b>OPÇÕES</b><span>Som, texto e mais</span></button>
+        <button class="mcard dlc locked" id="btn-dlc" type="button"><canvas class="px" data-icon="dlc" width="20" height="20"></canvas><b>DLC: O DESCARTE</b><span id="dlc-sub">Termine a história para liberar</span></button>
       </div>
-      <div id="title-bins" hidden></div>
+      <div class="mhow" id="title-how" hidden>
+        <p>Monstros feitos de lixo invadiram a areia. Derrote-os, recolha o que sobrar na mochila e leve cada resíduo até a lixeira certa. Lixo jogado volta a virar monstro, e no fim da fase tudo o que sobrou vira um chefe gigante.</p>
+        <p class="muted only-mobile">No celular: arraste o dedo para andar. O botão BURST aparece quando o poder estiver carregado.</p>
+        <div class="how">
+          <div><b>MOVER</b><kbd>W A S D</kbd> ou setas. No celular, arraste o dedo.</div>
+          <div><b>ATACAR</b>Suas armas atacam sozinhas. Cada classe tem a sua.</div>
+          <div><b>RECOLHER</b>Passe perto do lixo para guardar na mochila. Ela tem limite!</div>
+          <div><b>SEPARAR</b>Encoste na lixeira da cor certa para depositar e ganhar experiência.</div>
+          <div><b>BURST</b><kbd>ESPAÇO</kbd> solta o poder da classe quando a barra enche.</div>
+        </div>
+        <div id="title-bins"></div>
+      </div>
+      <p class="mfoot">Jogo educativo · Conscientização socioambiental</p>
+    </div>
+  </section>
+
+  <section class="screen" id="scr-chapters" hidden>
+    <div class="panel">
+      <h2 class="ttl">CAPÍTULOS DA HISTÓRIA</h2>
+      <p class="muted">Assista a qualquer cena ou pule direto para uma fase. Pontuações de fases puladas não entram no ranking.</p>
+      <div class="chaps" id="chaps"></div>
+      <div class="jump">
+        <h3>PULAR PARA A FASE</h3>
+        <div class="seg" id="jump-hero" role="group" aria-label="Personagem"></div>
+        <div class="row" id="jump-fases"></div>
+      </div>
+      <label class="opt chk" for="opt-apres"><input type="checkbox" id="opt-apres"><span>Modo apresentação<small>Libera a DLC do Robert neste aparelho sem precisar terminar o jogo.</small></span></label>
+      <div class="row"><button class="btn" id="chap-back" type="button">VOLTAR AO MENU</button></div>
     </div>
   </section>
 
@@ -821,7 +891,16 @@ const CLASSES = [
     pal:{ H:'#2b1d14', h:'#120b07', L:'#5a3b28', S:'#c98b62', s:'#9a6342', A:'#c9b07a', a:'#8f7a4c', B:'#7b5cd6', C:'#a68a55', c:'#7a6236', P:'#5d6b3a', p:'#3f4a26', K:'#5a3a1c', k:'#8b5a2b', Y:'#a0652d', y:'#6d4219' } },
 ];
 
+// DLC: Robert, o Descarte (só aparece depois de terminar a história)
+CLASSES.push({ id:'robert', dlc:true, nome:'Robert', classe:'Demolidor', papel:'Ex-aprendiz da Caretta', style:'hood', weapon:'martelo', burst:'terremoto',
+  burstNome:'Terremoto de Sucata', burstDesc:'Bate o martelo no chão várias vezes, machuca e atordoa tudo na tela.',
+  base:{ hp:125, speed:72, cap:7, dmg:1.15, magnet:24 }, stats:{ Vida:4, Dano:5, Alcance:2, Velocidade:3, Mochila:2 },
+  pal:{ H:'#3b2a55', h:'#22183a', L:'#5a4380', S:'#e0b896', s:'#b08a6c', A:'#4a3a6a', a:'#2c2142', B:'#8bd450', C:'#8bd450', P:'#2a2438', p:'#1a1626', K:'#1a1a22', k:'#3a3a48' } });
+
 const WEAPONS = {
+  martelo: { nome:'Martelo Compactador', excl:'robert', evoNome:'Martelo Sísmico', evoReq:'luvas',
+             desc:'Esmaga o lixo e solta uma onda de choque. Na vida real, latinhas amassadas ocupam menos espaço na reciclagem.',
+             st:(l, e) => ({ dano:(20 + 7 * l) * (e ? 1.5 : 1), recarga:(1.5 - 0.1 * l) * (e ? 0.8 : 1), raio:26 + 4 * l + (e ? 14 : 0) }) },
   espada:  { nome:'Espada de Brinquedo', excl:'marina', evoNome:'Espada das Marés', evoReq:'luvas',
              desc:'Golpe em arco no lixo mais próximo. É de espuma: só machuca o lixo!',
              st:(l, e) => ({ dano:(14 + 5 * l) * (e ? 1.6 : 1), recarga:(1.0 - 0.08 * l) * (e ? 0.85 : 1), alcance:28 + 3 * l + (e ? 14 : 0), golpes:(l >= 4 || e) ? 2 : 1 }) },
@@ -1146,6 +1225,7 @@ function buildSprites(){
   SPR.sword = wrap(fromRows(['....Y...........','RRR.YbBBBBBBBBb.','RrRRYBWWWWWWWWBB','RRR.YbbbbbbbbbB.','....Y...........'], { R:'#e5484d', r:'#a3222c', Y:'#ffd23f', B:'#4fb3ff', b:'#2f7fcf', W:'#d5f0ff' }));
   SPR.blaster = wrap(fromRows(['....OO........','...OooO.......','YYYYYYYYYYGGG.','YyyyyyyyyyGGGG','YYYYYYYYYYGGG.','..KK..........','.KK...........'], { O:'#ff9f43', o:'#ffd08a', Y:'#ffd23f', y:'#d9a925', G:'#3c9a5f', K:'#3a3a4a' }));
   SPR.lance = wrap(fromRows(['WW............','WWMMMMMMMMMMBB','..mmmmmmmmmmBB'], { W:'#2f6fb0', M:'#c9d0db', m:'#8c94a3', B:'#5aa9e6' }));
+  SPR.hammer = wrap(fromRows(['........HHHH','........HhGH','DDDDDDDDHhGH','ddddddddHhGH','........HhGH','........HHHH'], { H:'#8c94a3', h:'#c9d0db', G:'#8bd450', D:'#7a4f28', d:'#4f321a' }));
   SPR.sponge = wrap(fromRows(['GGGGGG','YYYYYY','YyYYyY','YYYyYY','YYYYYY'], { G:'#3c9a5f', Y:'#ffd23f', y:'#d9a925' }));
   SPR.rake = wrap(fromRows(['.......PT..','.......P...','HHHHHHHPT..','.......P...','.......PT..'], { H:'#f39c34', P:'#2bb3c0', T:'#2bb3c0' }));
   SPR.frisbee = wrap(mk(8, 8, g => { paintEllipsoid(g, 4, 4, 4, 4, ['#a8401e','#e8643a','#ff8f62','#ffd2c2']); g.fillStyle = '#ffffff'; g.fillRect(3, 2, 2, 1); }));
@@ -1178,7 +1258,7 @@ function buildSprites(){
   SPR.coco = wrap(mk(8, 9, g => { paintEllipsoid(g, 4, 5, 3.8, 3.8, RAMP.leaf); g.fillStyle = '#ff5d8f'; g.fillRect(5, 0, 1, 4); }));
 
   Object.assign(ICONS, {
-    espada: SPR.sword.img, esponja: SPR.blaster.img, limpeza: SPR.lance.img, frisbee: SPR.frisbee.img, ancinho: SPR.rake.img,
+    martelo: SPR.hammer.img, espada: SPR.sword.img, esponja: SPR.blaster.img, limpeza: SPR.lance.img, frisbee: SPR.frisbee.img, ancinho: SPR.rake.img,
     bolhas: outlined(mk(9, 9, g => paintEllipsoid(g, 4.5, 4.5, 4.5, 4.5, ['#2f7fcf','#7fd8ff','#c8f1ff','#ffffff']))),
     rede: outlined(mk(9, 9, g => { g.fillStyle = '#3f9f95'; for (let i = 0; i < 9; i++){ g.fillRect(i, i, 1, 1); g.fillRect(8 - i, i, 1, 1); g.fillRect(i, 0, 1, 1); g.fillRect(i, 8, 1, 1); g.fillRect(0, i, 1, 1); g.fillRect(8, i, 1, 1); g.fillRect(4, i, 1, 1); g.fillRect(i, 4, 1, 1); } })),
     protetor: outlined(fromRows(['..WW..','..WW..','.OOOO.','OOOOOO','OYYYYO','OYOOYO','OYYYYO','OOOOOO','.OOOO.'], { W:'#ffffff', O:'#ff9f43', Y:'#ffe08a' })),
@@ -1405,7 +1485,8 @@ function restore(p, snap){
   p.hp = p.maxHp; p.bag = []; p.inv = 0; p.hurt = 0; p.slow = 0; p.burstT = 0; p.cheer = 0; p.surprise = 0; p.idle = 0;
 }
 /* expressão do personagem: muda conforme o que acontece na partida */
-function playerMood(){
+function playerMood(){ const m = playerMood0(); return G.player.id === 'robert' ? villainMood('robert', m) : m; }
+function playerMood0(){
   const p = G.player, r = p.hp / p.maxHp;
   if (p.hp <= 0) return 'triste';
   if (p.hurt > 0.35) return 'dor';
@@ -1420,8 +1501,8 @@ function playerMood(){
 }
 
 /* ============================ partida e telas ============================ */
-function freshRun(){
-  return { player:makePlayer(selected), fase:0, totals:{}, seenItem:new Set(), pendingLv:0, kills:0, snap:null, credits:0, bought:{},
+function freshRun(id){
+  return { player:makePlayer(id || selected), fase:0, totals:{}, seenItem:new Set(), pendingLv:0, kills:0, snap:null, credits:0, bought:{},
            nick:myNick || 'Anônimo', score:0, sep:0, scoreSnap:0, sepSnap:0, saved:false, rerolls:2 };
 }
 function newRun(){
@@ -1494,10 +1575,11 @@ function startFase(f){
   playMusic(FASES[f].musica);
   showIntro();
 }
-const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits'];
+const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits','chapters'];
 function show(id){
   for (const s of screens) $('#scr-' + s).hidden = s !== id;
-  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits'].includes(id)) || state === 'cutscene';
+  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits','chapters'].includes(id)) || state === 'cutscene';
+  if (id === 'title') paintMenu();
 }
 function setState(s, scr){
   state = s; const id = scr === undefined ? s : scr; show(id);
@@ -1509,6 +1591,7 @@ function binsHTML(){
 }
 function paintBinCanvases(root){ root.querySelectorAll('canvas[data-bin]').forEach(c => c.getContext('2d').drawImage(SPR.bin[c.dataset.bin].img, 0, 0)); }
 function portraitCanvas(cnv, id, mood, sick, set){
+  mood = villainMood(id, mood);
   const base = (set || SPR.chars[id])[0], g = cnv.getContext('2d'), s = sick ? sickOf(base) : base; g.imageSmoothingEnabled = false;
   g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 0, 0, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x + 1, s.face.y + 3, mood, s.face);
 }
@@ -1518,6 +1601,7 @@ function buildSelect(){
   if (infected && selected === 'marina') selected = 'tiago';
   $('#sel-infect').hidden = !infected;
   for (const c of CLASSES){
+    if (c.dlc) continue;
     const locked = infected && c.id === 'marina';
     const b = document.createElement('button'); b.type = 'button'; b.className = 'char' + (c.id === selected ? ' sel' : '') + (locked ? ' locked' : ''); b.setAttribute('aria-pressed', c.id === selected);
     if (locked){ b.disabled = true; b.title = 'Marina foi infectada pelo Robert, o Descarte'; }
@@ -1540,12 +1624,12 @@ function buildSelect(){
 }
 function showIntro(){
   const F = FASES[G.fase], B = BOSSES[F.boss];
-  $('#intro-n').textContent = `FASE ${G.fase + 1} DE ${FASES.length}`;
+  $('#intro-n').textContent = (G.dlc ? 'DLC O DESCARTE · ' : '') + `FASE ${G.fase + 1} DE ${FASES.length}`;
   $('#intro-t').textContent = F.nome.toUpperCase();
   $('#intro-d').textContent = F.desc;
   $('#intro-foes').innerHTML = Object.keys(F.tipos).map(k => `<div style="border-left-color:${MATS[ETYPES[k].mat].cor}"><span>${ETYPES[k].nome}</span><span class="muted">${MATS[ETYPES[k].mat].lixeira}</span></div>`).join('');
   $('#intro-goal').textContent = `Deposite ${F.meta} recicláveis nas lixeiras certas. Depois, todo o lixo que sobrar na praia vai se juntar no ${B.nome}.`;
-  const first = G.fase === 0, tutDone = !!load('lp-tut', false);
+  const first = G.fase === 0 && !G.dlc && !G.jump, tutDone = !!load('lp-tut', false);
   $('#btn-tut').hidden = !first;
   $('#tut-hint').hidden = !first || tutDone;
   $('#btn-tut').textContent = tutDone ? 'REFAZER O TUTORIAL' : 'FAZER O TUTORIAL';
@@ -1698,7 +1782,7 @@ function showWin(){
     const meta = [MUTIRAO.local, MUTIRAO.data, MUTIRAO.voluntarios ? MUTIRAO.voluntarios + ' voluntários' : '', MUTIRAO.quilos ? MUTIRAO.quilos + ' kg recolhidos' : ''].filter(Boolean).join(' · ');
     real.innerHTML = `<h3>NO NOSSO MUTIRÃO DE VERDADE${meta ? ' · ' + meta.toUpperCase() : ''}</h3><div class="tally" style="margin-top:8px">${rows}</div>`;
   } else real.innerHTML = '';
-  $('#win-story').hidden = !load('lp-marina-infectada', false);
+  $('#win-story').hidden = !load('lp-marina-infectada', false) || G.dlc;
   jingle(); setState('win'); setTimeout(() => { if (state === 'win') playMusic('heroica'); }, 1200);
 }
 function gameOver(){
@@ -1799,7 +1883,8 @@ function spawnGroup(){
 
 /* ---- o lixo que sobrou se junta e forma o chefe ---- */
 function startForming(){
-  if (!L.preCine && BOSS_CINE[L.fase]){ L.preCine = true; playCine(BOSS_CINE[L.fase](), () => { setState('play', null); startForming(); }); return; }
+  const BC = G.dlc ? DLC_BOSS : BOSS_CINE;
+  if (!L.preCine && BC[L.fase]){ L.preCine = true; playCine(BC[L.fase](), () => { setState('play', null); startForming(); }); return; }
   const p = G.player, F = FASES[L.fase];
   const a = Math.random() * TAU; const x = clamp(p.x + Math.cos(a) * 120, 80, WORLD_W - 80), y = clamp(p.y + Math.sin(a) * 90, SHORE + 70, WORLD_H - 80);
   L.forming = { t:0, dur:3.4, x, y, absorbed:0 };
@@ -1883,11 +1968,24 @@ function fireWeapon(w){
     for (let i = 0; i < s.discos; i++){ const t = ts[i]; const a = t ? Math.atan2(t.y - p.y, t.x - p.x) : p.face + i * 2.1;
       L.projs.push({ kind:'frisbee', x:p.x, y:p.y - 4, vx:Math.cos(a) * 190, vy:Math.sin(a) * 190, r:5 + (w.evo ? 3 : 0), dmg:s.dano, dist:s.distancia, trav:0, back:false, life:4, hit:new Set(), rot:0, big:w.evo }); }
     w.t = cd;
+  } else if (w.id === 'martelo'){
+    const t = nearest(p.x, p.y, 40 + s.raio); const a = t ? Math.atan2(t.y - p.y, t.x - p.x) : p.face; p.aim = a;
+    slam(p.x + Math.cos(a) * 16, p.y + Math.sin(a) * 12, s.raio, s.dano, true);
+    if (w.evo) slam(p.x, p.y, s.raio * 1.8, s.dano * 0.5, false);
+    sfx('swing'); w.t = cd;
   } else if (w.id === 'rede'){
     const t = nearest(p.x, p.y, 170) || { x:p.x + Math.cos(p.face) * 60, y:p.y + Math.sin(p.face) * 60 };
     L.projs.push({ kind:'redevoa', x:p.x, y:p.y, tx:t.x, ty:t.y, vx:0, vy:0, r:0, dmg:s.dano, life:3, hit:new Set(), s });
     w.t = cd;
   }
+}
+function slam(x, y, r, dmg, own){
+  L.fx.push({ kind:'slam', x, y, r, t:0, dur:0.35, own });
+  for (const e of query(x, y, r + 30)){
+    const dx = e.x - x, dy = e.y - y, d = Math.hypot(dx, dy) || 1; if (d > r + e.r) continue;
+    hitEnemy(e, dmg, dx / d * 160, dy / d * 160); if (!e.boss) e.stun = Math.max(e.stun || 0, 0.25);
+  }
+  cam.shake = Math.max(cam.shake, 0.12);
 }
 function swing(a, s){
   const p = G.player;
@@ -2051,6 +2149,8 @@ function useBurst(){
     L.fx.push({ kind:'mare', x:p.x, y:p.y, t:0, dur:0.9 });
     for (const e of targets()){ const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy) || 1; if (Math.abs(dx) < VW / 2 + 20 && Math.abs(dy) < VH / 2 + 20) hitEnemy(e, 30 + lv * 25, dx / d * 260, dy / d * 260); }
     L.eprojs = L.eprojs.filter(b => Math.abs(b.x - p.x) > VW / 2 || Math.abs(b.y - p.y) > VH / 2);
+  } else if (cl.burst === 'terremoto'){
+    p.burstT = 1.6 + lv * 0.5;
   } else if (cl.burst === 'ima'){
     p.burstT = 1.4; L.fx.push({ kind:'ima', x:p.x, y:p.y, t:0, dur:1.4 });
     let n = 0; const got = [...p.bag];
@@ -2066,6 +2166,11 @@ function updateBurst(dt){
   p.burstT -= dt; p.burstTick -= dt;
   if (p.burstKind === 'tornado'){
     if (p.burstTick <= 0){ p.burstTick = 0.15; for (const e of query(p.x, p.y, 80)) if ((e.x - p.x) ** 2 + (e.y - p.y) ** 2 < (52 + e.r) ** 2){ const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy) || 1; hitEnemy(e, 10 + p.burstLvl * 6, dx / d * 120, dy / d * 120); } }
+  } else if (p.burstKind === 'terremoto'){
+    if (p.burstTick <= 0){
+      p.burstTick = 0.45; L.fx.push({ kind:'slam', x:p.x, y:p.y, r:VW * 0.6, t:0, dur:0.5, own:true }); cam.shake = 0.35; sfx('swing');
+      for (const e of targets()) if (Math.abs(e.x - p.x) < VW / 2 + 20 && Math.abs(e.y - p.y) < VH / 2 + 20){ const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy) || 1; hitEnemy(e, 12 + p.burstLvl * 6, dx / d * 90, dy / d * 90); if (!e.boss) e.stun = 0.6; }
+    }
   } else if (p.burstKind === 'chuva'){
     if (p.burstTick <= 0){ p.burstTick = 0.05; const a = (L.time * 9) % TAU; for (let k = 0; k < 2; k++){ const aa = a + k * Math.PI; L.projs.push({ kind:'esponja', x:p.x, y:p.y - 4, vx:Math.cos(aa) * 200, vy:Math.sin(aa) * 200, r:3, dmg:10 + p.burstLvl * 5, bounce:1, life:1.4, hit:new Set(), rot:0 }); } }
   }
@@ -2174,6 +2279,7 @@ function drawHeld(g, id, hx, hy, aim, flip, t){
   if (id === 'marina'){ g.rotate(-1.0 + Math.sin(t * 3) * 0.05); g.drawImage(SPR.sword.img, -2, -4); }
   else if (id === 'tiago'){ g.rotate(clamp(ang, -0.9, 0.9)); g.drawImage(SPR.blaster.img, -3, -5); }
   else if (id === 'cida'){ g.rotate(clamp(ang, -0.9, 0.9) * 0.6 + 0.2); g.drawImage(SPR.lance.img, -2, -2); }
+  else if (id === 'robert'){ const sl = G && L && L.fx.find(f => f.kind === 'slam' && f.own); g.rotate(sl ? -2.2 + 2.6 * Math.min(1, sl.t / sl.dur * 2) : -1.1 + Math.sin(t * 3) * 0.05); g.drawImage(SPR.hammer.img, -2, -4); }
   else g.drawImage(SPR.frisbee.img, -2, -6);
   g.restore();
 }
@@ -2286,6 +2392,10 @@ function render(dt){
       ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, f.range - 4, f.a - 1.2, a); ctx.stroke();
       ctx.strokeStyle = 'rgba(127,216,255,.6)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, f.range - 1, f.a - 1.2, a); ctx.stroke();
       ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.drawImage(SPR.sword.img, 2, -3, f.range - 2, 7); ctx.restore();
+    } else if (f.kind === 'slam'){
+      const k = f.t / f.dur, x = Math.round(f.x - cx), y = Math.round(f.y - cy);
+      ctx.strokeStyle = `rgba(139,212,80,${1 - k})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(x, y, f.r * (0.4 + k * 0.7), f.r * (0.25 + k * 0.45), 0, 0, TAU); ctx.stroke();
+      ctx.fillStyle = `rgba(255,248,231,${0.6 * (1 - k)})`; for (let i = 0; i < 8; i++){ const a = i * TAU / 8; ctx.fillRect(Math.round(x + Math.cos(a) * f.r * k), Math.round(y + Math.sin(a) * f.r * k * 0.6) - 2, 2, 2); }
     } else if (f.kind === 'ghost'){
       const k = f.t / f.dur, s = f.spr; drawSpr(s, Math.round(f.x - cx - s.w / 2), Math.round(f.y - cy - s.h / 2 - k * 18), 'alegre', true, 1 - k);
     } else if (f.kind === 'mare'){
@@ -2497,6 +2607,7 @@ async function saveRun(run){
 async function finishRun(venceu){
   if (!G || G.saved) return;
   G.saved = true;
+  if (G.jump) return;   // fase pulada pelos capítulos não vai para o ranking
   const cl = CLASSES.find(c => c.id === G.player.id);
   const run = { nick:G.nick, classe:cl.nome, pontos:Math.round(G.score), fase:G.fase + 1, venceu:!!venceu, separados:G.sep, quando:Date.now() };
   Rank.last = cleanRun(run, true);
@@ -2948,7 +3059,7 @@ function drawActor(a, x, y, t){
     shadow(x - jx, y - jy + 2, 14);
     if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); if (!a.silhouette) drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
     else { ctx.drawImage(s.img, x0, y0); if (!a.silhouette) drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
-    if (HEROIS.includes(a.id) && !a.sick && a.outfit !== 'casual') drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
+    if ((HEROIS.includes(a.id) || a.hammer) && !a.sick && a.outfit !== 'casual') drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
     if (a.sick || a.id === 'robert'){ ctx.fillStyle = '#8bd450'; const k = (t * 1.5 + a.x * 0.01) % 1; ctx.globalAlpha = 1 - k; ctx.fillRect(x - 7, Math.round(y0 + 6 - k * 10), 2, 2); ctx.fillRect(x + 6, Math.round(y0 + 12 - ((k + 0.5) % 1) * 10), 2, 2); ctx.globalAlpha = 1; }
     return { top:y0 };
   }
@@ -3028,6 +3139,129 @@ const POST_CREDITS = () => [
     { card:'OS GUARDIÕES DA MARÉ VOLTARÃO' } ] },
 ];
 
+/* ============================ DLC: O DESCARTE ============================
+   Depois do ataque à Marina, o Chorume treina o Robert no lixão.
+   Ele manda o Robert esmagar o lixo das praias sem separar nada... mas o Robert
+   não consegue largar o costume que aprendeu com a Caretta. */
+function dlcUnlocked(){ return !!(load('lp-zerou', false) || load('lp-marina-infectada', false) || load('lp-apresentacao', false)); }
+function chorumeEnters(){
+  const p = G.player;
+  return { id:'chorume', kind:'char', nome:'Chorume', x:p.x + 170, y:p.y - 6, tx:p.x + 60, ty:p.y - 6, mood:'zangado', flip:true };
+}
+const DLC_INTRO = () => [
+  { fase:2, music:'misteriosa', cam:[STAGE_X, 400], crabs:'triste', trash:80, glow:true, thunder:true,
+    actors:[ ch('robert', -40, 412, 'triste', { nome:'Robert, o Descarte' }), ch('chorume', 50, 400, 'zangado', { flip:true, nome:'Chorume' }) ], lines:[
+    { card:'O DESCARTE', sub:'a história do Robert' },
+    { who:'narr', text:'Uma semana depois do ataque à Marina. O lixão nunca dorme.', shot:'wide' },
+    { who:'chorume', mood:'zangado', text:'De pé, garoto. A Caretta te ensinou a limpar. Eu vou te ensinar a esmagar.', shot:{ f:'chorume', z:2.6 } },
+    { who:'narr', text:'Do meio da sucata, o Chorume puxou um martelo enferrujado.', shot:{ f:'robert', z:2.2 }, fx:'thunder', do:C => { const a = actor(C, 'robert'); a.hammer = true; burst(C, a, ['#8bd450','#8c94a3','#c9d0db']); } },
+    { who:'robert', mood:'preocupado', text:'Um martelo compactador... de amassar latinha.', shot:{ f:'robert', z:2.8 } },
+    { who:'chorume', mood:'triste', text:'Era de uma cooperativa que fechou. Um dia ninguém mais quis separar nada.', shot:{ f:'chorume', z:2.8 }, grade:'gray' },
+    { who:'robert', mood:'zangado', text:'Então me ensina. Tudo o que ela não teve coragem de ensinar.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines' },
+    { who:'chorume', mood:'zangado', text:'Primeira lição: vá para as praias. Esmague tudo o que se mexer. E não separe NADA.', shot:{ f:'chorume', z:3.2 }, grade:'red' },
+    { who:'robert', mood:'triste', text:'...', shot:{ f:'robert', z:3.4 } },
+    { card:'LIÇÃO 1', sub:'esmagar sem separar' } ] },
+];
+const DLC_BOSS = {
+  0: () => [{ music:'tensa', camPlayer:true, actors:[chorumeEnters()], lines:[
+    { who:'chorume', mood:'zangado', text:'Eu vi, garoto. Cada latinha foi parar na lixeira amarela.', shot:{ f:'chorume', z:2.4 } },
+    { who:'player', mood:'preocupado', text:'É costume. Não quer dizer nada.', shot:{ f:'player', z:2.6 } },
+    { who:'chorume', mood:'zangado', text:'Então prove. O lixo que sobrou vai virar um gigante. Esmague.', shot:{ f:'chorume', z:3 }, grade:'red', fx:'lines', do:C => walk(C, 'chorume', 240, 0, true) } ] }],
+  1: () => [{ music:'tensa', camPlayer:true, actors:[chorumeEnters()], lines:[
+    { who:'chorume', mood:'triste', text:'Sabe quanto tempo uma sacola leva para sumir no mar? Eu sei. Eu contei.', shot:{ f:'chorume', z:2.6 }, grade:'gray' },
+    { who:'player', mood:'triste', text:'Centenas de anos. A Caretta ensinou isso no primeiro dia.', shot:{ f:'player', z:2.6 } },
+    { who:'chorume', mood:'zangado', text:'Pare de falar o nome dela!', shot:{ f:'chorume', z:3.2 }, grade:'red', fx:'shake', do:C => walk(C, 'chorume', 240, 0, true) } ] }],
+  2: () => [{ music:'tensa', camPlayer:true, thunder:true, actors:[chorumeEnters()], lines:[
+    { who:'chorume', mood:'zangado', text:'Última lição. Este gigante é feito de tudo o que a cidade esqueceu.', shot:{ f:'chorume', z:2.6 } },
+    { who:'player', mood:'zangado', text:'Eu não tenho medo de lixo.', shot:{ f:'player', z:2.8 } },
+    { who:'chorume', mood:'preocupado', text:'Não é do lixo que você devia ter medo, garoto.', shot:'wide', fx:'thunder', do:C => walk(C, 'chorume', 240, 0, true) } ] }],
+};
+const DLC_FINAL = () => [
+  { fase:2, music:'misteriosa', cam:[STAGE_X, 400], crabs:'triste', trash:80, glow:true, thunder:true,
+    actors:[ ch('robert', -40, 412, 'zangado', { nome:'Robert, o Descarte', hammer:true }), ch('chorume', 50, 400, 'zangado', { flip:true, nome:'Chorume' }) ], lines:[
+    { card:'DE VOLTA AO LIXÃO' },
+    { who:'chorume', mood:'zangado', text:'Três praias. E você separou tudo de novo.', shot:{ f:'chorume', z:2.6 } },
+    { who:'robert', mood:'zangado', text:'Eu esmaguei cada monstro que você mandou!', shot:{ f:'robert', z:2.8 }, fx:'shake' },
+    { who:'chorume', mood:'zangado', text:'E depois levou os restos para a lixeira certa. Como um bom aluno da tartaruga.', shot:{ f:'chorume', z:3 }, grade:'red' },
+    { who:'robert', mood:'triste', text:'Eu não consigo deixar no chão. Eu tentei.', shot:{ f:'robert', z:3 }, music:'triste', grade:'gray' },
+    { who:'chorume', mood:'triste', text:'Eu também não conseguia, no começo.', shot:{ f:'chorume', z:3 }, grade:'gray' },
+    { who:'narr', text:'Pela primeira vez, o martelo pesou na mão do Robert.', shot:{ f:'robert', z:2.2 } },
+    { who:'robert', mood:'preocupado', text:'E se a Caretta tiver razão? E se ainda der tempo?', shot:{ f:'robert', z:3.2 } },
+    { who:'chorume', mood:'zangado', text:'Ninguém volta do lixão, garoto. Ninguém.', shot:{ f:'chorume', z:3.4 }, grade:'red', fx:'thunder' },
+    { who:'robert', mood:'triste', text:'Marina...', shot:{ f:'robert', z:3.6 }, grade:'gray' },
+    { card:'FIM DO CAPÍTULO DO ROBERT', sub:'será que ainda dá tempo?' } ] },
+];
+function startDLC(){
+  const card = $('#btn-dlc');
+  if (!dlcUnlocked()){ card.classList.remove('nope'); void card.offsetWidth; card.classList.add('nope'); initAudio(); sfx('hurt'); return; }
+  if (!takeNick()) return;
+  initAudio(); G = freshRun('robert'); G.dlc = true;
+  playCine(DLC_INTRO(), () => startFase(0));
+}
+
+/* ============================ capítulos (para apresentar) ============================ */
+let jumpHero = 'tiago';
+function backToChapters(){ resetToMenu(); openChapters(); }
+function watchCine(build, run){
+  initAudio();
+  if (run){ G = freshRun(run.hero); G.jump = true; G.dlc = !!run.dlc; G.fase = run.fase; L = makeLevel(run.fase); }
+  playCine(build(), backToChapters);
+}
+function chapterList(){
+  const list = [];
+  const NOMES_CAP = [['Praia do Sol','muitos verões atrás · começa a abertura'], ['Vinte verões depois','a praia suja'], ['Os cinco da cidade','quem são os aprendizes'], ['O chamado','a Caretta aparece'], ['O treinamento','os poderes e as roupas de herói'], ['A briga','meses depois'], ['Robert, o Descarte','o lixo acorda'], ['A confissão','a Caretta mentiu'], ['Cinquenta anos atrás','o primeiro aprendiz'], ['A união dos Guardiões','vamos salvar o Robert']];
+  OPENING().forEach((sc, i) => { const c = sc.lines.find(l => l.card), [t, sub] = NOMES_CAP[i] || [c ? c.card : 'Cena ' + (i + 1), 'abertura']; list.push({ t, sub, who:i === 6 ? 'robert' : 'caretta', go:() => watchCine(() => OPENING().slice(i)) }); });
+  [0, 1, 2].forEach(f => list.push({ t:'Antes do chefe ' + (f + 1), sub:FASES[f].nome, who:'robert', go:() => watchCine(BOSS_CINE[f], { hero:jumpHero === 'robert' ? 'tiago' : jumpHero, fase:f }) }));
+  list.push({ t:'O final', sub:'a Marina é infectada', who:'marina', go:() => watchCine(FINAL_CINE) });
+  list.push({ t:'Créditos finais', sub:'equipe e referências', who:'leo', go:() => { initAudio(); rollCredits(backToChapters); } });
+  list.push({ t:'Cena pós-créditos', sub:'o Chorume aparece', who:'chorume', go:() => watchCine(POST_CREDITS) });
+  return list;
+}
+function dlcChapterList(){
+  return [
+    { t:'O Descarte', sub:'o treino no lixão', who:'chorume', go:() => watchCine(DLC_INTRO) },
+    ...[0, 1, 2].map(f => ({ t:'Lição ' + (f + 1), sub:'antes do chefe de ' + FASES[f].nome, who:'chorume', go:() => watchCine(DLC_BOSS[f], { hero:'robert', fase:f, dlc:true }) })),
+    { t:'De volta ao lixão', sub:'o final da DLC', who:'robert', go:() => watchCine(DLC_FINAL) },
+  ];
+}
+function chapButton(c, n, dlc){
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'chap' + (dlc ? ' dlcc' : '');
+  const cv2 = document.createElement('canvas'); cv2.className = 'px'; cv2.width = 20; cv2.height = 20;
+  if (c.who === 'caretta') carettaPortrait(cv2, 'alegre'); else portraitCanvas(cv2, c.who, 'alegre');
+  const tx = document.createElement('div'); tx.innerHTML = '<span class="n"></span><b></b><small></small>';
+  tx.querySelector('.n').textContent = (dlc ? 'DLC ' : '') + String(n).padStart(2, '0');
+  tx.querySelector('b').textContent = c.t; tx.querySelector('small').textContent = c.sub;
+  b.append(cv2, tx); b.onclick = c.go; return b;
+}
+function openChapters(){
+  if (jumpHero === 'robert' && !dlcUnlocked()) jumpHero = 'tiago';
+  const box = $('#chaps'); box.replaceChildren();
+  const sec = (title, items, dlc) => { const h = document.createElement('h3'); h.textContent = title; const g = document.createElement('div'); g.className = 'chgrid'; items.forEach((c, i) => g.append(chapButton(c, i + 1, dlc))); box.append(h, g); };
+  sec('HISTÓRIA PRINCIPAL', chapterList(), false);
+  if (dlcUnlocked()) sec('DLC: O DESCARTE', dlcChapterList(), true);
+  const hs = $('#jump-hero'); hs.replaceChildren();
+  for (const c of CLASSES){
+    if (c.dlc && !dlcUnlocked()) continue;
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = c.nome.toUpperCase(); b.setAttribute('aria-pressed', c.id === jumpHero);
+    b.onclick = () => { jumpHero = c.id; hs.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
+    hs.append(b);
+  }
+  const fs2 = $('#jump-fases'); fs2.replaceChildren();
+  FASES.forEach((F, f) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ghost'; b.textContent = 'FASE ' + (f + 1); b.title = F.nome; b.onclick = () => jumpToPhase(f, jumpHero); fs2.append(b); });
+  $('#opt-apres').checked = !!load('lp-apresentacao', false);
+  setState('chapters');
+}
+function jumpToPhase(f, hero){
+  initAudio();
+  G = freshRun(hero); G.jump = true; G.dlc = hero === 'robert'; G.nick = myNick || 'Apresentação';
+  // deixa o personagem com a força que teria ao chegar nessa fase
+  const p = G.player;
+  for (let k = 0; k < f; k++){ p.maxHp += 30; p.dmgMul *= 1.3; p.speed *= 1.03; p.cap += 1; }
+  p.weapons[0].lvl = Math.min(5, 1 + 2 * f); if (f >= 1) addWeapon(p, 'ancinho'); if (f >= 2){ p.weapons[1].lvl = 3; addWeapon(p, 'bolhas'); }
+  p.level = 1 + 5 * f; p.xpNext = Math.floor(10 + p.level * 5 + p.level * p.level * 0.15); p.burstLvl = 1 + f;
+  startFase(f);
+}
+
 /* créditos finais rolando */
 let creditsDone = null;
 function creditsHTML(){
@@ -3103,7 +3337,7 @@ function resetData(){
   const b = $('#opt-reset');
   if (Date.now() - resetArmed > 4000){ resetArmed = Date.now(); b.textContent = 'TOQUE DE NOVO PARA CONFIRMAR'; setTimeout(() => { if (Date.now() - resetArmed >= 4000) b.textContent = 'APAGAR'; }, 4100); return; }
   resetArmed = 0;
-  for (const k of ['lp-nick','lp-tut','lp-hist','lp-marina-infectada','lp-runs','lp-vote','lp-client']){ try { localStorage.removeItem(k); } catch (e) {} }
+  for (const k of ['lp-nick','lp-tut','lp-hist','lp-marina-infectada','lp-runs','lp-vote','lp-client','lp-zerou','lp-dlc-fim','lp-apresentacao']){ try { localStorage.removeItem(k); } catch (e) {} }
   Rank.local = []; Rank.localVote = null; Rank.last = null; myNick = ''; $('#nick').value = '';
   renderRank(); renderVotes();
   b.textContent = 'DADOS APAGADOS';
@@ -3135,6 +3369,7 @@ addEventListener('keydown', e => {
   keys[e.code] = true;
   if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code) && state === 'play') e.preventDefault();
   if (state === 'opts'){ if (e.code === 'Escape') closeOpts(); return; }
+  if (state === 'chapters'){ if (e.code === 'Escape') toTitle(); return; }
   if (state === 'credits'){ if (['Escape','Space','Enter'].includes(e.code)){ e.preventDefault(); endCredits(); } return; }
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
   if (e.code === 'Space' && state === 'play') useBurst();
@@ -3151,11 +3386,14 @@ const endJoy = e => { if (joy && e.pointerId === joy.id) joy = null; };
 cv.addEventListener('pointerup', endJoy); cv.addEventListener('pointercancel', endJoy);
 function toggleMusic(){ musicOn = !musicOn; $('#btn-music').setAttribute('aria-pressed', musicOn); }
 
+function takeNick(){
+  const n = cleanNick($('#nick').value);
+  if (n.length < 2){ $('#nick-err').hidden = false; $('#nick').focus(); return false; }
+  $('#nick-err').hidden = true; $('#nick').value = n; myNick = n; store('lp-nick', n); return true;
+}
 $('#nick-form').addEventListener('submit', e => {
   e.preventDefault();
-  const n = cleanNick($('#nick').value);
-  if (n.length < 2){ $('#nick-err').hidden = false; $('#nick').focus(); return; }
-  $('#nick-err').hidden = true; $('#nick').value = n; myNick = n; store('lp-nick', n);
+  if (!takeNick()) return;
   initAudio(); playMusic('main');
   const goSelect = () => { store('lp-hist', true); L = makeLevel(0); playMusic('main'); buildSelect(); setState('select'); };
   goSelect();
@@ -3163,7 +3401,33 @@ $('#nick-form').addEventListener('submit', e => {
 $('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); refreshSB(); };
 $('#btn-rank-back').onclick = () => toTitle();
 $('#btn-win-rank').onclick = () => goRank();
-$('#btn-howbins').onclick = () => { const b = $('#title-bins'); b.hidden = !b.hidden; };
+$('#btn-how').onclick = () => { const b = $('#title-how'); b.hidden = !b.hidden; $('#btn-how').setAttribute('aria-expanded', !b.hidden); if (!b.hidden) b.scrollIntoView({ behavior:'smooth', block:'nearest' }); };
+$('#btn-dlc').onclick = startDLC;
+$('#chap-back').onclick = () => toTitle();
+$('#opt-apres').addEventListener('change', e => { store('lp-apresentacao', e.target.checked); openChapters(); });
+// menu: personagens pulando e ícones dos cartões
+function paintMenu(){
+  const cast = $('#menu-cast'), list = ['caretta', ...HEROIS, ...(dlcUnlocked() ? ['robert'] : [])];
+  cast.replaceChildren();
+  list.forEach((id, i) => {
+    const s = id === 'caretta' ? SPR.caretta[0] : SPR.chars[id][0], c = document.createElement('canvas'); c.className = 'px'; c.width = 26; c.height = 36;
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false; const ox = (26 - s.w) >> 1, oy = 36 - s.h;
+    g.drawImage(s.img, ox, oy); drawFace(g, ox + s.face.x, oy + s.face.y, villainMood(id, 'alegre'), s.face);
+    if (HEROIS.includes(id) || id === 'robert') drawHeld(g, id, ox + 14, oy + 17, 0, false, 0);
+    c.style.animationDelay = (i * 0.14) + 's';
+    c.onclick = () => { initAudio(); sfx('deposit'); };
+    cast.append(c);
+  });
+  const icon = (k, f) => { const c = document.querySelector('#scr-title canvas[data-icon="' + k + '"]'); const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, 20, 20); f(c, g); };
+  icon('story', c => carettaPortrait(c, 'alegre'));
+  icon('how', (c, g) => g.drawImage(SPR.bin.plastico.img, 1, -1));
+  icon('rank', c => portraitCanvas(c, 'tiago', 'comemorando'));
+  icon('opts', (c, g) => { g.fillStyle = '#c9d0db'; for (let a = 0; a < 8; a++){ const x = 10 + Math.cos(a * TAU / 8) * 6, y = 10 + Math.sin(a * TAU / 8) * 6; g.fillRect(Math.round(x) - 1, Math.round(y) - 1, 3, 3); } g.beginPath(); g.arc(10, 10, 5, 0, TAU); g.fill(); g.fillStyle = '#2c4a7c'; g.beginPath(); g.arc(10, 10, 2, 0, TAU); g.fill(); });
+  const open = dlcUnlocked();
+  icon('dlc', (c, g) => { portraitCanvas(c, 'robert', 'zangado'); if (!open){ g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(20,14,30,.75)'; g.fillRect(0, 0, 20, 20); g.globalCompositeOperation = 'source-over'; g.fillStyle = '#ffd23f'; g.fillRect(7, 11, 7, 6); g.fillRect(8, 7, 1, 4); g.fillRect(12, 7, 1, 4); g.fillRect(8, 7, 5, 1); } });
+  $('#btn-dlc').classList.toggle('locked', !open);
+  $('#dlc-sub').textContent = open ? 'Jogue com o Robert e o martelo' : 'Termine a história para liberar';
+}
 $('#btn-back').onclick = () => setState('title');
 $('#btn-start').onclick = () => { initAudio(); newRun(); };
 $('#btn-go').onclick = () => { initAudio(); setState('play', null); if (G.fase === 0) toast('COMO SEPARAR', 'Derrote os monstros, recolha o lixo na mochila e encoste na lixeira da cor certa. Lixo largado no chão volta a virar monstro!', 'Recolha o lixo e leve à lixeira da cor certa.'); };
@@ -3185,10 +3449,14 @@ document.addEventListener('touchend', e => { const now = Date.now(); if (now - l
 $('#btn-music').onclick = () => { initAudio(); toggleMusic(); };
 $('#btn-mute').onclick = () => { initAudio(); sfxOn = !sfxOn; $('#btn-mute').setAttribute('aria-pressed', sfxOn); };
 $('#btn-quit').onclick = () => endRun(); $('#btn-menu').onclick = () => endRun(); $('#btn-again').onclick = () => toTitle();
-$('#btn-next').onclick = () => { if (G.fase + 1 < FASES.length) showShop(); else playCine(FINAL_CINE(), () => { store('lp-marina-infectada', true); rollCredits(() => playCine(POST_CREDITS(), showWin)); }); };
+$('#btn-next').onclick = () => {
+  if (G.fase + 1 < FASES.length) showShop();
+  else if (G.dlc) playCine(DLC_FINAL(), () => { if (!G.jump) store('lp-dlc-fim', true); showWin(); });
+  else playCine(FINAL_CINE(), () => { store('lp-marina-infectada', true); if (!G.jump) store('lp-zerou', true); rollCredits(() => playCine(POST_CREDITS(), showWin)); });
+};
 $('#credits-skip').onclick = e => { e.stopPropagation(); endCredits(); };
 $('#scr-credits').onclick = endCredits;
-$('#btn-story').onclick = () => { initAudio(); startOpening(); };
+$('#btn-story').onclick = () => { initAudio(); openChapters(); };
 $('#btn-begin').onclick = beginGame;
 $('#btn-opts').onclick = openOpts;
 $('#btn-opts2').onclick = openOpts;
@@ -3216,7 +3484,7 @@ function boot(){
   resize(); buildSprites();
   L = makeLevel(0);
   $('#pause-bins').innerHTML = binsHTML(); paintBinCanvases($('#pause-bins'));
-  $('#title-bins').innerHTML = `<div class="bins">${binsHTML()}</div>`; paintBinCanvases($('#title-bins'));
+  $('#title-bins').innerHTML = `<h3 style="margin-bottom:8px">ONDE VAI CADA LIXO</h3><div class="bins">${binsHTML()}</div>`; paintBinCanvases($('#title-bins'));
   myNick = cleanNick(load('lp-nick', '')); $('#nick').value = myNick;
   setState('start');
   initRank();

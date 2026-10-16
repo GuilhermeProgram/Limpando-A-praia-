@@ -40,7 +40,8 @@ Depois disso, a Caretta confessa que mentiu: a força dos Guardiões não vem do
 
 Os personagens começam a história com roupas comuns e ganham **trajes de herói** (capas, tiara, visor, sobretudo) quando recebem o poder da Caretta. A roupa do Robert escurece quando ele se corrompe.
 
-- A abertura aparece na primeira vez que a pessoa joga e pode ser revista pelo botão **HISTÓRIA** do menu.
+- A abertura aparece quando a pessoa entra no jogo (dá para desligar nas Opções).
+- O botão **HISTÓRIA** do menu abre os **Capítulos**: dá para assistir a qualquer cena separada (abertura, antes de cada chefe, final, créditos e pós-créditos) ou **pular direto para a fase 1, 2 ou 3** com o personagem escolhido, já com a força que ele teria naquela fase. Ideal para apresentar em sala. Pontuações de fases puladas não entram no ranking.
 - Antes de cada chefe, Robert aparece provocando.
 - No final, Robert ataca a Marina com uma gosma tóxica. A partir daí, a Marina fica infectada e não pode mais ser escolhida naquele aparelho. A seleção de personagem tem a opção **Reiniciar a história** para ela voltar.
 - Cada momento tem uma música própria: alegre, triste, tensa, misteriosa e heroica. Cada fase também tem a sua trilha.
@@ -55,6 +56,19 @@ Os personagens começam a história com roupas comuns e ganham **trajes de heró
 | Léo | Coletor | Frisbee Reciclado | Ímã Reciclador |
 
 O rosto do personagem muda conforme a partida: alegre, com dor ao levar dano, comemorando ao separar o lixo, surpreso quando o chefe aparece, triste ou exausto com pouca vida, preocupado com a mochila cheia e com sono quando fica parado.
+
+## DLC: O Descarte
+
+Depois de terminar a história, o menu libera a **DLC: O Descarte**, jogada com o **Robert**:
+
+- **Arma:** Martelo Compactador. Esmaga o lixo com uma onda de choque e evolui para Martelo Sísmico com as Luvas de Proteção.
+- **Poder especial:** Terremoto de Sucata. Ele bate o martelo no chão várias vezes e atordoa tudo na tela.
+- **História:** depois do ataque à Marina, o Chorume treina o Robert no lixão e manda ele esmagar o lixo das praias sem separar nada. Mas o Robert não consegue largar o costume que aprendeu com a Caretta.
+- **Expressões:** o Robert nunca sorri. Ele fica zangado, triste ou preocupado.
+
+Para mostrar a DLC sem terminar o jogo, marque **Modo apresentação** na tela de Capítulos.
+
+Se o ranking online já estava criado antes da DLC, rode de novo o [`supabase/ranking.sql`](supabase/ranking.sql) no SQL Editor do Supabase para o banco aceitar pontuações do Robert.
 
 ## Créditos finais e cena pós-créditos
 
