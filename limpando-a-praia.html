@@ -2564,7 +2564,10 @@ const ch = (id, x, y, mood, extra) => ({ id, kind:'char', x:STAGE_X + x, y, mood
 const carettaAt = (x, y, extra) => ({ id:'caretta', kind:'caretta', x:STAGE_X + x, y, mood:'alegre', ...(extra || {}) });
 function actor(C, id){ return C.actors.find(a => a.id === id); }
 function walk(C, id, dx, dy, leave){ const a = actor(C, id); if (a){ a.tx = a.x + dx; a.ty = a.y + (dy || 0); a.leave = !!leave; } }
-function setMoods(C, ids, m){ for (const id of ids){ const a = actor(C, id); if (a) a.mood = m; } }
+// Robert e Chorume só ficam zangados, tristes ou preocupados
+const VILOES = ['robert', 'chorume'];
+function villainMood(id, m){ if (!VILOES.includes(id) || ['zangado','triste','preocupado'].includes(m)) return m; return ['surpreso','dor','exausto'].includes(m) ? 'preocupado' : 'zangado'; }
+function setMoods(C, ids, m){ for (const id of ids){ const a = actor(C, id); if (a) a.mood = villainMood(id, m); } }
 function hop(C, ids){ for (const id of ids){ const a = actor(C, id); if (a) a.hop = 0.45; } }
 function tremble(C, id, t){ const a = actor(C, id); if (a) a.tremble = t || 1.2; }
 const CASUAL = { outfit:'casual' };
@@ -2611,16 +2614,16 @@ const OPENING = () => [
     actors:[ ch('marina', -68, 330, 'triste', CASUAL), ch('tiago', -34, 342, 'triste', CASUAL), ch('robert', 0, 336, 'zangado', CASUAL), ch('cida', 34, 342, 'triste', { flip:true, ...CASUAL }), ch('leo', 68, 330, 'triste', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 6, { hidden:true }) ], lines:[
     { card:'O CHAMADO' },
     { who:'narr', text:'Naquela tarde, os cinco foram até o mar sem saber direito por quê.', shot:'wide' },
-    { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 62; setMoods(C, [...HEROIS, 'robert'], 'surpreso'); } },
+    { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 62; setMoods(C, HEROIS, 'surpreso'); setMoods(C, ['robert'], 'preocupado'); } },
     { who:'caretta', text:'Faz cem anos que eu guardo esta praia.', shot:{ f:'caretta', z:2.6 } },
     { who:'caretta', text:'E faz cem anos que eu espero alguém que se importe.', shot:{ f:'caretta', z:3 } },
     { who:'tiago', mood:'surpreso', text:'Calma aí... uma tartaruga falando? Eu bati a cabeça no recife, né?', shot:{ f:'tiago', z:2.4 } },
     { who:'caretta', text:'Vocês cinco sentiram a mesma dor que eu. Isso não é coincidência.', shot:{ f:'caretta', z:2.4 } },
     { who:'caretta', text:'O mar vai dar força a vocês.', shot:{ f:'caretta', z:2.8 } },
-    { who:'caretta', text:'É um chamado.', shot:'wide', fx:'flash', do:C => setMoods(C, [...HEROIS, 'robert'], 'alegre') } ] },
+    { who:'caretta', text:'É um chamado.', shot:'wide', fx:'flash', do:C => { setMoods(C, HEROIS, 'alegre'); setMoods(C, ['robert'], 'preocupado'); } } ] },
 
   { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre',
-    actors:[ ch('marina', -100, 380, 'alegre', CASUAL), ch('tiago', -50, 396, 'alegre', CASUAL), ch('robert', 0, 404, 'alegre', CASUAL), ch('cida', 50, 396, 'alegre', { flip:true, ...CASUAL }), ch('leo', 100, 380, 'alegre', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 64) ], lines:[
+    actors:[ ch('marina', -100, 380, 'alegre', CASUAL), ch('tiago', -50, 396, 'alegre', CASUAL), ch('robert', 0, 404, 'preocupado', CASUAL), ch('cida', 50, 396, 'alegre', { flip:true, ...CASUAL }), ch('leo', 100, 380, 'alegre', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 64) ], lines:[
     { card:'O TREINAMENTO' },
     { who:'caretta', text:'Marina. Coragem para chegar perto do que todo mundo evita.', shot:{ f:'caretta', z:2.2 } },
     { who:'marina', mood:'comemorando', text:'Pode deixar comigo!', shot:{ f:'marina', z:2.6 }, do:C => transform(C, 'marina') },
@@ -2631,9 +2634,9 @@ const OPENING = () => [
     { who:'caretta', text:'Léo. O que vai, volta. Na natureza, nada se perde.', shot:{ f:'caretta', z:2.2 } },
     { who:'leo', mood:'comemorando', text:'Tudo se transforma. Eu sei, eu sei.', shot:{ f:'leo', z:2.6 }, do:C => transform(C, 'leo') },
     { who:'caretta', text:'Robert... você é o mais rápido de todos.', shot:{ f:'robert', z:2.6 } },
-    { who:'robert', mood:'alegre', text:'Eu sei.', shot:{ f:'robert', z:2.8 }, do:C => transform(C, 'robert') },
-    { who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.', shot:{ f:'caretta', z:2.8 }, do:C => setMoods(C, ['robert'], 'zangado') },
-    { who:'robert', mood:'zangado', text:'...', shot:{ f:'robert', z:3.2 }, grade:'red' },
+    { who:'robert', mood:'zangado', text:'Eu sei.', shot:{ f:'robert', z:2.8 }, do:C => transform(C, 'robert') },
+    { who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.', shot:{ f:'caretta', z:2.8 }, do:C => setMoods(C, ['robert'], 'preocupado') },
+    { who:'robert', mood:'preocupado', text:'...', shot:{ f:'robert', z:3.2 }, grade:'red' },
     { who:'caretta', text:'Lembrem: limpar é importante. Mas o segredo é separar o lixo na origem. Cada resíduo na sua lixeira.', shot:'wide' } ] },
 
   { fase:1, music:'tensa', cam:[STAGE_X, 380], crabs:'triste', trash:50,
@@ -2642,10 +2645,10 @@ const OPENING = () => [
     { who:'robert', mood:'zangado', text:'Ontem esta praia estava limpa. LIMPA!', shot:{ f:'robert', z:2.4 }, fx:'shake', do:C => tremble(C, 'robert', 1.4) },
     { who:'robert', mood:'zangado', text:'Olha isso. Olha!', shot:{ at:[STAGE_X + 40, 420], z:1.6 } },
     { who:'cida', mood:'triste', text:'Robert, calma. A gente limpa de novo. A gente ensina. Um dia eles aprendem.', shot:{ f:'cida', z:2.4 } },
-    { who:'robert', mood:'zangado', text:'UM DIA? Quantos verões mais? Quantas tartarugas mais?!', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines' },
+    { who:'robert', mood:'zangado', text:'UM DIA? Quantos verões mais? Quantas tartarugas mais?!', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines', do:C => setMoods(C, ['marina','tiago','cida','leo'], 'preocupado') },
     { who:'marina', mood:'triste', text:'Robert... a Caretta disse que...', shot:{ f:'marina', z:2.4 } },
     { who:'robert', mood:'zangado', text:'A Caretta está aqui há cem anos e NADA mudou!', shot:{ f:'robert', z:3.2 }, grade:'red', fx:'shake' },
-    { who:'robert', mood:'triste', text:'Vocês limpam. Eles sujam. É sempre assim.', shot:{ f:'robert', z:2.6 } },
+    { who:'robert', mood:'triste', text:'Vocês limpam. Eles sujam. É sempre assim.', shot:{ f:'robert', z:2.6 }, do:C => setMoods(C, ['marina','tiago','cida','leo'], 'triste') },
     { who:'robert', mood:'zangado', text:'Se ninguém se importa com esta praia... então que o lixo fique com ela.', shot:'wide', do:C => walk(C, 'robert', 300, 20, true) },
     { who:'marina', mood:'triste', text:'Robert, espera!', shot:{ f:'marina', z:2.2 } } ] },
 
@@ -2666,7 +2669,7 @@ const OPENING = () => [
     { who:'tiago', mood:'surpreso', text:'Escondeu? Escondeu o quê?', shot:{ f:'tiago', z:2.4 } },
     { who:'caretta', mood:'triste', text:'Eu disse que a força de vocês vinha do mar.', shot:{ f:'caretta', z:2.8 } },
     { who:'caretta', mood:'triste', text:'Eu menti.', shot:{ f:'caretta', z:3.4 }, music:'triste', grade:'gray', do:C => setMoods(C, HEROIS, 'surpreso') },
-    { who:'caretta', mood:'triste', text:'Ela vem do lixo.', shot:'wide', fx:'shake' },
+    { who:'caretta', mood:'triste', text:'Ela vem do lixo.', shot:'wide', fx:'shake', do:C => setMoods(C, HEROIS, 'preocupado') },
     { who:'caretta', mood:'triste', text:'Todo resíduo carrega o descaso de quem jogou fora. Separado e reciclado, esse descaso vira força. Foi isso que eu dei a vocês.', shot:{ f:'caretta', z:2.4 } },
     { who:'caretta', mood:'triste', text:'Mas o lixo esquecido apodrece. E o descaso apodrecido procura um coração cansado para morar.', shot:{ f:'caretta', z:2.8 }, grade:'gray' } ] },
 
@@ -2682,7 +2685,7 @@ const OPENING = () => [
     { who:'tiago', mood:'zangado', text:'E deixou o Robert carregar isso sozinho!', shot:{ f:'tiago', z:2.6 } },
     { who:'caretta', mood:'triste', text:'Eu tive medo. Medo de perder vocês como perdi ele.', shot:{ f:'caretta', z:2.8 } },
     { who:'leo', mood:'triste', text:'Então o Robert não escolheu isso. Ele foi contaminado.', shot:{ f:'leo', z:2.4 } },
-    { who:'marina', mood:'zangado', text:'Mentira ou não... o Robert é um de nós.', shot:{ f:'marina', z:3 }, music:'heroica', do:C => setMoods(C, ['tiago','cida','leo'], 'surpreso') },
+    { who:'marina', mood:'zangado', text:'Mentira ou não... o Robert é um de nós.', shot:{ f:'marina', z:3 }, music:'heroica', do:C => setMoods(C, ['tiago','cida','leo'], 'preocupado') },
     { who:'marina', mood:'zangado', text:'A gente não vai lutar contra ele. A gente vai trazer ele de volta.', shot:{ f:'marina', z:2.6 } },
     { who:'caretta', mood:'alegre', text:'Cada resíduo separado na lixeira certa enfraquece o Descarte. Limpem a praia... e talvez Robert volte a ser quem era.', shot:{ f:'caretta', z:2.4 } },
     { who:'tiago', mood:'comemorando', text:'Então é isso. Bora salvar aquele cabeça-dura!', shot:{ f:'tiago', z:2.6 }, do:C => { hop(C, ['tiago']); setMoods(C, ['cida','leo'], 'alegre'); } },
@@ -2696,14 +2699,14 @@ function robertEnters(){
 }
 const BOSS_CINE = {
   0: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
-    { who:'robert', mood:'alegre', text:'Que bonitinho. Recolhendo garrafinha por garrafinha.', shot:{ f:'robert', z:2.4 } },
+    { who:'robert', mood:'zangado', text:'Que bonitinho. Recolhendo garrafinha por garrafinha.', shot:{ f:'robert', z:2.4 } },
     { who:'player', mood:'zangado', text:'Robert! Para com isso!', shot:{ f:'player', z:2.4 } },
     { who:'robert', mood:'zangado', text:'Vocês ainda não entenderam. O lixo que deixaram para trás... já tem dono.', shot:{ f:'robert', z:3 }, grade:'red' },
     { who:'robert', mood:'zangado', text:'Juntem-se!', shot:'wide', fx:'thunder', do:C => walk(C, 'robert', 240, 0, true) } ] }],
   1: () => [{ music:'tensa', camPlayer:true, actors:[robertEnters()], lines:[
     { who:'robert', mood:'zangado', text:'Sabe para onde vai cada sacola que o vento leva?', shot:{ f:'robert', z:2.6 } },
     { who:'player', mood:'zangado', text:'Para o mar.', shot:{ f:'player', z:2.6 } },
-    { who:'robert', mood:'alegre', text:'Exatamente. E o mar devolve... em dobro.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines', do:C => walk(C, 'robert', 240, 0, true) } ] }],
+    { who:'robert', mood:'zangado', text:'Exatamente. E o mar devolve... em dobro.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines', do:C => walk(C, 'robert', 240, 0, true) } ] }],
   2: () => [{ music:'tensa', camPlayer:true, thunder:true, actors:[robertEnters()], lines:[
     { who:'robert', mood:'zangado', text:'Chega de brincadeira, Guardiões.', shot:{ f:'robert', z:2.6 } },
     { who:'robert', mood:'zangado', text:'Eu mesmo vou comandar o Lixão Gigante.', shot:{ f:'robert', z:3.2 }, grade:'red' },
@@ -2718,13 +2721,13 @@ const FINAL_CINE = () => [
     { who:'caretta', text:'Vocês conseguiram.', shot:{ f:'caretta', z:2.4 } },
     { who:'caretta', text:'A praia mais limpa não é a que mais se limpa. É a que menos se suja.', shot:{ f:'caretta', z:2.8 } },
     { who:'todos', mood:'comemorando', text:'Conseguimos!', shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
-  { keep:true, music:'tensa', thunder:true, actorsAdd:[ ch('robert', 260, 392, 'alegre', { tx:STAGE_X + 120, ty:392, flip:true, nome:'Robert, o Descarte' }) ], lines:[
-    { who:'robert', mood:'alegre', text:'Que bonito. Uma praia limpa... por uma semana.', shot:{ f:'robert', z:2.6 }, do:C => setMoods(C, HEROIS, 'surpreso') },
-    { who:'marina', mood:'zangado', text:'Robert, acabou. Volta para a gente.', shot:{ f:'marina', z:2.6 } },
-    { who:'robert', mood:'zangado', text:'Voltar? Eu nunca saí. Eu só parei de fingir que adianta.', shot:{ f:'robert', z:3 }, grade:'red' },
-    { who:'robert', mood:'zangado', text:'Isto aqui é para você lembrar de mim.', shot:{ f:'robert', z:3.2 }, grade:'red', fx:'lines', do:C => throwToxic(C, 'robert', 'marina') },
+  { keep:true, music:'tensa', thunder:true, actorsAdd:[ ch('robert', 260, 392, 'zangado', { tx:STAGE_X + 120, ty:392, flip:true, nome:'Robert, o Descarte' }) ], lines:[
+    { who:'robert', mood:'zangado', text:'Que bonito. Uma praia limpa... por uma semana.', shot:{ f:'robert', z:2.6 }, do:C => setMoods(C, [...HEROIS, 'caretta'], 'preocupado') },
+    { who:'marina', mood:'triste', text:'Robert, acabou. Volta para a gente.', shot:{ f:'marina', z:2.6 } },
+    { who:'robert', mood:'triste', text:'Voltar? Eu nunca saí. Eu só parei de fingir que adianta.', shot:{ f:'robert', z:3 }, grade:'red' },
+    { who:'robert', mood:'zangado', text:'Isto aqui é para você lembrar de mim.', shot:{ f:'robert', z:3.2 }, grade:'red', fx:'lines', do:C => { throwToxic(C, 'robert', 'marina'); setMoods(C, ['tiago','cida','leo'], 'surpreso'); } },
     { who:'marina', mood:'dor', text:'AHH...!', shot:{ f:'marina', z:3 }, fx:'shake' },
-    { who:'robert', mood:'alegre', text:'Até a próxima, Guardiões.', shot:'wide', do:C => { setMoods(C, ['marina'], 'exausto'); walk(C, 'robert', 320, 0, true); } } ] },
+    { who:'robert', mood:'zangado', text:'Até a próxima, Guardiões.', shot:'wide', do:C => { setMoods(C, ['marina'], 'exausto'); setMoods(C, ['tiago','cida','leo'], 'zangado'); walk(C, 'robert', 320, 0, true); } } ] },
   { keep:true, music:'triste', grade:'gray', rain:true, lines:[
     { who:'leo', mood:'triste', text:'Ela está queimando de febre... isso é contaminação.', shot:{ f:'marina', z:2.6 }, do:C => setMoods(C, ['tiago','cida','leo'], 'triste') },
     { who:'tiago', mood:'zangado', text:'ROBERT!', shot:{ f:'tiago', z:3 }, fx:'lines' },
@@ -2747,7 +2750,7 @@ function cineScene(i){
   const C = CINE, sc = C.scenes[i]; C.i = i;
   if (!sc.keep){
     if (sc.fase != null) L = makeLevel(sc.fase);
-    C.actors = (sc.actors || []).map(a => ({ anim:Math.random() * 3, ...a }));
+    C.actors = (sc.actors || []).map(a => ({ anim:Math.random() * 3, ...a, mood:villainMood(a.id, a.mood) }));
     C.fx = [];
     if (sc.trash){
       const R = mulberry(17 + i), types = Object.keys(ETYPES), cx0 = sc.cam ? sc.cam[0] : STAGE_X, cy0 = sc.cam ? sc.cam[1] : 360;
@@ -2755,7 +2758,7 @@ function cineScene(i){
     }
     C.fade = 1;
   }
-  if (sc.actorsAdd) C.actors.push(...sc.actorsAdd.map(a => ({ anim:0, ...a })));
+  if (sc.actorsAdd) C.actors.push(...sc.actorsAdd.map(a => ({ anim:0, ...a, mood:villainMood(a.id, a.mood) })));
   if (sc.camPlayer && G) C.wide = { x:G.player.x + 40, y:G.player.y - 10 };
   else if (sc.cam) C.wide = { x:sc.cam[0], y:sc.cam[1] };
   C.goal = { ...C.wide, z:1 }; if (!sc.keep) C.view = { ...C.wide, z:1 };
@@ -2802,7 +2805,7 @@ function cineLine(){
   $('#dlg-name').textContent = ln.name || (a && a.nome) || NOMES[who] || '';
   $('#dlg-name').style.color = COR_NOME[who] || '';
   cnv.hidden = !hasFace;
-  if (hasFace){ const mood = ln.mood || (a && a.mood) || 'alegre'; if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick, a ? spriteSet(a) : null); }
+  if (hasFace){ const mood = villainMood(who, ln.mood || (a && a.mood) || 'alegre'); if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick, a ? spriteSet(a) : null); }
   $('#dlg').classList.toggle('narr', who === 'narr');
   C.text = ln.text; C.typed = 0; $('#dlg-text').textContent = '';
 }
@@ -2968,10 +2971,10 @@ const POST_CREDITS = () => [
     { who:'chorume', mood:'zangado', text:'A Caretta sempre achou que dava para salvar o mundo separando garrafinhas.', shot:{ f:'chorume', z:2.6 } },
     { who:'chorume', mood:'triste', text:'Eu também tentei. Por anos. E eles continuaram jogando tudo fora.', shot:{ f:'chorume', z:3 }, grade:'gray' },
     { who:'robert', mood:'zangado', text:'Então me ensina o que ela não teve coragem de ensinar.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines' },
-    { who:'chorume', mood:'alegre', text:'Antes eu tinha um nome. Hoje, quem escorre por baixo de cada lixão... sou eu.', shot:{ f:'chorume', z:3.2 }, do:C => { const a = actor(C, 'chorume'); a.nome = 'Chorume'; } },
+    { who:'chorume', mood:'zangado', text:'Antes eu tinha um nome. Hoje, quem escorre por baixo de cada lixão... sou eu.', shot:{ f:'chorume', z:3.2 }, do:C => { const a = actor(C, 'chorume'); a.nome = 'Chorume'; } },
     { card:'CHORUME', red:true },
-    { who:'chorume', mood:'alegre', text:'Juntos, garoto... vamos cobrir este mundo de lixo.', shot:{ f:'chorume', z:2.6 }, grade:'red' },
-    { who:'robert', mood:'alegre', text:'Até não sobrar nenhuma praia para limpar.', shot:{ f:'robert', z:2.6 }, grade:'red' },
+    { who:'chorume', mood:'zangado', text:'Juntos, garoto... vamos cobrir este mundo de lixo.', shot:{ f:'chorume', z:2.6 }, grade:'red' },
+    { who:'robert', mood:'zangado', text:'Até não sobrar nenhuma praia para limpar.', shot:{ f:'robert', z:2.6 }, grade:'red' },
     { who:'narr', text:'E, pela primeira vez em cinquenta anos, o lixão inteiro brilhou.', shot:'wide', fx:'thunder', do:C => riseMonsters(C, STAGE_X, 405) },
     { card:'OS GUARDIÕES DA MARÉ VOLTARÃO' } ] },
 ];
