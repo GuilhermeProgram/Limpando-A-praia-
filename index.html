@@ -1078,8 +1078,9 @@ function charRows(style, frame, extras){
   }
   const ex = extras || [];
   if (ex.includes('cape') || ex.includes('torn')){
-    for (let y = 13; y <= 21; y++){ put(1, y, 'X'); put(2, y, y % 3 === 0 ? 'x' : 'X'); if (y >= 16) put(0, y, y % 2 ? 'x' : 'X'); }
-    put(0, 22, 'x'); put(1, 22, 'X'); put(2, 22, 'x');
+    const back = (x, y, c) => { if (g[y] && g[y][x] === '.') put(x, y, c); };
+    for (let y = 13; y <= 21; y++){ back(1, y, 'X'); back(2, y, y % 3 === 0 ? 'x' : 'X'); if (y >= 16) back(0, y, y % 2 ? 'x' : 'X'); }
+    back(0, 22, 'x'); back(1, 22, 'X'); back(2, 22, 'x');
     put(4, 13, 'G'); put(11, 13, 'G');
     if (ex.includes('torn')){ put(0, 17, '.'); put(2, 19, '.'); put(0, 21, '.'); put(1, 22, '.'); }
   }
@@ -1110,6 +1111,12 @@ function charRows(style, frame, extras){
   if (ex.includes('coat')){ for (let y = 17; y <= 21; y++){ put(3, y, y === 21 ? 'x' : 'X'); put(12, y, y === 21 ? 'x' : 'X'); } put(4, 13, 'G'); put(11, 13, 'G'); put(9, 4, 'V'); put(10, 4, 'V'); }
   if (ex.includes('tiara')){ put(6, 2, 'G'); put(7, 1, 'G'); put(8, 2, 'G'); put(7, 2, 'G'); }
   if (ex.includes('visor')){ put(9, 5, 'V'); put(10, 5, 'V'); put(11, 5, 'V'); }
+  if (ex.includes('crown')){
+    for (const x of [5, 7, 8, 10]) put(x, 0, 'R');
+    for (let x = 5; x <= 10; x++) put(x, 1, x === 7 || x === 8 ? 'E' : 'R'); for (const x of [5, 10]) put(x, 2, 'r');
+    put(6, 0, 'r'); put(9, 0, 'r');
+  }
+  if (ex.includes('ooze')){ for (const [x, y] of [[0, 19], [1, 23], [2, 21], [6, 18], [9, 18], [4, 22], [11, 22], [3, 17], [13, 17]]) put(x, y, 'E'); }
   if (ex.includes('beard')){ for (const [x, y] of [[6,12],[7,12],[8,12],[9,12],[6,13],[7,13],[8,13],[9,13],[7,14],[8,14],[7,15]]) put(x, y, 'Q'); }
   if (ex.includes('feather')){ put(11, 0, 'G'); put(12, 0, 'G'); put(12, 1, 'G'); put(13, 0, 'G'); }
   return g.map(a => a.join(''));
@@ -1130,16 +1137,16 @@ function makeEnemy(w, h, body, face, feet, arms){
 function buildSprites(){
   SPR.chars = {};
   // traje de herói (usado no jogo) e roupa comum (antes de receber o poder)
-  const HERO_EXTRA = { marina:['suit','domino','tiara'], tiago:['suit','tails','fin'], cida:['suit','domino','harness'], leo:['suit','domino','feather','arrows'] };
+  const HERO_EXTRA = { marina:['suit','domino','tiara','cape'], tiago:['suit','tails','fin','cape'], cida:['suit','domino','harness','cape'], leo:['suit','domino','feather','arrows','cape'] };
   const HERO_PAL = {
     // Marina: vermelho e azul com estrela dourada (inspirada no Capitão Marvel)
-    marina:{ A:'#d93a3a', a:'#9b2228', O:'#2a4fa8', o:'#1d3a80', E:'#ffd23f', T:'#ffd23f', G:'#fff1a8', C:'#ffd23f', N:'#2a4fa8', M:'#2a4fa8', e:'#ffffff', P:'#d93a3a', p:'#9b2228', K:'#2a4fa8', k:'#4f7ae0' },
+    marina:{ A:'#d93a3a', a:'#9b2228', O:'#2a4fa8', o:'#1d3a80', E:'#ffd23f', T:'#ffd23f', G:'#fff1a8', C:'#ffd23f', N:'#2a4fa8', M:'#2a4fa8', e:'#ffffff', P:'#d93a3a', p:'#9b2228', K:'#2a4fa8', k:'#4f7ae0', X:'#2a4fa8', x:'#1d3a80' },
     // Tiago: ninja do mar, azul-marlim com faixa e nadadeira (inspirado no espadarte)
-    tiago: { A:'#1f3f5c', a:'#132a3f', O:'#5aa0c8', o:'#3d7aa0', E:'#9fe3ff', T:'#132a3f', G:'#c9d0db', C:'#9fe3ff', N:'#0f1f2e', F:'#bfefff', P:'#1f3f5c', p:'#132a3f', K:'#0f1f2e', k:'#2a4560' },
+    tiago: { A:'#1f3f5c', a:'#132a3f', O:'#5aa0c8', o:'#3d7aa0', E:'#9fe3ff', T:'#132a3f', G:'#c9d0db', C:'#9fe3ff', N:'#0f1f2e', F:'#bfefff', P:'#1f3f5c', p:'#132a3f', K:'#0f1f2e', k:'#2a4560', X:'#5aa0c8', x:'#3d7aa0' },
     // Cida: tática preta e azul com arreios brancos e óculos de proteção
-    cida:  { A:'#2a2b33', a:'#17181d', O:'#2f6fd6', o:'#1d4fa8', E:'#2f6fd6', T:'#f4f4f8', G:'#c9d0db', U:'#f4f4f8', N:'#17181d', M:'#2f6fd6', e:'#e9fbff', P:'#2a2b33', p:'#17181d', K:'#2a2b33', k:'#3a3c48', C:'#2f6fd6', c:'#1d4fa8' },
+    cida:  { A:'#2a2b33', a:'#17181d', O:'#2f6fd6', o:'#1d4fa8', E:'#2f6fd6', T:'#f4f4f8', G:'#c9d0db', U:'#f4f4f8', N:'#17181d', M:'#2f6fd6', e:'#e9fbff', P:'#2a2b33', p:'#17181d', K:'#2a2b33', k:'#3a3c48', C:'#2f6fd6', c:'#1d4fa8', X:'#2f6fd6', x:'#1d4fa8' },
     // Léo: arqueiro verde e roxo, com aljava e flechas
-    leo:   { A:'#3f8a3a', a:'#2a5e27', O:'#7b4fc4', o:'#58368f', E:'#ffd23f', T:'#5a3a1c', G:'#ffd23f', N:'#3a2a1a', M:'#2a5e27', e:'#ffffff', F:'#e85d4a', C:'#3f8a3a', c:'#2a5e27', P:'#2a5e27', p:'#1d421b', K:'#3a2a1a', k:'#5a4028' },
+    leo:   { A:'#3f8a3a', a:'#2a5e27', O:'#7b4fc4', o:'#58368f', E:'#ffd23f', T:'#5a3a1c', G:'#ffd23f', N:'#3a2a1a', M:'#2a5e27', e:'#ffffff', F:'#e85d4a', C:'#3f8a3a', c:'#2a5e27', P:'#2a5e27', p:'#1d421b', K:'#3a2a1a', k:'#5a4028', X:'#7b4fc4', x:'#58368f' },
   };
   const CASUAL_PAL = {
     marina:{ A:'#e8e2d0', a:'#b9b2a0', B:'#e8e2d0', C:'#7a5a3a', P:'#3d5a8a', p:'#2b4066', K:'#8a5a3a', k:'#b07a4a' },
@@ -1154,11 +1161,14 @@ function buildSprites(){
     SPR.casual[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f, []), cp), { x:6, y:8, style:'big' }));
   }
   const ROBERT_PAL = { H:'#33363d', h:'#1b1c21', L:'#4a4e57', S:'#e0b896', s:'#b08a6c', A:'#2c2f35', a:'#1c1e22', B:'#5b6068', C:'#4a3f35', P:'#26282d', p:'#16171a', K:'#1c1916', k:'#38312a', V:'#33363d' };
-  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['coat']), { ...ROBERT_PAL, X:'#3a3d39', x:'#232624', G:'#6f7d5c' }), { x:6, y:8, style:'big' }));
+  // Robert, o Descarte: o Rei da Podridão. Tudo preto, capa rasgada, coroa de sucata e gosma tóxica
+  const DESCARTE_PAL = { H:'#121216', h:'#060608', L:'#24242a', S:'#cfc7b0', s:'#9a937e', A:'#141418', a:'#09090b', B:'#141418', O:'#2b3320', o:'#1a1f14',
+    E:'#8bd450', T:'#0d0d10', G:'#5f7a3a', N:'#09090b', P:'#141418', p:'#09090b', K:'#09090b', k:'#1d1d22', X:'#0e0e11', x:'#040405', R:'#b08a3e', r:'#6b5530', V:'#121216', C:'#141418' };
+  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['suit', 'torn', 'crown', 'ooze']), DESCARTE_PAL), { x:6, y:8, style:'big', col:'#8bd450' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
   SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
-  SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['suit']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33' }), { x:6, y:8, style:'big' }));
+  SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }), { x:6, y:8, style:'big' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
     B:'#f2efe6', b:'#c9c4b4', T:'#6b3f1a', t:'#3f2410', Y:'#b77a38', z:'#4f2e12',
