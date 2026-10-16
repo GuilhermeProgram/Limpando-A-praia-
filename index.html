@@ -670,6 +670,22 @@ function wrap(base, face){ const img = outlined(base); return { img, flash: whit
 function drawFace(g, x, y, mood, f){
   const s = f.s || 1, col = f.col || OUT;
   const px = (a, b, c) => { g.fillStyle = c; g.fillRect(x + a * s, y + b * s, s, s); };
+  if (f.style === 'caretta'){
+    const E = '#1a1a12', BR = '#f2efe6';
+    const brow = pts => pts.forEach(([a, b]) => px(a, b, BR));
+    const m = { comemorando:'alegre', dor:'triste', exausto:'sonolento' }[mood] || mood;
+    if (m === 'zangado') brow([[-1,-2],[0,-2],[1,-1],[3,-1],[4,-2],[5,-2]]);
+    else if (m === 'triste' || m === 'preocupado') brow([[-2,0],[-1,-1],[0,-1],[1,-2],[3,-2],[4,-1],[5,-1],[6,0]]);
+    else if (m === 'surpreso') brow([[-1,-2],[0,-3],[1,-2],[3,-2],[4,-3],[5,-2]]);
+    else brow([[-2,0],[-1,-1],[0,-1],[4,-1],[5,-1],[6,0]]);
+    if (m === 'alegre'){ px(-1, 0, E); px(0, 1, E); px(1, 0, E); px(3, 0, E); px(4, 1, E); px(5, 0, E); px(2, 3, '#3a2a1a'); px(1, 2, '#3a2a1a'); px(3, 2, '#3a2a1a'); }
+    else if (m === 'sonolento'){ px(-1, 0, E); px(0, 0, E); px(4, 0, E); px(5, 0, E); }
+    else if (m === 'surpreso'){ px(0, 0, '#ffffff'); px(0, 1, E); px(4, 0, '#ffffff'); px(4, 1, E); px(2, 3, '#3a2a1a'); }
+    else { px(0, 0, E); px(4, 0, E); if (m === 'zangado'){ px(1, 3, '#3a2a1a'); px(2, 3, '#3a2a1a'); px(3, 3, '#3a2a1a'); } }
+    if (m === 'triste') px(-1, 1, '#6cc9ff');
+    if (m === 'preocupado') px(6, -3, '#8fd8ff');
+    return;
+  }
   if (f.style === 'mini' || f.style === 'small') mood = { dor:'zangado', comemorando:'alegre', surpreso:'alegre', exausto:'triste', preocupado:'triste', sonolento:'alegre' }[mood] || mood;
   if (f.style === 'mini'){
     const ec = mood === 'zangado' ? '#e0262f' : col;
@@ -973,43 +989,39 @@ function buildSprites(){
   SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
   SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
   SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['cape']), { ...ROBERT_BASE, A:'#f39c34', a:'#b86a1c', B:'#ffffff', C:'#ffd23f', P:'#2a2a33', p:'#1a1a22', K:'#f4f4f8', k:'#ffffff', X:'#f39c34', x:'#b86a1c', G:'#ffd23f' }), { x:6, y:8, style:'big' }));
-  // Mestra Caretta: tartaruga em pé, casco nas costas, túnica, faixa de alga e cajado de coral
-  const CARETTA_ROWS = [
-    '.......GGGGG........',
-    '.....GGgSSSgGG...oo.',
-    '....GgSSsSSSMgG.oOOo',
-    '...GgMSssSSSMSgGoEEo',
-    '...GSSSsSSMSSSSG.oO.',
-    '..GWWwWWWWwWWWWG..D.',
-    '..GSSSSSSSSSSSSG..D.',
-    '..GSSSSSSSSSSSSG..D.',
-    '..GSSSSSSSSSSSSG..D.',
-    '..GgSSSSSSSSSSgG..D.',
-    '..tGSSSSSSSSSSGt..D.',
-    '.tTGgsSSSSSSsgGTt.D.',
-    '.tTYGgSSSSSSgGYTt.D.',
-    '.tTYYGGgggggGYYTt.D.',
-    '..tTTRRgggRRTTt...D.',
-    '.tTYRRrUUUUrRRYTt.D.',
-    '.tTYRRrUuuUrRRYTt.D.',
-    '.tTYgRrUUUUrRRYTtSS.',
-    '.tTYSRrUuuUrRRYTt.D.',
-    '.tTYRQQQQQQQQRYTt.D.',
-    '..tTRRRRQqRRRRTt..D.',
-    '..tyRRRrRRrRRRyt..D.',
-    '...tRRRrRRrRRRt...D.',
-    '...RRRRrRRrRRRR...D.',
-    '...rRRRRRRRRRRr...D.',
-  ];
-  const CARETTA_FEET = ['....gSS...SSg.....D.', '...GGgg...GGgg....dd'];
-  const CARETTA_PAL = { G:'#2f5a24', g:'#4f7d34', S:'#86b85a', s:'#b5dd8a', M:'#5f8a3c', W:'#3fa86b', w:'#2b7a4c',
-    T:'#7a4a1e', t:'#4a2e14', Y:'#cf9248', y:'#a8692c', U:'#e9d68a', u:'#c4ab5a', R:'#2a7f8f', r:'#1b5560',
-    Q:'#ffd23f', q:'#d9a21f', D:'#8a5a2e', d:'#5a3a1c', O:'#ff6f61', o:'#ff9a8a', E:'#e8fbff' };
-  SPR.caretta = [0, 1].map(f => {
-    const rows = [...CARETTA_ROWS, ...(f ? ['....gSS....SSg....D.', '...GGgg....GGgg...dd'] : CARETTA_FEET)];
-    if (f){ rows[3] = rows[3].replace('oEEo', 'oEsO'); }   // brilho da pérola
-    return wrap(fromRows(rows, CARETTA_PAL), { x:6, y:8, style:'big' });
-  });
+  // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
+  const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
+    B:'#f2efe6', b:'#c9c4b4', T:'#6b3f1a', t:'#3f2410', Y:'#b77a38', z:'#4f2e12',
+    R:'#2a6f7f', r:'#174a55', W:'#3f8a5b', w:'#2b6342', Q:'#d9a21f',
+    D:'#7a4f28', d:'#4f321a', O:'#ff6f61', o:'#ff9a8a', E:'#e8fbff' };
+  function carettaRows(f){
+    const W2 = 22, H2 = 31, g = Array.from({ length:H2 }, () => Array(W2).fill('.'));
+    const at = (y, x, str) => { for (let i = 0; i < str.length; i++) if (str[i] !== ' ' && g[y] && x + i >= 0 && x + i < W2) g[y][x + i] = str[i]; };
+    // casco atrás do corpo: sobe acima dos ombros (postura curvada)
+    for (let y = 8; y <= 26; y++) for (let x = 0; x < 19; x++){
+      const d = ((x - 9.5) / 9.2) ** 2 + ((y - 17) / 9.5) ** 2; if (d > 1) continue;
+      g[y][x] = d > 0.9 ? 't' : d > 0.72 ? 'Y' : ((x * 2 + y) % 7 === 0 ? 'z' : 'T');
+    }
+    // cajado de coral com pérola, mais alto que ela
+    for (let y = 4; y <= 29; y++) at(y, 18, 'D'); at(30, 18, 'd');
+    at(0, 17, 'oOo'); at(1, 16, 'oEEOo'); at(2, 16, f ? 'oEsOo' : 'oEEOo'); at(3, 17, 'oOo');
+    // cabeça pequena de tartaruga
+    at(4, 7, 'GGGGGG'); at(5, 6, 'GgMSSMgG'); at(6, 6, 'GSSsSSSG'); at(7, 6, 'GSSSSSSG'); at(8, 6, 'GSSSSSSG'); at(9, 6, 'GgSSSSgG'); at(10, 7, 'GkkkkG');
+    // xale de algas, túnica longa e faixa
+    at(12, 4, 'wWWWWWWWWWWw'); at(13, 4, 'wWWWWWWWWWWw'); at(14, 5, 'wWWWWWWWWw');
+    for (let y = 15; y <= 21; y++) at(y, 5, 'rRRRRRRRRr');
+    at(20, 5, 'QQQQQQQQQQ');
+    for (let y = 22; y <= 28; y++) at(y, 4, y === 28 ? 'rrRRRRRRRRrr' : 'rRRRrRRrRRRr');
+    // braços: um escondido no xale, outro segurando o cajado
+    for (let y = 15; y <= 19; y++) at(y, 4, 'w'); at(20, 4, 'S');
+    at(16, 15, 'WWSS'); at(17, 16, 'wS');
+    // barba branca comprida
+    at(11, 8, 'BBBB'); at(12, 8, 'BBBB'); at(13, 8, 'bBBb'); at(14, 8, 'BBBB'); at(15, 9, 'BB'); at(16, 9, 'Bb'); at(17, f ? 10 : 9, 'b');
+    // pés com garras
+    at(29, 5, 'GgG'); at(29, 11, 'GgG'); at(30, 4, 'GGgg'); at(30, 11, 'ggGG');
+    return g.map(r => r.join(''));
+  }
+  SPR.caretta = [0, 1].map(f => wrap(fromRows(carettaRows(f), CARETTA_PAL), { x:7, y:7, style:'caretta' }));
 
   const petBody = (g) => {
     const prof = [2.6,2.6,2.6,2.2,2.2,2.2,3,4,5,5.8,6.3,6.3,6.3,6.3,6.3,6.3,6.3,6.3,6.1,5.6];
@@ -2807,7 +2819,7 @@ function cineScene(i){
 function setShot(C, shot){
   if (!shot || shot === 'wide'){ C.focus = null; C.goal = { ...C.wide, z:1 }; return; }
   if (shot.at){ C.focus = null; C.goal = { x:shot.at[0], y:shot.at[1], z:shot.z || 1.6 }; return; }
-  C.focus = shot.f; C.goal.z = shot.z || 2.2; C.focusDy = shot.dy ?? -14;
+  C.focus = shot.f; C.goal.z = shot.z || 2.2; C.focusDy = shot.dy ?? (shot.f === 'caretta' ? -20 : -14);
 }
 function cineLine(){
   const C = CINE, sc = C.scenes[C.i]; C.line++;
@@ -2917,7 +2929,7 @@ function sickOf(s){
 }
 function carettaPortrait(cnv, mood){
   const g = cnv.getContext('2d'), s = SPR.caretta[0]; g.imageSmoothingEnabled = false;
-  g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 2, 0, 17, 17, 1, 3, 17, 17); drawFace(g, s.face.x - 1, s.face.y + 3, mood, s.face);
+  g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 1, 2, 18, 18, 1, 1, 18, 18); drawFace(g, s.face.x, s.face.y - 1, mood, s.face);
 }
 function speakerArrow(x, y, t){
   if (CINE && CINE.view.z > 1.4) return;   // no close-up a câmera já mostra quem fala
@@ -2944,7 +2956,7 @@ function drawActor(a, x, y, t){
     const s = SPR.caretta[((t * 1.5 + a.x * 0.01) | 0) % 2];
     const x0 = x - (s.w >> 1), y0 = y - s.h + 4;
     shadow(x - jx, y - jy + 2, 16);
-    if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
+    if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 5, y0 + s.face.y, a.mood, s.face); }
     else drawSpr(s, x0, y0, a.mood);
     return { top:y0 };
   }
