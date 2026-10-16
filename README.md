@@ -69,7 +69,8 @@ Depois de terminar a história, o menu libera a **DLC: O Descarte**, jogada com 
 
 - **Arma:** Martelo Compactador. Esmaga o lixo com uma onda de choque e evolui para Martelo Sísmico com as Luvas de Proteção.
 - **Poder especial:** Terremoto de Sucata. Ele bate o martelo no chão várias vezes e atordoa tudo na tela.
-- **História:** depois do ataque à Marina, o Chorume treina o Robert no lixão e manda ele esmagar o lixo das praias sem separar nada. Mas o Robert não consegue largar o costume que aprendeu com a Caretta.
+- **Jogabilidade:** o Robert não usa mochila nem lixeira. Ele esmaga os monstros e **absorve** o lixo que sobra, e cada resto absorvido deixa o martelo mais forte e com alcance maior. A barra "Poder" mostra quanto ele cresceu, e entre as lições não há cooperativa.
+- **História:** depois do ataque à Marina, o Chorume treina o Robert no lixão: "lixo não é sujeira, lixo é força". A cada lição o Robert fica mais poderoso e destrutivo, até que nem o Chorume consegue controlá-lo. A mensagem final: cada lixo jogado fora sem cuidado deixou o Descarte mais forte.
 - **Expressões:** o Robert nunca sorri. Ele fica zangado, triste ou preocupado.
 
 Para mostrar a DLC sem terminar o jogo, marque **Modo apresentação** na tela de Capítulos.
