@@ -1205,6 +1205,13 @@ function charRows(style, frame, extras){
     put(6, 14, 'G'); put(7, 15, 'G'); put(8, 15, 'G'); put(9, 14, 'G');
     g[22] = g[22].map(c => c === 'k' ? 'S' : c);
   }
+  if (ex.includes('jacket')){
+    for (let y = 13; y <= 18; y++){ put(4, y, 'X'); put(5, y, y === 13 ? 'x' : 'X'); put(10, y, y === 13 ? 'x' : 'X'); put(11, y, 'X'); }
+    put(4, 12, 'x'); put(11, 12, 'x'); put(5, 15, 'x'); put(10, 16, 'x');
+    for (let y = 19; y <= 22; y++){ for (const x of [2, 3, 12, 13]) if (g[y][x] === '.') put(x, y, y === 22 ? 'x' : 'X'); }
+    g[21] = g[21].map(c => c === 'S' ? 'P' : c);
+    const knee = g[20].indexOf('P'); if (knee >= 0) g[20][knee] = 'S';
+  }
   if (ex.includes('dots')){ for (const [x, y] of [[6, 14], [9, 15], [7, 17], [10, 17], [5, 16]]) put(x, y, 'E'); }
   if (ex.includes('beard')){ for (const [x, y] of [[6,12],[7,12],[8,12],[9,12],[6,13],[7,13],[8,13],[9,13],[7,14],[8,14],[7,15]]) put(x, y, 'Q'); }
   if (ex.includes('feather')){ put(11, 0, 'G'); put(12, 0, 'G'); put(12, 1, 'G'); put(13, 0, 'G'); }
@@ -1254,11 +1261,22 @@ function addWings(sh, n, feather){
   return { ...sh, rows:g.map(r => r.join('')), fx:sh.fx + n, lx:sh.lx + n, rx:sh.rx + n };
 }
 const WING_PAL = { '3':'#4f9cc4', '4':'#c9d0db', '5':'#e9e4d8', '6':'#bb854a', '7':'#1f3d22', '8':'#ff8fb8', '9':'#ffc2da', '0':'#d9578c' };
+function addBigHat(sh){
+  const pad = 4, up = 3, W = sh.rows[0].length + pad * 2;
+  const g = [...Array(up)].map(() => Array(W).fill('.')).concat(sh.rows.map(r => ('.'.repeat(pad) + r + '.'.repeat(pad)).split('')));
+  const hc = sh.fx + pad + 2, put = (x, y, c) => { if (g[y] && x >= 0 && x < W) g[y][x] = c; };
+  for (let x = hc - 3; x <= hc + 2; x++) put(x, 0, x === hc - 1 || x === hc ? '.' : 'D');
+  for (let y = 1; y <= 6; y++) for (let x = hc - 5; x <= hc + 4; x++) put(x, y, y === 5 ? 'd' : (x === hc - 5 || x === hc + 4) && y < 3 ? '.' : 'D');
+  put(hc - 1, 1, 'a'); put(hc, 1, 'a');
+  for (let x = hc - 11; x <= hc + 10; x++){ put(x, 7, 'D'); if (Math.abs(x - hc + 0.5) > 7) put(x, 8, '.'); }
+  for (const x of [hc - 11, hc - 10, hc + 9, hc + 10]) put(x, 6, 'D');
+  return { ...sh, rows:g.map(r => r.join('')), fx:sh.fx + pad, lx:sh.lx + pad, rx:sh.rx + pad, ay:sh.ay + up, hy:sh.hy + up, dy:(sh.dy || 0) + up };
+}
 function charSprite(id, rows, pal, face, opts){
-  let sh = shapeRows(rows, id); if (opts && opts.wings) sh = addWings(sh, opts.wings, opts.feather);
+  let sh = shapeRows(rows, id); if (opts && opts.wings) sh = addWings(sh, opts.wings, opts.feather); if (opts && opts.bighat) sh = addBigHat(sh);
   if (opts && opts.feather){ const g = sh.rows.map(r => r.split('')), y = sh.ay - 2; for (let k = -1; k <= 1; k++) for (let x = 0; x < g[0].length; x++){ const yy = y + k; if (g[yy] && (g[yy][x] === 'a' || g[yy][x] === 'A' || g[yy][x] === '1') && x > 0 && x < g[0].length - 1 && Math.abs(x - g[0].length / 2) > 3) g[yy][x] = k === 0 ? '9' : '8'; } sh = { ...sh, rows:g.map(r => r.join('')) }; }
   const P = { '1':pal.A || pal.H, '2':pal.N || pal.S, ...WING_PAL, ...pal };
-  const sp = wrap(fromRows(sh.rows, P), { x:sh.fx, y:8, style:'big', ...(face || {}) });
+  const sp = wrap(fromRows(sh.rows, P), { x:sh.fx, y:8 + (sh.dy || 0), style:'big', ...(face || {}) });
   sp.hx = sh.hx; sp.hy = sh.hy;
   // versão sem braços, para o jogo desenhar braços que se mexem
   sp.body = outlined(fromRows(sh.rows.map(r => r.replace(/[12]/g, '.')), P));
@@ -1311,7 +1329,7 @@ function buildSprites(){
   // gravata listrada, calça de pneu com cortes, luvas e botas de couro; o cabelo prateado aparece por baixo do chapéu
   const DESCARTE_PAL = { H:'#c9cdd6', h:'#7d828f', L:'#eef0f5', S:'#e6c4a6', s:'#b8927a', D:'#3a2e24', d:'#c9a87a', A:'#2e2e34', a:'#1c1c20', B:'#2e2e34',
     O:'#c9a87a', Q:'#e6d6b0', q:'#7a6a50', C:'#5a4630', G:'#c9a87a', P:'#3a3a40', p:'#26262b', K:'#2a2018', k:'#5a4630', N:'#3a2a1c', X:'#2e2e34', x:'#1c1c20', V:'#3a2e24' };
-  SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['cowboy', 'coat']), DESCARTE_PAL, { col:'#6b3fa8' }));
+  SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['cowboy', 'coat']), DESCARTE_PAL, { col:'#6b3fa8' }, { bighat:true }));
   // Descarte Supremo (estilo Duas-Caras): metade é o Robert nobre, metade foi tomada pelo lixo.
   // Do meio do rosto para a direita: pele verde-podre com cicatrizes, cabelo desgrenhado e terno branco com colete roxo
   const twoFace = rows => rows.map((r, y) => r.split('').map((c, x) => {
@@ -1320,12 +1338,12 @@ function buildSprites(){
     return { S:'Y', s:'y', H:'J', h:'j', L:'j', A:'U', a:'u', P:'U', p:'u', B:'M', O:'Z', q:'M' }[c] || c;
   }).join('')).map((r, y) => y === 0 || y === 1 ? r.replace(/.(?=J|j)/, 'j') : r);
   const SUPREMO_PAL = { ...DESCARTE_PAL, Y:'#8fb36a', y:'#5f7d42', J:'#2f4a2a', j:'#18261a', U:'#ecebe2', u:'#b9b6a8', M:'#5a2a7a', Z:'#2a3a1e' };
-  SPR.robertMax = [0, 1, 0, 2].map(f => charSprite('robert', twoFace(charRows('curto', f, ['cowboy', 'coat'])), SUPREMO_PAL, { col:'#6b3fa8' }));
+  SPR.robertMax = [0, 1, 0, 2].map(f => charSprite('robert', twoFace(charRows('curto', f, ['cowboy', 'coat'])), SUPREMO_PAL, { col:'#6b3fa8' }, { bighat:true }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }));
-  // Chorume: pele verde de chorume, cabelo loiro espetado, óculos vermelhos, regata, corrente dourada, bermuda e chinelo
-  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('spiky', f, ['shades', 'tank']), { H:'#ffe14a', h:'#c9a227', L:'#fff3a0', S:'#6fae3c', s:'#4a7a24', A:'#8a8f96', a:'#5f646b', B:'#8a8f96', C:'#ffe14a',
-    P:'#3d5a9a', p:'#2b4070', K:'#2a2a33', k:'#2a2a33', V:'#ff3b3b', v:'#7a1020', G:'#e0b24a', N:'#6fae3c', '1':'#6fae3c', '2':'#6fae3c' }, { col:'#ffd0d0' }));
+  // Chorume: pele verde de chorume, cabelo loiro espetado, óculos vermelhos, jaqueta longa de saco de lixo, regata, corrente dourada, jeans rasgado e tênis
+  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('spiky', f, ['shades', 'tank', 'jacket']), { H:'#ffe14a', h:'#c9a227', L:'#fff3a0', S:'#6fae3c', s:'#4a7a24', A:'#8a8f96', a:'#5f646b', B:'#8a8f96', C:'#2a2a33',
+    P:'#3d5a9a', p:'#2b4070', K:'#f0f0f4', k:'#b0b0bc', V:'#ff3b3b', v:'#7a1020', G:'#e0b24a', N:'#6fae3c', X:'#1e1e24', x:'#4a4a58', '1':'#1e1e24', '2':'#6fae3c' }, { col:'#ffd0d0' }));
   SPR.robertHero = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
@@ -1853,7 +1871,7 @@ function paintBinCanvases(root){ root.querySelectorAll('canvas[data-bin]').forEa
 function portraitCanvas(cnv, id, mood, sick, set){
   mood = villainMood(id, mood);
   const base = (set || SPR.chars[id])[0], g = cnv.getContext('2d'), s = sick ? sickOf(base) : base; g.imageSmoothingEnabled = false;
-  const sx = s.face.x - 7; g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, sx, 0, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x - sx + 1, s.face.y + 3, mood, s.face);
+  const sx = s.face.x - 7, sy = Math.max(0, s.face.y - 11); g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, sx, sy, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x - sx + 1, s.face.y - sy + 3, mood, s.face);
 }
 function buildSelect(){
   const box = $('#chars'); box.innerHTML = '';
