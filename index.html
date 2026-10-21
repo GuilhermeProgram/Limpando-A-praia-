@@ -213,6 +213,30 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 #card-s{font-family:var(--f-body);font-size:clamp(15px,2.8vw,24px);letter-spacing:.14em;color:var(--muted)}
 #card.red #card-t{color:#ff5a4f;text-shadow:0 0 22px rgba(255,60,40,.65)}
 @keyframes cardIn{from{opacity:0;letter-spacing:.5em}to{opacity:1}}
+/* quadrinhos */
+#cine.comic::before,#cine.comic::after{display:none}
+#comic{position:absolute;inset:0;z-index:2;display:grid;place-items:center;overflow:hidden;background:#efe4c8 radial-gradient(circle,rgba(60,40,20,.13) 1px,transparent 1.6px) 0 0/7px 7px}
+.cpage{grid-area:1/1;position:relative;width:min(calc(100vw - 28px),calc((100vh - 76px) * 1.5),1180px);aspect-ratio:1.5;transition:transform .5s cubic-bezier(.6,0,.4,1),opacity .5s}
+.cpage.out{transform:translateX(-115%) rotate(-5deg);opacity:0}
+.cpanel{position:absolute;box-sizing:border-box;background:#111;border:4px solid #111;box-shadow:5px 5px 0 rgba(30,20,10,.35);animation:panelIn .38s cubic-bezier(.2,1.3,.4,1) both}
+.cpanel canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.cpanel::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,rgba(0,0,0,.2) .8px,transparent 1.3px) 0 0/5px 5px;mix-blend-mode:multiply}
+@keyframes panelIn{from{transform:scale(1.1) rotate(1.5deg);opacity:0}to{transform:none;opacity:1}}
+.cpanel.card{display:grid;place-content:center;gap:6px;text-align:center;background:#0d0d16;padding:8px}
+.cpanel.card.red{background:#2a0606}
+.ctitle{font-family:var(--f-body);font-weight:700;font-size:clamp(18px,3.4vw,46px);letter-spacing:.18em;color:#fff8e7;text-wrap:balance}
+.cpanel.card.red .ctitle{color:#ff5a4f}
+.csub{font-family:var(--f-body);font-style:italic;font-size:clamp(12px,1.7vw,22px);color:#b9c4dc}
+.balloon{position:absolute;top:5%;transform:translateX(-50%);max-width:72%;min-width:18%;box-sizing:border-box;background:#fff;color:#111;border:3px solid #111;border-radius:20px;padding:.45em .8em .55em;font-family:var(--f-body);font-weight:700;font-size:clamp(11px,1.3vw,19px);line-height:1.25;z-index:3;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+.balloon b{display:block;font-size:.68em;letter-spacing:.08em;margin-bottom:1px}
+.balloon .tail{position:absolute;bottom:-10px;width:16px;height:16px;margin-left:-8px;background:inherit;border-right:3px solid #111;border-bottom:3px solid #111;transform:rotate(45deg) skew(12deg,12deg)}
+.balloon.shout{border-width:4px;border-radius:4px;background:#fff6cf;font-size:clamp(12px,1.55vw,22px);transform:translateX(-50%) rotate(-2deg);box-shadow:0 0 0 3px #fff6cf,0 0 0 6px #111,4px 4px 0 6px rgba(0,0,0,.25)}
+.balloon.think{border-style:dashed;border-radius:30px;font-style:italic}
+.caption{position:absolute;left:3%;top:4%;max-width:72%;box-sizing:border-box;background:#ffd23f;color:#111;border:3px solid #111;padding:.35em .6em;font-family:var(--f-body);font-weight:700;font-style:italic;font-size:clamp(11px,1.25vw,18px);line-height:1.25;z-index:3;box-shadow:3px 3px 0 rgba(0,0,0,.3)}
+.sfxw{position:absolute;font-family:var(--f-display);font-size:clamp(16px,3vw,42px);color:#ffd23f;-webkit-text-stroke:2px #111;paint-order:stroke fill;text-shadow:4px 4px 0 #b23a2f;transform:rotate(-12deg);z-index:4;pointer-events:none;animation:sfxIn .3s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes sfxIn{from{transform:rotate(-12deg) scale(2.4);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
+@media (orientation:portrait){.cpage{aspect-ratio:.78;width:min(calc(100vw - 24px),calc((100vh - 90px) * .78))}}
+@media (prefers-reduced-motion:reduce){.cpanel,.sfxw{animation:none}.cpage{transition:none}}
 #dlg.narr #dlg-text{font-style:italic;color:#e6e0ff}
 #dlg{position:absolute;z-index:2;left:50%;transform:translateX(-50%);bottom:calc(min(9vh,60px) + 10px + env(safe-area-inset-bottom,0px));width:min(780px,calc(100% - 24px));box-sizing:border-box;background:linear-gradient(#1d3a6b,#13284d);border:3px solid var(--foam);border-radius:10px;box-shadow:0 0 0 3px var(--deep),0 8px 0 rgba(0,0,0,.35);padding:12px 16px 16px;display:flex;gap:14px;align-items:flex-start;min-height:104px}
 #dlg.narr{background:linear-gradient(#2c2547,#1a1530)}
@@ -3438,6 +3462,10 @@ function playCine(scenes, done){
            flash:0, lines:0, fade:1, light:0, rainDrops:[], grade:null, lineGrade:null, card:null };
   toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); bannerT = 0; $('#banner').textContent = '';
   for (const k in keys) keys[k] = false; joy = null;
+  CINE.comic = !!(scenes[0] && scenes[0].comic);
+  $('#cine').classList.toggle('comic', CINE.comic);
+  const oldC = $('#comic'); if (oldC) oldC.remove();
+  if (CINE.comic){ const cm = document.createElement('div'); cm.id = 'comic'; $('#cine').prepend(cm); $('#dlg').hidden = true; }
   $('#cine').hidden = false; setState('cutscene', null);
   cineScene(0);
 }
@@ -3451,8 +3479,9 @@ function cineScene(i){
       const R = mulberry(17 + i), types = Object.keys(ETYPES), cx0 = sc.cam ? sc.cam[0] : STAGE_X, cy0 = sc.cam ? sc.cam[1] : 360;
       for (let k = 0; k < sc.trash; k++) L.items.push({ type:types[k % types.length], x:cx0 + (R() - 0.5) * 520, y:clamp(cy0 + (R() - 0.5) * 260, SHORE + 14, WORLD_H - 20), vx:0, vy:0, age:0, delay:0, keep:true });
     }
-    C.fade = 1;
+    C.fade = C.comic ? 0 : 1;
   }
+  if (C.comic){ const n = sc.lines.length, pages = Math.ceil(n / 4); C.plan = { n, per:Math.ceil(n / pages) }; C.pageScene = -1; }
   if (sc.actorsAdd) C.actors.push(...sc.actorsAdd.map(a => ({ anim:0, ...a, mood:villainMood(a.id, a.mood) })));
   if (sc.camPlayer && G) C.wide = { x:G.player.x + 40, y:G.player.y - 10 };
   else if (sc.cam) C.wide = { x:sc.cam[0], y:sc.cam[1] };
@@ -3476,13 +3505,14 @@ function cineLine(){
   C.wait = 0; C.hold = 0; C.lineGrade = ln.grade || null;
   if (ln.card){
     C.card = { t:0, dur:ln.sub ? 2.4 : 1.9 };
+    if (C.comic){ C.text = ''; C.typed = 0; C.speaker = null; if (ln.red) sfx('boss'); comicPanel(C, ln, null); return; }
     $('#card-t').textContent = ln.card; $('#card-s').textContent = ln.sub || '';
     $('#card').classList.toggle('red', !!ln.red); $('#card').hidden = false; $('#dlg').hidden = true;
     C.text = ''; C.typed = 0; C.speaker = null;
     if (ln.red){ sfx('boss'); }
     return;
   }
-  C.card = null; $('#card').hidden = true; $('#dlg').hidden = false;
+  C.card = null; $('#card').hidden = true; $('#dlg').hidden = !!C.comic;
   const who = ln.who === 'player' ? (G ? G.player.id : 'tiago') : ln.who;
   C.speaker = who;
   if (ln.music) playMusic(ln.music);
@@ -3492,6 +3522,10 @@ function cineLine(){
   if (shot === undefined) shot = C.focus ? { f:C.focus, z:C.goal.z } : 'wide';   // sem indicação: mantém o enquadramento
   else if (shot && shot.f === 'player') shot = { ...shot, f:'__player' };
   setShot(C, shot);
+  if (C.comic){ // enquadra na hora: cada quadro já nasce com o close certo
+    if (C.focus){ const f = C.focus === '__player' ? (G && G.player) : actor(C, C.focus); if (f){ C.goal.x = f.x; C.goal.y = f.y + (C.focusDy ?? -14); } }
+    C.view = { ...C.goal };
+  }
   if (ln.fx === 'flash') C.flash = 1;
   if (ln.fx === 'shake') cam.shake = 0.45;
   if (ln.fx === 'lines') C.lines = 1.4;
@@ -3502,16 +3536,84 @@ function cineLine(){
   cnv.hidden = !hasFace;
   if (hasFace){ const mood = villainMood(who, ln.mood || (a && a.mood) || 'alegre'); if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick, a ? spriteSet(a) : null); }
   $('#dlg').classList.toggle('narr', who === 'narr');
-  C.text = ln.text; C.typed = 0; $('#dlg-text').textContent = '';
+  if (C.comic) comicPanel(C, ln, who);
+  C.text = ln.text; C.typed = 0; cineText('');
 }
 function cineNext(){
   const C = CINE; if (!C) return;
   if (C.card){ cineLine(); return; }
-  if (C.typed < C.text.length){ C.typed = C.text.length; $('#dlg-text').textContent = C.text; }
+  if (C.typed < C.text.length){ C.typed = C.text.length; cineText(C.text); }
   else cineLine();
 }
-function cineEnd(){ const d = CINE && CINE.done; CINE = null; $('#cine').hidden = true; $('#card').hidden = true; $('#dlg').hidden = false; if (d) d(); }
+function cineEnd(){ const d = CINE && CINE.done; CINE = null; const cm = $('#comic'); if (cm) cm.remove(); $('#cine').classList.remove('comic'); $('#cine').hidden = true; $('#card').hidden = true; $('#dlg').hidden = false; if (d) d(); }
 function cineSkip(){ if (CINE) cineEnd(); }
+function cineText(t){ if (CINE && CINE.comic){ if (CINE.balloonText) CINE.balloonText.textContent = t; } else $('#dlg-text').textContent = t; }
+// marca uma sequência de cenas para ser contada como história em quadrinhos
+function comicScenes(arr){ for (const sc of arr) sc.comic = true; return arr; }
+// posição de cada quadro na página, de 1 a 4 quadros: [x, y, largura, altura] em frações da página
+const COMIC_LAYOUT = {
+  1:[[0, 0, 1, 1]],
+  2:[[0, 0, 1, .5], [0, .5, 1, .5]],
+  3:[[0, 0, 1, .52], [0, .52, .5, .48], [.5, .52, .5, .48]],
+  4:[[0, 0, .6, .5], [.6, 0, .4, .5], [0, .5, .4, .5], [.4, .5, .6, .5]],
+};
+const COMIC_LAYOUT_TALL = {
+  1:[[0, 0, 1, 1]],
+  2:[[0, 0, 1, .5], [0, .5, 1, .5]],
+  3:[[0, 0, 1, .36], [0, .36, 1, .32], [0, .68, 1, .32]],
+  4:[[0, 0, 1, .3], [0, .3, .5, .36], [.5, .3, .5, .36], [0, .66, 1, .34]],
+};
+function comicPanel(C, ln, who){
+  const root = $('#comic'); if (!root) return;
+  // fecha o quadro anterior: última imagem e texto completo
+  if (C.activePanel){ comicCapture(); } if (C.balloonText && C.prevText) C.balloonText.textContent = C.prevText;
+  C.prevText = ln.text || '';
+  const idx = C.line, per = C.plan.per, pg = Math.floor(idx / per), slot = idx % per, count = Math.min(per, C.plan.n - pg * per);
+  if (!C.pageEl || C.pageNo !== pg || C.pageScene !== C.i){
+    if (C.pageEl){ const old = C.pageEl; old.classList.add('out'); setTimeout(() => old.remove(), 550); sfx('swing'); }
+    C.pageEl = document.createElement('div'); C.pageEl.className = 'cpage'; root.append(C.pageEl); C.pageNo = pg; C.pageScene = C.i;
+  }
+  const tall = matchMedia('(orientation:portrait)').matches, R = (tall ? COMIC_LAYOUT_TALL : COMIC_LAYOUT)[count][slot], gap = 0.9;
+  const el = document.createElement('div'); el.className = 'cpanel';
+  Object.assign(el.style, { left:(R[0] * 100 + gap / 2) + '%', top:(R[1] * 100 + gap / 2) + '%', width:(R[2] * 100 - gap) + '%', height:(R[3] * 100 - gap) + '%' });
+  C.pageEl.append(el); C.balloonText = null;
+  if (ln.card){
+    el.classList.add('card'); el.classList.toggle('red', !!ln.red);
+    const t = document.createElement('div'); t.className = 'ctitle'; t.textContent = ln.card; el.append(t);
+    if (ln.sub){ const sub = document.createElement('div'); sub.className = 'csub'; sub.textContent = ln.sub; el.append(sub); }
+    C.activePanel = null; return;
+  }
+  const cnv = document.createElement('canvas'); el.append(cnv); C.activePanel = { el, cnv, who, placed:false };
+  if (who === 'narr'){ const cap = document.createElement('div'); cap.className = 'caption'; el.append(cap); C.balloonText = cap; }
+  else {
+    const shout = ['lines', 'shake', 'thunder'].includes(ln.fx) || (/!/.test(ln.text) && /[A-ZÀ-Ú]{3,}/.test(ln.text));
+    const think = /^\.+$/.test(ln.text.trim());
+    const b = document.createElement('div'); b.className = 'balloon' + (shout ? ' shout' : '') + (think ? ' think' : '');
+    const nm = document.createElement('b'); const a = actor(C, who); nm.textContent = ln.name || (a && a.nome) || NOMES[who] || ''; nm.style.color = COR_NOME[who] ? 'color-mix(in srgb,' + COR_NOME[who] + ' 55%, #111)' : '#444';
+    const tx = document.createElement('span'); const tail = document.createElement('i'); tail.className = 'tail';
+    b.append(nm, tx, tail); b.style.left = '50%'; tail.style.left = '50%'; el.append(b);
+    C.balloonText = tx; C.activePanel.balloon = b; C.activePanel.tail = tail;
+  }
+  const word = ln.sfxWord || { thunder:'KRAKOOM!', shake:'TUM!', flash:'FLASH!' }[ln.fx];
+  if (word){ const w = document.createElement('div'); w.className = 'sfxw'; w.textContent = word; w.style.left = (52 + Math.random() * 14) + '%'; w.style.top = (58 + Math.random() * 14) + '%'; el.append(w); }
+}
+// o quadro da vez é uma janela ao vivo da cena: copia a tela do jogo, recortada no formato do quadro
+function comicCapture(){
+  const C = CINE, P = C && C.activePanel; if (!P) return;
+  const r = P.el.getBoundingClientRect(); if (!r.width || !r.height) return;
+  const asp = r.width / r.height; let cw = VW, ch = VW / asp; if (ch > VH){ ch = VH; cw = VH * asp; }
+  cw = Math.max(8, Math.round(cw)); ch = Math.max(8, Math.round(ch)); const ox = Math.round((VW - cw) / 2), oy = Math.round((VH - ch) / 2);
+  if (P.cnv.width !== cw || P.cnv.height !== ch){ P.cnv.width = cw; P.cnv.height = ch; }
+  const g = P.cnv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, cw, ch); g.drawImage(cv, ox, oy, cw, ch, 0, 0, cw, ch);
+  if (!P.placed && P.balloon){
+    P.placed = true;
+    const a = P.who === '__player' ? (G && G.player) : actor(C, P.who);
+    let fx = 0.5;
+    if (a){ let px = a.x - Math.round(cam.x); if (C.zoom){ px = (px - C.zoom.sx) * C.zoom.z; } fx = clamp((px - ox) / cw, 0.04, 0.96); }
+    const X = clamp(fx * 100, 26, 74); P.balloon.style.left = X + '%';
+    P.tail.style.left = clamp(50 + (fx * 100 - X) * 2.2, 14, 86) + '%';
+  }
+}
 const VOZ = { chorume:110, caretta:300, robert:170, marina:620, tiago:520, cida:440, leo:480, todos:560 };
 function talkBlip(who){
   const f = VOZ[who]; if (!f || !sfxOn || !AC) return;
@@ -3526,7 +3628,7 @@ function cineUpdate(dt){
     else {
       const before = C.typed | 0; C.typed = Math.min(C.text.length, C.typed + dt * 55 * TEXTO_VEL()); const now = C.typed | 0;
       if (now !== before){
-        $('#dlg-text').textContent = C.text.slice(0, now);
+        cineText(C.text.slice(0, now));
         const chr = C.text[now - 1];
         if ('.!?'.includes(chr) && now < C.text.length) C.hold = C.text[now] === '.' ? 0.08 : 0.24;
         else if (chr === ',') C.hold = 0.07;
@@ -3580,7 +3682,7 @@ function carettaPortrait(cnv, mood){
   g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 1, 2, 18, 18, 1, 1, 18, 18); drawFace(g, s.face.x, s.face.y - 1, mood, s.face);
 }
 function speakerArrow(x, y, t){
-  if (CINE && CINE.view.z > 1.4) return;   // no close-up a câmera já mostra quem fala
+  if (CINE && (CINE.view.z > 1.4 || CINE.comic)) return;   // no close-up (e nos quadrinhos) já dá para ver quem fala
   const yy = Math.round(y - 5 - (((t * 4) | 0) % 2));
   ctx.fillStyle = OUT; ctx.fillRect(x - 4, yy - 1, 9, 2); ctx.fillRect(x - 3, yy + 1, 7, 1); ctx.fillRect(x - 2, yy + 2, 5, 1); ctx.fillRect(x - 1, yy + 3, 3, 1);
   ctx.fillStyle = '#ffd23f'; ctx.fillRect(x - 3, yy - 1, 7, 1); ctx.fillRect(x - 2, yy, 5, 1); ctx.fillRect(x - 1, yy + 1, 3, 1); ctx.fillRect(x, yy + 2, 1, 1);
@@ -3638,7 +3740,8 @@ function cinePost(){
     const w = VW / z, h = VH / z, fx = C.view.x - cam.x, fy = C.view.y - cam.y;
     const sx = clamp(fx - w / 2, 0, VW - w), sy = clamp(fy - h / 2, 0, VH - h);
     ctx.imageSmoothingEnabled = false; ctx.drawImage(zbuf, sx, sy, w, h, 0, 0, VW, VH);
-  }
+    C.zoom = { sx, z };
+  } else C.zoom = null;
   const grade = C.lineGrade || C.grade;
   if (grade === 'gray'){ ctx.save(); ctx.globalCompositeOperation = 'saturation'; ctx.fillStyle = 'rgba(128,128,128,.8)'; ctx.fillRect(0, 0, VW, VH); ctx.restore(); ctx.fillStyle = 'rgba(30,40,70,.18)'; ctx.fillRect(0, 0, VW, VH); }
   else if (grade === 'sepia'){ ctx.save(); ctx.globalCompositeOperation = 'color'; ctx.fillStyle = 'rgba(176,132,82,.7)'; ctx.fillRect(0, 0, VW, VH); ctx.restore(); }
@@ -3652,6 +3755,7 @@ function cinePost(){
   vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, VW, VH);
   if (C.flash > 0){ ctx.fillStyle = `rgba(255,255,255,${C.flash * 0.75})`; ctx.fillRect(0, 0, VW, VH); }
   if (C.fade > 0){ ctx.fillStyle = `rgba(0,0,0,${Math.min(1, C.fade)})`; ctx.fillRect(0, 0, VW, VH); }
+  if (C.comic) comicCapture();
 }
 
 /* cena pós-créditos: Robert encontra o antigo aprendiz da Caretta */
@@ -3748,7 +3852,7 @@ function watchCine(build, run){
 function chapterList(){
   const list = [];
   const NOMES_CAP = [['Praia do Sol','muitos verões atrás · começa a abertura'], ['Vinte verões depois','a praia suja'], ['Os cinco da cidade','quem são os aprendizes'], ['O chamado','a Caretta aparece'], ['O treinamento','os poderes e as roupas de herói'], ['A briga','meses depois'], ['Robert, o Descarte','o lixo acorda'], ['A confissão','a Caretta mentiu'], ['Cinquenta anos atrás','o primeiro aprendiz'], ['A união dos Guardiões','vamos salvar o Robert']];
-  OPENING().forEach((sc, i) => { const c = sc.lines.find(l => l.card), [t, sub] = NOMES_CAP[i] || [c ? c.card : 'Cena ' + (i + 1), 'abertura']; list.push({ t, sub, who:i === 6 ? 'robert' : 'caretta', go:() => watchCine(() => OPENING().slice(i)) }); });
+  OPENING().forEach((sc, i) => { const c = sc.lines.find(l => l.card), [t, sub] = NOMES_CAP[i] || [c ? c.card : 'Cena ' + (i + 1), 'abertura']; list.push({ t, sub, who:i === 6 ? 'robert' : 'caretta', go:() => watchCine(() => comicScenes(OPENING().slice(i))) }); });
   [0, 1, 2].forEach(f => list.push({ t:'Antes do chefe ' + (f + 1), sub:FASES[f].nome, who:'robert', go:() => watchCine(BOSS_CINE[f], { hero:jumpHero === 'robert' ? 'tiago' : jumpHero, fase:f }) }));
   list.push({ t:'O final', sub:'a Marina é infectada', who:'marina', go:() => watchCine(FINAL_CINE) });
   list.push({ t:'Créditos finais', sub:'equipe e referências', who:'leo', go:() => { initAudio(); rollCredits(backToChapters); } });
@@ -3826,7 +3930,7 @@ function rollCredits(done){
 function endCredits(){ if (state !== 'credits' || !creditsDone) return; const d = creditsDone; creditsDone = null; d(); }
 
 /* abertura automática e logo do jogo */
-function startOpening(){ playCine(OPENING(), showLogo); }
+function startOpening(){ playCine(comicScenes(OPENING()), showLogo); }
 function beginGame(){ if (state !== 'start') return; initAudio(); applyVolumes(); if (OPTS.historia) startOpening(); else showLogo(); }
 let logoTimer = null;
 function showLogo(){
