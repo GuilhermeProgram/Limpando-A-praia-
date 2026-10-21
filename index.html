@@ -1180,6 +1180,17 @@ function charRows(style, frame, extras){
   }
   if (ex.includes('ooze')){ for (const [x, y] of [[0, 19], [1, 23], [2, 21], [6, 18], [9, 18], [4, 22], [11, 22], [3, 17], [13, 17]]) put(x, y, 'E'); }
   if (ex.includes('mohawk')){ for (const [x, y, c] of [[2,0,'h'],[4,0,'L'],[5,0,'h'],[9,0,'h'],[12,0,'L'],[13,0,'h'],[1,1,'h'],[14,1,'h'],[2,1,'H'],[13,1,'H'],[0,2,'h'],[15,2,'h']]) put(x, y, c); }
+  // Robert nobre: colarinho branco aberto, colete azul-petróleo, corrente dourada com pedra roxa, bordados brancos no sobretudo, mechas na testa
+  if (ex.includes('noble')){
+    for (const x of [5, 6, 9, 10]) put(x, 13, 'Q'); put(4, 12, 'Q'); put(11, 12, 'Q'); put(5, 14, 'Q'); put(10, 14, 'Q');
+    for (let y = 14; y <= 17; y++) for (const x of [6, 7, 8, 9]) put(x, y, 'B');
+    put(6, 14, 'Q'); put(9, 14, 'Q'); put(7, 15, 'G'); put(8, 16, 'G'); put(7, 17, 'I');
+    for (const [x, y] of [[4, 15], [4, 17], [11, 16], [11, 18], [5, 18]]) put(x, y, 'O');
+    put(6, 6, 'L'); put(7, 6, 'H'); put(10, 6, 'L');
+  }
+  // Chorume estilo Doflamingo: óculos vermelhos e camisa branca de bolinhas
+  if (ex.includes('shades')){ for (let x = 5; x <= 12; x++) put(x, 8, x === 8 || x === 9 ? 'v' : 'V'); put(4, 8, 'v'); put(13, 8, 'v'); }
+  if (ex.includes('dots')){ for (const [x, y] of [[6, 14], [9, 15], [7, 17], [10, 17], [5, 16]]) put(x, y, 'E'); }
   if (ex.includes('beard')){ for (const [x, y] of [[6,12],[7,12],[8,12],[9,12],[6,13],[7,13],[8,13],[9,13],[7,14],[8,14],[7,15]]) put(x, y, 'Q'); }
   if (ex.includes('feather')){ put(11, 0, 'G'); put(12, 0, 'G'); put(12, 1, 'G'); put(13, 0, 'G'); }
   for (let y = 15; y <= 18; y++){ const c = y <= 16 ? '1' : '2'; put(2, y, c); put(3, y, c); put(13, y, c); put(14, y, c); }
@@ -1188,7 +1199,7 @@ function charRows(style, frame, extras){
 
 // Marina: atlética e de ombros largos · Tiago: o mais alto e magro · Cida: baixa e forte
 // Léo: médio e esguio · Robert: o maior de todos, largo e alto (a cabeça fica proporcionalmente menor)
-const BODY = { marina:{ widen:2, add:[16, 20] }, tiago:{ narrow:true, add:[14, 15, 16, 19, 20, 21, 21] }, cida:{ widen:6, del:[16, 17, 20, 21] }, leo:{ narrow:true, add:[19, 20, 21] }, robert:{ widen:6, add:[14, 15, 16, 17, 19, 20, 21, 21] } };
+const BODY = { chorume:{ widen:6, add:[15, 16, 19, 20, 21] }, marina:{ widen:2, add:[16, 20] }, tiago:{ narrow:true, add:[14, 15, 16, 19, 20, 21, 21] }, cida:{ widen:6, del:[16, 17, 20, 21] }, leo:{ narrow:true, add:[19, 20, 21] }, robert:{ widen:6, add:[14, 15, 16, 17, 19, 20, 21, 21] } };
 function shapeRows(rows, id){
   const B = BODY[id]; let g = rows.map(r => r.split('')), fx = 6, hx = 5, hy = 18;
   if (!B) return { rows, fx, hx, hy, lx:2.5, rx:13.5, ay:15 };
@@ -1214,21 +1225,23 @@ function shapeRows(rows, id){
 }
 // sprite de personagem com o molde de corpo dele; guarda onde fica a mão (hx, hy)
 // asas feitas de lixo (garrafa, latinha, sacola e papelão) abertas atrás dos ombros
-function addWings(sh, n){
+function addWings(sh, n, feather){
   const g = sh.rows.map(r => ('.'.repeat(n) + r + '.'.repeat(n)).split('')), top = sh.ay - 1;
   const lE = n + Math.floor(sh.lx), rE = n + Math.ceil(sh.rx);
   for (let c = 1; c <= n; c++){
-    const y0 = top - Math.floor(c * 0.9), y1 = top + 8 - Math.floor(c * 0.7);
+    const y0 = feather ? top - 3 - Math.floor(c * 0.5) : top - Math.floor(c * 0.9), y1 = feather ? top + 10 - Math.floor(c * 0.5) : top + 8 - Math.floor(c * 0.7);
     for (let y = Math.max(0, y0); y <= Math.min(g.length - 1, y1); y++){
-      const edge = y === y0 || y === y1 || c === n, ch = edge ? '7' : '3456'[(c + y * 2) % 4];
+      const edge = y === y0 || y === y1 || c === n;
+      const ch = feather ? (edge ? ((y + c) % 2 ? '0' : '.') : ((y + c) % 3 ? '8' : '9')) : (edge ? '7' : '3456'[(c + y * 2) % 4]);
       if (g[y][lE - c] === '.') g[y][lE - c] = ch; if (g[y][rE + c] === '.') g[y][rE + c] = ch;
     }
   }
   return { ...sh, rows:g.map(r => r.join('')), fx:sh.fx + n, lx:sh.lx + n, rx:sh.rx + n };
 }
-const WING_PAL = { '3':'#4f9cc4', '4':'#c9d0db', '5':'#e9e4d8', '6':'#bb854a', '7':'#1f3d22' };
+const WING_PAL = { '3':'#4f9cc4', '4':'#c9d0db', '5':'#e9e4d8', '6':'#bb854a', '7':'#1f3d22', '8':'#ff8fb8', '9':'#ffc2da', '0':'#d9578c' };
 function charSprite(id, rows, pal, face, opts){
-  let sh = shapeRows(rows, id); if (opts && opts.wings) sh = addWings(sh, opts.wings);
+  let sh = shapeRows(rows, id); if (opts && opts.wings) sh = addWings(sh, opts.wings, opts.feather);
+  if (opts && opts.feather){ const g = sh.rows.map(r => r.split('')), y = sh.ay - 2; for (let k = -1; k <= 1; k++) for (let x = 0; x < g[0].length; x++){ const yy = y + k; if (g[yy] && (g[yy][x] === 'a' || g[yy][x] === 'A' || g[yy][x] === '1') && x > 0 && x < g[0].length - 1 && Math.abs(x - g[0].length / 2) > 3) g[yy][x] = k === 0 ? '9' : '8'; } sh = { ...sh, rows:g.map(r => r.join('')) }; }
   const P = { '1':pal.A || pal.H, '2':pal.N || pal.S, ...WING_PAL, ...pal };
   const sp = wrap(fromRows(sh.rows, P), { x:sh.fx, y:8, style:'big', ...(face || {}) });
   sp.hx = sh.hx; sp.hy = sh.hy;
@@ -1279,17 +1292,20 @@ function buildSprites(){
     SPR.casual[c.id] = [0, 1, 0, 2].map(f => charSprite(c.id, charRows(c.style, f, CASUAL_EXTRA[c.id] || []), { ...ACC_PAL, ...cp }));
   }
   const ROBERT_PAL = { H:'#33363d', h:'#1b1c21', L:'#4a4e57', S:'#e0b896', s:'#b08a6c', A:'#2c2f35', a:'#1c1e22', B:'#5b6068', C:'#4a3f35', P:'#26282d', p:'#16171a', K:'#1c1916', k:'#38312a', V:'#33363d' };
-  // Robert, o Descarte: verde-podre, coroa de sucata, capa rasgada e asas feitas de lixo
-  const DESCARTE_PAL = { H:'#173d22', h:'#0b2414', L:'#2f6b3a', S:'#cfc7b0', s:'#9a937e', A:'#2f8a3a', a:'#1d5e27', B:'#2f8a3a', O:'#8bd450', o:'#5fa83a',
-    E:'#d6ff8a', T:'#0f2a16', G:'#8bd450', N:'#123018', P:'#245c2e', p:'#123018', K:'#0b1f0f', k:'#1f3d22', X:'#1f4d2a', x:'#0f2a16', R:'#b08a3e', r:'#6b5530', V:'#173d22', C:'#2f8a3a' };
-  SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('hood', f, ['suit', 'torn', 'crown', 'ooze']), DESCARTE_PAL, { col:'#8bd450' }, { wings:6 }));
+  // Robert, o Descarte: nobre e perigoso. Cabelo prateado penteado, sobretudo preto bordado com forro vermelho,
+  // colarinho branco aberto, colete azul-petróleo e corrente dourada com pedra roxa
+  const DESCARTE_PAL = { H:'#c9cdd6', h:'#7d828f', L:'#eef0f5', S:'#e6c4a6', s:'#b8927a', A:'#1c1c24', a:'#0d0d12', B:'#3f7f8a', C:'#1c1c24', O:'#e8e8f0',
+    Q:'#f4f0ea', G:'#e0b24a', I:'#8a3ce0', P:'#1c1c24', p:'#0d0d12', K:'#0d0d12', k:'#2a2a33', N:'#e6c4a6', X:'#1c1c24', x:'#7a1020', V:'#c9cdd6' };
+  SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['noble', 'cape', 'coat']), DESCARTE_PAL, { col:'#6b3fa8' }));
   // Descarte Supremo: depois de absorver o Chorume. Cabelo verde arrepiado, asas maiores, tudo brilhando
   const SUPREMO_PAL = { H:'#7dff4f', h:'#2f8a1f', L:'#e6ffb0', S:'#d8d2bc', s:'#a39c86', A:'#1f6b2a', a:'#0f3d18', B:'#1f6b2a', O:'#8bd450', o:'#4f8a2a',
     E:'#ffffff', T:'#0b1f0f', G:'#d6ff8a', N:'#0f3d18', P:'#1f6b2a', p:'#0f3d18', K:'#0b1f0f', k:'#1f3d22', C:'#d6ff8a', c:'#8bd450', V:'#7dff4f' };
   SPR.robertMax = [0, 1, 0, 2].map(f => charSprite('robert', charRows('spiky', f, ['suit', 'mohawk', 'ooze']), SUPREMO_PAL, { col:'#d6ff8a' }, { wings:9 }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }));
-  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }, { col:'#a8ff5a' }));
+  // Chorume: alto, cabelo loiro espetado, óculos vermelhos, casaco de penas cor-de-rosa, camisa de bolinhas e calça laranja
+  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('spiky', f, ['shades', 'dots']), { H:'#ffe14a', h:'#c9a227', L:'#fff3a0', S:'#d9a06c', s:'#a8743f', A:'#f4f4f8', a:'#c3c3d2', B:'#f4f4f8', C:'#ffe14a', E:'#2a2a33',
+    P:'#e8803a', p:'#b85a1f', K:'#2a2a33', k:'#4a4a58', V:'#ff3b3b', v:'#7a1020', N:'#d9a06c' }, { col:'#ffd0d0' }, { wings:8, feather:true }));
   SPR.robertHero = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
@@ -3876,14 +3892,14 @@ const POST_CREDITS = () => [
     { who:'robert', mood:'zangado', text:'Cinquenta anos... e a tartaruga achou que ninguém ia descobrir.', shot:{ f:'robert', z:2.6 } },
     { who:'robert', mood:'zangado', text:'Eu sei que você tá aqui. O primeiro aprendiz.', shot:{ f:'robert', z:2.8 }, grade:'red' },
     { who:'narr', text:'O lixo começou a se mexer.', shot:{ at:[STAGE_X + 60, 390], z:2 }, fx:'thunder', do:C => { const a = actor(C, 'chorume'); a.hidden = false; a.tremble = 1.2; burst(C, a, ['#8bd450','#4f8a2a','#3d4a2a']); } },
-    { who:'chorume', mood:'triste', text:'Faz tempo que ninguém me procura, garoto. Muito tempo.', shot:{ f:'chorume', z:2.8 } },
+    { who:'chorume', mood:'triste', text:'Fufufu... faz tempo que ninguém me procura, garoto.', shot:{ f:'chorume', z:2.8 } },
     { who:'robert', mood:'zangado', text:'Ela mentiu pra todo mundo. Pra você também.', shot:{ f:'robert', z:2.6 } },
     { who:'chorume', mood:'zangado', text:'A Caretta sempre achou que dava pra salvar o mundo separando garrafinha.', shot:{ f:'chorume', z:2.6 } },
     { who:'chorume', mood:'triste', text:'Eu tentei. Anos e anos. E eles continuaram jogando tudo fora.', shot:{ f:'chorume', z:3 }, grade:'gray' },
     { who:'robert', mood:'zangado', text:'Então me ensina o que ela não teve coragem de ensinar.', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines' },
     { who:'chorume', mood:'zangado', text:'Antes eu tinha um nome. Hoje, quem escorre por baixo de cada lixão... sou eu.', shot:{ f:'chorume', z:3.2 }, do:C => { const a = actor(C, 'chorume'); a.nome = 'Chorume'; } },
     { card:'CHORUME', red:true },
-    { who:'chorume', mood:'zangado', text:'Juntos, garoto, a gente cobre este mundo de lixo.', shot:{ f:'chorume', z:2.6 }, grade:'red' },
+    { who:'chorume', mood:'zangado', text:'Fufufu... juntos, garoto, a gente cobre este mundo de lixo.', shot:{ f:'chorume', z:2.6 }, grade:'red' },
     { who:'robert', mood:'zangado', text:'Até não sobrar uma praia pra limpar.', shot:{ f:'robert', z:2.6 }, grade:'red' },
     { who:'narr', text:'E, pela primeira vez em cinquenta anos, o lixão inteiro brilhou.', shot:'wide', fx:'thunder', do:C => riseMonsters(C, STAGE_X, 405) },
     { card:'OS GUARDIÕES DA MARÉ VOLTARÃO' } ] },
@@ -3903,7 +3919,7 @@ const DLC_INTRO = () => [
     actors:[ ch('robert', -40, 412, 'zangado', { nome:'Robert, o Descarte' }), ch('chorume', 50, 400, 'zangado', { flip:true, nome:'Chorume' }) ], lines:[
     { card:'O DESCARTE', sub:'a história do Robert' },
     { who:'narr', text:'Uma semana depois do ataque à Marina. O lixão nunca dorme.', shot:'wide' },
-    { who:'chorume', mood:'zangado', text:'A tartaruga te ensinou a limpar, garoto. Eu vou te ensinar a esmagar.', shot:{ f:'chorume', z:2.6 } },
+    { who:'chorume', mood:'zangado', text:'Fufufu... a tartaruga te ensinou a limpar, garoto. Eu vou te ensinar a esmagar.', shot:{ f:'chorume', z:2.6 } },
     { who:'narr', text:'Do meio da sucata, o Chorume puxou um martelo enferrujado.', shot:{ f:'robert', z:2.2 }, fx:'thunder', do:C => { const a = actor(C, 'robert'); a.hammer = true; burst(C, a, ['#8bd450','#8c94a3','#c9d0db']); } },
     { who:'chorume', mood:'zangado', text:'Primeira lição: lixo não é sujeira. Lixo é força. Esmaga e absorve.', shot:{ f:'chorume', z:3 }, grade:'red' },
     { who:'robert', mood:'zangado', text:'E quanto mais lixo eles jogarem fora...', shot:{ f:'robert', z:2.8 } },
@@ -3915,11 +3931,11 @@ const DLC_INTRO = () => [
 function dlcBoost(hp, dmg){ return C => { if (!G) return; const p = G.player; p.maxHp += hp; p.hp = p.maxHp; p.dmgMul *= dmg; C.flash = 1; for (let k = 0; k < 30; k++){ const ang = Math.random() * TAU, sp = rand(30, 110); L.parts.push({ x:p.x, y:p.y - 12, vx:Math.cos(ang) * sp, vy:Math.sin(ang) * sp - 40, life:rand(.5, 1.1), col:k % 2 ? '#8bd450' : '#2c2142', s:2 }); } sfx('lvl'); }; }
 const DLC_BOSS = {
   0: () => [{ music:'tensa', camPlayer:true, actors:[chorumeEnters()], lines:[
-    { who:'chorume', mood:'zangado', text:'Sente isso, garoto? Cada pedaço de lixo te deixa mais forte.', shot:{ f:'chorume', z:2.4 } },
+    { who:'chorume', mood:'zangado', text:'Fufufu... sente isso, garoto? Cada pedaço de lixo te deixa mais forte.', shot:{ f:'chorume', z:2.4 } },
     { who:'player', mood:'zangado', text:'Eu sinto. E quero mais.', shot:{ f:'player', z:2.8 }, fx:'lines', do:dlcBoost(20, 1.1) },
     { who:'chorume', mood:'zangado', text:'Então esmaga o gigante que o lixo deixou.', shot:{ f:'chorume', z:3 }, grade:'red', do:C => walk(C, 'chorume', 240, 0, true) } ] }],
   1: () => [{ music:'tensa', camPlayer:true, actors:[chorumeEnters()], lines:[
-    { who:'chorume', mood:'zangado', text:'A tartaruga escondia essa força de vocês. Medrosa.', shot:{ f:'chorume', z:2.6 } },
+    { who:'chorume', mood:'zangado', text:'Fufufu... a tartaruga escondia essa força de vocês. Medrosa.', shot:{ f:'chorume', z:2.6 } },
     { who:'player', mood:'zangado', text:'Ela mentiu pra todo mundo. Agora eu enxergo tudo.', shot:{ f:'player', z:2.8 }, grade:'red' },
     { who:'chorume', mood:'zangado', text:'Mostra.', shot:{ f:'chorume', z:3.2 }, grade:'red', fx:'shake', do:C => { dlcBoost(30, 1.15)(C); walk(C, 'chorume', 240, 0, true); } } ] }],
   2: () => [{ music:'tensa', camPlayer:true, thunder:true, actors:[chorumeEnters()], lines:[
@@ -3938,7 +3954,7 @@ const DLC_FINAL = () => [
   { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:90, glow:true, thunder:true,
     actors:[ ch('robert', -40, 412, 'zangado', { nome:'Robert, o Descarte', hammer:true }), ch('chorume', 50, 400, 'zangado', { flip:true, nome:'Chorume' }) ], lines:[
     { card:'DE VOLTA AO LIXÃO' },
-    { who:'chorume', mood:'zangado', text:'Três praias. Nenhuma lixeira. Nenhum lixo separado. Muito bem, garoto.', shot:{ f:'chorume', z:2.6 } },
+    { who:'chorume', mood:'zangado', text:'Fufufu... três praias. Nenhuma lixeira. Nenhum lixo separado. Muito bem, garoto.', shot:{ f:'chorume', z:2.6 } },
     { who:'robert', mood:'zangado', text:'Eu nunca me senti tão forte.', shot:{ f:'robert', z:3 }, fx:'lines', do:C => { const a = actor(C, 'robert'); a.tremble = 1.4; burst(C, a, ['#8bd450','#4f8a2a','#2c2142']); } },
     { who:'chorume', mood:'preocupado', text:'Calma... essa força tá vindo rápido demais. Até pra mim.', shot:{ f:'chorume', z:3 } },
     { who:'robert', mood:'zangado', text:'Você me ensinou que lixo é força.', shot:{ f:'robert', z:3.2 }, grade:'red' },
