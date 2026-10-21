@@ -220,12 +220,17 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .ctitle{font-family:var(--f-body);font-weight:700;font-size:clamp(18px,3.4vw,46px);letter-spacing:.18em;color:#fff8e7;text-wrap:balance}
 .cpanel.card.red .ctitle{color:#ff5a4f}
 .csub{font-family:var(--f-body);font-style:italic;font-size:clamp(12px,1.7vw,22px);color:#b9c4dc}
-.balloon{position:absolute;top:5%;transform:translateX(-50%);max-width:72%;min-width:18%;box-sizing:border-box;background:#fff;color:#111;border:3px solid #111;border-radius:20px;padding:.45em .8em .55em;font-family:var(--f-body);font-weight:700;font-size:clamp(11px,1.3vw,19px);line-height:1.25;z-index:3;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
-.balloon b{display:block;font-size:.68em;letter-spacing:.08em;margin-bottom:1px}
+.balloon{position:absolute;top:5%;max-width:66%;width:max-content;min-width:18%;box-sizing:border-box;background:#fff;color:#111;border:3px solid #111;border-radius:20px;padding:.45em .8em .75em;font-family:var(--f-body);font-weight:700;font-size:clamp(11px,1.3vw,19px);line-height:1.25;z-index:3;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+.balloon span{position:relative;z-index:1}
+.balloon b{display:block;position:relative;z-index:1;font-size:.68em;letter-spacing:.08em;margin-bottom:1px}
 .balloon .tail{position:absolute;bottom:-10px;width:16px;height:16px;margin-left:-8px;background:inherit;border-right:3px solid #111;border-bottom:3px solid #111;transform:rotate(45deg) skew(12deg,12deg)}
-.balloon.shout{border-width:4px;border-radius:4px;background:#fff6cf;font-size:clamp(12px,1.55vw,22px);transform:translateX(-50%) rotate(-2deg);box-shadow:0 0 0 3px #fff6cf,0 0 0 6px #111,4px 4px 0 6px rgba(0,0,0,.25)}
+.balloon.shout{border-width:4px;border-radius:4px;background:#fff6cf;font-size:clamp(12px,1.55vw,22px);transform:rotate(-2deg);box-shadow:0 0 0 3px #fff6cf,0 0 0 6px #111,4px 4px 0 6px rgba(0,0,0,.25)}
 .balloon.think{border-style:dashed;border-radius:30px;font-style:italic}
+.cpanel.small .balloon{font-size:clamp(9px,.95vw,14px);padding:.3em .55em .6em;max-width:78%}
+.cpanel.small .caption{font-size:clamp(9px,.95vw,14px)}
 .caption{position:absolute;left:3%;top:4%;max-width:72%;box-sizing:border-box;background:#ffd23f;color:#111;border:3px solid #111;padding:.35em .6em;font-family:var(--f-body);font-weight:700;font-style:italic;font-size:clamp(11px,1.25vw,18px);line-height:1.25;z-index:3;box-shadow:3px 3px 0 rgba(0,0,0,.3)}
+.ctag{position:absolute;left:0;bottom:6%;background:#111;color:#fff8e7;padding:.3em .7em .3em .6em;font-family:var(--f-body);font-weight:700;font-size:clamp(10px,1.15vw,16px);letter-spacing:.08em;z-index:3;border-left:6px solid var(--tagc,#ffd23f)}
+.ctag small{display:block;font-weight:400;font-style:italic;letter-spacing:.02em;opacity:.8}
 .sfxw{position:absolute;font-family:var(--f-display);font-size:clamp(16px,3vw,42px);color:#ffd23f;-webkit-text-stroke:2px #111;paint-order:stroke fill;text-shadow:4px 4px 0 #b23a2f;transform:rotate(-12deg);z-index:4;pointer-events:none;animation:sfxIn .3s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes sfxIn{from{transform:rotate(-12deg) scale(2.4);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
 @media (orientation:portrait){.cpage{aspect-ratio:.78;width:min(calc(100vw - 24px),calc((100vh - 90px) * .78))}}
@@ -1168,6 +1173,7 @@ function charRows(style, frame, extras){
   if (ex.includes('ooze')){ for (const [x, y] of [[0, 19], [1, 23], [2, 21], [6, 18], [9, 18], [4, 22], [11, 22], [3, 17], [13, 17]]) put(x, y, 'E'); }
   if (ex.includes('beard')){ for (const [x, y] of [[6,12],[7,12],[8,12],[9,12],[6,13],[7,13],[8,13],[9,13],[7,14],[8,14],[7,15]]) put(x, y, 'Q'); }
   if (ex.includes('feather')){ put(11, 0, 'G'); put(12, 0, 'G'); put(12, 1, 'G'); put(13, 0, 'G'); }
+  for (let y = 15; y <= 18; y++){ const c = y <= 16 ? '1' : '2'; put(2, y, c); put(3, y, c); put(13, y, c); put(14, y, c); }
   return g.map(a => a.join(''));
 }
 
@@ -1176,7 +1182,7 @@ function charRows(style, frame, extras){
 const BODY = { marina:{ widen:2, add:[16, 20] }, tiago:{ narrow:true, add:[14, 15, 16, 19, 20, 21, 21] }, cida:{ widen:6, del:[16, 17, 20, 21] }, leo:{ narrow:true, add:[19, 20, 21] }, robert:{ widen:6, add:[14, 15, 16, 17, 19, 20, 21, 21] } };
 function shapeRows(rows, id){
   const B = BODY[id]; let g = rows.map(r => r.split('')), fx = 6, hx = 5, hy = 18;
-  if (!B) return { rows, fx, hx, hy };
+  if (!B) return { rows, fx, hx, hy, lx:2.5, rx:13.5, ay:15 };
   if (B.narrow){
     // tronco mais fino: tira duas colunas do meio do corpo e completa nas bordas
     g = g.map((r, y) => y < 13 ? r : ['.', ...r.filter((c, x) => x !== 6 && x !== 9), '.']);
@@ -1194,12 +1200,18 @@ function shapeRows(rows, id){
   const ops = [...add.map(i => [i, 1]), ...del.map(i => [i, -1])].sort((a, b) => b[0] - a[0]);
   for (const [i, op] of ops){ if (op > 0) g.splice(i + 1, 0, [...g[i]]); else g.splice(i, 1); }
   hy += add.filter(i => i < 17).length - del.filter(i => i < 17).length;
-  return { rows:g.map(r => r.join('')), fx, hx, hy };
+  const ay = 15 + add.filter(i => i < 15).length - del.filter(i => i < 15).length;
+  return { rows:g.map(r => r.join('')), fx, hx, hy, lx:2.5 + (B.narrow ? 1 : 0), rx:13.5 + (B.widen || 0) - (B.narrow ? 1 : 0), ay };
 }
 // sprite de personagem com o molde de corpo dele; guarda onde fica a mão (hx, hy)
 function charSprite(id, rows, pal, face){
-  const sh = shapeRows(rows, id), sp = wrap(fromRows(sh.rows, pal), { x:sh.fx, y:8, style:'big', ...(face || {}) });
-  sp.hx = sh.hx; sp.hy = sh.hy; return sp;
+  const sh = shapeRows(rows, id), P = { '1':pal.A || pal.H, '2':pal.N || pal.S, ...pal };
+  const sp = wrap(fromRows(sh.rows, P), { x:sh.fx, y:8, style:'big', ...(face || {}) });
+  sp.hx = sh.hx; sp.hy = sh.hy;
+  // versão sem braços, para o jogo desenhar braços que se mexem
+  sp.body = outlined(fromRows(sh.rows.map(r => r.replace(/[12]/g, '.')), P));
+  sp.arm = { lx:sh.lx + 1, rx:sh.rx + 1, y:sh.ay + 1, sleeve:P['1'], hand:P['2'], len:id === 'robert' ? 6 : 5 };
+  return sp;
 }
 function makeEnemy(w, h, body, face, feet, arms){
   return [0, 1].map(f => {
@@ -1216,7 +1228,7 @@ function makeEnemy(w, h, body, face, feet, arms){
 function buildSprites(){
   SPR.chars = {};
   // traje de herói (usado no jogo) e roupa comum (antes de receber o poder)
-  const HERO_EXTRA = { marina:['buoy','whistle','suit','domino','tiara','cape'], tiago:['board','suit','tails','fin','cape'], cida:['gloves','suit','domino','harness','cape'], leo:['binoc','suit','domino','feather','arrows','cape'] };
+  const HERO_EXTRA = { marina:['buoy','whistle','suit','domino','tiara','cape'], tiago:['board','suit','tails','fin','cape'], cida:['suit','domino','harness','cape'], leo:['binoc','suit','domino','feather','arrows','cape'] };
   const CASUAL_EXTRA = { marina:['buoy','whistle'], tiago:['board'], cida:[], leo:['binoc'] };
   // cores dos acessórios (boia, apito, prancha, binóculo)
   const ACC_PAL = { J:'#ff5a4f', j:'#ffffff', Z:'#d9dde3', I:'#ffd23f', i:'#ff6b5b', D:'#22232b', l:'#9fe3ff', d:'#5a3a1c' };
@@ -1249,7 +1261,7 @@ function buildSprites(){
   SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('hood', f, ['suit', 'torn', 'crown', 'ooze']), DESCARTE_PAL, { col:'#8bd450' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }));
-  SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
+  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }, { col:'#a8ff5a' }));
   SPR.robertHero = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
@@ -2677,10 +2689,19 @@ function drawPlayer(p, x, y, t){
   ctx.save(); ctx.translate(x + pose.ox, y + 4 + pose.oy); ctx.rotate(pose.rot); ctx.scale(pose.sx, pose.sy); ctx.translate(-x, -(y + 4));
   if (G.dlc){ const r = 10 + Math.min(16, (G.corr || 0) * 0.12), k = 0.18 + 0.1 * Math.sin(t * 5); ctx.fillStyle = `rgba(139,212,80,${k})`; ctx.beginPath(); ctx.ellipse(x, y - 8, r, r * 1.2, 0, 0, TAU); ctx.fill(); }
   const swinging = L.fx.some(f => f.kind === 'swing' || f.kind === 'thrust') || (p.burstT > 0 && p.burstKind === 'tornado');
-  if (p.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, playerMood(), s.face); }
-  else { ctx.drawImage(s.img, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, playerMood(), s.face); }
-  drawIdleProp(p, s, x0, y0, t);
-  if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, x + (p.flip ? -s.hx : s.hx) + pose.hx, y0 + s.hy + pose.hy, p.aim, p.flip, t);
+  const bodyImg = s.body || s.img;
+  if (p.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(bodyImg, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, playerMood(), s.face); }
+  else { ctx.drawImage(bodyImg, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, playerMood(), s.face); }
+  if (s.arm){
+    const A = s.arm, ang = armAngles(p, t), X = ix => p.flip ? x0 + s.w - ix : x0 + ix;
+    drawArm(ctx, X(A.lx), y0 + A.y, ang.back, A.len, A.sleeve, A.hand);
+    const [hx, hy] = drawArm(ctx, X(A.rx), y0 + A.y, ang.front, A.len, A.sleeve, A.hand);
+    drawIdleProp(p, s, x0, y0, t);
+    if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, Math.round(hx) + pose.hx, Math.round(hy) + pose.hy, p.aim, p.flip, t);
+  } else {
+    drawIdleProp(p, s, x0, y0, t);
+    if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, x + (p.flip ? -s.hx : s.hx) + pose.hx, y0 + s.hy + pose.hy, p.aim, p.flip, t);
+  }
   ctx.restore();
   const m = playerMood();
   if (m === 'sonolento'){ const k = (t * 0.7) % 1; ctx.globalAlpha = 1 - k; pixText('z', x + 8 + Math.round(k * 4), y0 - 1 - Math.round(k * 9), '#ffffff', 'small'); ctx.globalAlpha = 1; }
@@ -2690,6 +2711,34 @@ function drawPlayer(p, x, y, t){
 }
 // pose do corpo: inclina ao correr, balança a cada passo, estica na esquiva, recua ao levar dano
 // e tem uma pose de ataque própria para cada personagem
+// um braço: manga e mão de 2 pixels com contorno, saindo do ombro no ângulo pedido
+function drawArm(g, sx, sy, a, len, sleeve, hand){
+  const c = Math.cos(a), si = Math.sin(a);
+  g.fillStyle = OUT; for (let k = 0; k <= len; k++) g.fillRect(Math.round(sx + c * k) - 2, Math.round(sy + si * k) - 2, 4, 4);
+  for (let k = 0; k <= len; k++){ g.fillStyle = k < len * 0.55 ? sleeve : hand; g.fillRect(Math.round(sx + c * k) - 1, Math.round(sy + si * k) - 1, 2, 2); }
+  return [sx + c * len, sy + si * len];
+}
+// ângulo dos braços: balançam ao andar, vão para trás na esquiva, o da arma aponta para o ataque
+function armAngles(p, t){
+  const face = p.flip ? -1 : 1, mir = a => p.flip ? Math.PI - a : a;
+  let front = Math.PI / 2 - 0.25, back = Math.PI / 2 + 0.25;
+  if (p.dashT > 0 || p.skillT > 0){ front = back = Math.PI / 2 + 0.95; }
+  else if (p.moving){ const sw = Math.sin(p.anim * 4 * Math.PI) * 0.6; front -= sw; back += sw; }
+  else { const b = Math.sin(t * 3) * 0.06; front += b; back -= b; }
+  front = mir(front); back = mir(back);
+  const ig = idleGesture(p);
+  if (ig > 0){
+    if (p.id === 'leo'){ front = mir(-Math.PI / 2 - 0.35); back = mir(-Math.PI / 2 + 0.35); }
+    else if (p.id === 'tiago') front = mir(-Math.PI / 2 + 0.35);
+    else if (p.id === 'cida') front = mir(-Math.PI / 2 - 0.15);
+    else if (p.id === 'marina') front = mir(-Math.PI / 2 - 1.0);
+  }
+  const k = Math.min(1, (p.atkT || 0) / 0.12);
+  const sf = L.fx.find(f => f.kind === 'swing' || f.kind === 'thrust');
+  if (p.id === 'marina' && sf){ if (sf.kind === 'thrust') front = sf.a; else { const dir = sf.dir || 1, q = Math.min(1, sf.t / (sf.dur * 0.7)); front = sf.a - 1.25 * dir + 2.5 * dir * (1 - (1 - q) * (1 - q)); } }
+  else if (k > 0 || p.spraying) front = p.aim || front;
+  return { front, back, face };
+}
 function playerPose(p, t, fr){
   const P = { sx:1, sy:1, rot:0, ox:0, oy:0, hx:0, hy:0 }, face = p.flip ? -1 : 1, k = Math.min(1, (p.atkT || 0) / 0.12);
   const ca = Math.cos(p.aim || 0), sa = Math.sin(p.aim || 0);
@@ -2728,8 +2777,6 @@ function drawIdleProp(p, s, x0, y0, t){
   const ig = idleGesture(p); if (ig <= 0) return;
   const W = s.w, fx = s.face.x, fy = s.face.y, X = (dx, w) => p.flip ? x0 + W - dx - w : x0 + dx;
   if (p.id === 'marina'){ ctx.fillStyle = '#ffffff'; const k = ((t * 6) | 0) % 3; for (let i = 0; i <= k; i++) ctx.fillRect(X(fx + 9 + i * 2, 1), y0 + fy + 2 - i, 1, 2 + i); ctx.fillStyle = '#d9dde3'; ctx.fillRect(X(fx + 6, 2), y0 + fy + 3, 2, 1); }
-  else if (p.id === 'tiago'){ const hy = y0 + fy - 3 - Math.round(Math.sin(t * 8)); ctx.fillStyle = OUT; ctx.fillRect(X(W - 4, 4), hy - 1, 4, 5); ctx.fillStyle = '#f0c39a'; ctx.fillRect(X(W - 3, 2), hy, 2, 3); ctx.fillRect(X(W - 4, 1), hy - 1, 1, 2); ctx.fillRect(X(W - 1, 1), hy + 2, 1, 1); }
-  else if (p.id === 'cida'){ ctx.fillStyle = OUT; ctx.fillRect(X(W - 6, 4), y0 + 2, 4, 4); ctx.fillStyle = '#9b6243'; ctx.fillRect(X(W - 5, 2), y0 + 3, 2, 2); }
   else if (p.id === 'leo'){ ctx.fillStyle = OUT; ctx.fillRect(X(fx - 1, 9), y0 + fy - 1, 9, 4); ctx.fillStyle = '#22232b'; ctx.fillRect(X(fx, 7), y0 + fy, 7, 2); ctx.fillStyle = '#9fe3ff'; ctx.fillRect(X(fx, 2), y0 + fy, 2, 1); ctx.fillRect(X(fx + 5, 2), y0 + fy, 2, 1); }
 }
 // prancha e onda embaixo do Tiago durante a Rasgada
@@ -3301,106 +3348,103 @@ function throwToxic(C, from, to){
 
 /* Cada fala pode ter: shot ('wide' | {f:id, z, dy} ), fx ('flash','shake','lines','thunder'), grade (cor da fala), do (ação). */
 const OPENING = () => [
+  // 1 · a praia de antes
   { fase:0, music:'alegre', cam:[STAGE_X, 300], crabs:'alegre', grade:'sepia', lines:[
     { card:'PRAIA DO SOL', sub:'muitos verões atrás' },
-    { who:'narr', text:'Antes, a Praia do Sol cabia inteira num cartão-postal.' },
-    { who:'narr', text:'As tartarugas voltavam todo ano para desovar. Era isso que todo mundo chamava de casa.', shot:{ at:[STAGE_X - 120, 250], z:1.6 } } ] },
+    { cap:'Antes, a Praia do Sol cabia inteira num cartão-postal.', shot:'wide' },
+    { cap:'Todo verão, as tartarugas voltavam para desovar. Era a casa delas. E a nossa.', shot:{ at:[STAGE_X - 120, 250], z:1.6 } } ] },
 
+  // 2 · a praia suja
   { fase:0, music:'triste', cam:[STAGE_X - 160, 360], crabs:'triste', trash:56, grade:'gray', lines:[
     { card:'VINTE VERÕES DEPOIS' },
-    { who:'narr', text:'Ninguém percebeu quando começou.' },
-    { who:'narr', text:'Uma garrafa aqui. Uma sacola ali. Uma bituca enterrada na areia...', shot:{ at:[STAGE_X + 120, 380], z:1.5 } },
-    { who:'narr', text:'Até que a praia não era mais de ninguém.', shot:{ at:[STAGE_X, 360], z:1 } } ] },
+    { cap:'Ninguém percebeu quando começou.', shot:'wide' },
+    { cap:'Uma garrafa aqui. Uma sacola ali. Uma bituca enterrada na areia...', shot:{ at:[STAGE_X + 120, 380], z:1.6 } },
+    { cap:'Até que a praia não era mais de ninguém.', shot:{ at:[STAGE_X, 360], z:1 } } ] },
 
+  // 3 · uma página com os cinco
   { fase:0, music:'triste', cam:[STAGE_X, 340], crabs:'triste', trash:30, grade:'gray', rain:true,
     actors:[ ch('marina', -170, SHORE + 44, 'triste', CASUAL), ch('tiago', 160, SHORE + 56, 'dor', { flip:true, ...CASUAL }), ch('cida', -120, 430, 'zangado', CASUAL), ch('leo', 140, 420, 'triste', { flip:true, ...CASUAL }), ch('robert', 0, 370, 'zangado', CASUAL) ], lines:[
-    { who:'narr', text:'Cinco pessoas da cidade carregavam a mesma ferida.', shot:'wide' },
-    { who:'marina', mood:'triste', text:'Ela tinha uma sacola enrolada no pescoço... Eu cheguei a tempo. Dessa vez.', shot:{ f:'marina', z:2.4 } },
-    { who:'tiago', mood:'dor', text:'Vinte anos surfando aqui. Hoje eu saí do mar sangrando por causa de um caco de vidro.', shot:{ f:'tiago', z:2.4 } },
-    { who:'cida', mood:'zangado', text:'Me olham torto quando eu passo com a carroça. Mas sou eu que separo o que eles largam.', shot:{ f:'cida', z:2.4 } },
-    { who:'leo', mood:'triste', text:'Ano passado eu contei quarenta ninhos de tartaruga. Este ano... onze.', shot:{ f:'leo', z:2.4 } },
-    { who:'robert', mood:'zangado', text:'Eu cansei de reclamar. Alguém tem que fazer alguma coisa.', shot:{ f:'robert', z:2.8 }, grade:'red', do:C => tremble(C, 'robert', 1) } ] },
+    { who:'marina', mood:'triste', text:'Tinha uma sacola enrolada no pescoço da tartaruga. Cheguei a tempo. Dessa vez.', shot:{ f:'marina', z:2.4 }, tag:['MARINA', 'salva-vidas'], page:true },
+    { who:'tiago', mood:'dor', text:'Vinte anos pegando onda aqui, mano... e hoje saí do mar cortado por um caco de vidro.', shot:{ f:'tiago', z:2.4 }, tag:['TIAGO', 'surfista'] },
+    { who:'cida', mood:'zangado', text:'Trinta anos puxando carroça de reciclável. Me olham torto. Mas quem tira a sujeira deles sou eu.', shot:{ f:'cida', z:2.4 }, tag:['CIDA', 'catadora'] },
+    { who:'leo', mood:'triste', text:'Ano passado: quarenta ninhos de tartaruga. Este ano: onze. Isso não é azar. É estatística.', shot:{ f:'leo', z:2.4 }, tag:['LÉO', 'biólogo marinho'] },
+    { who:'robert', mood:'zangado', text:'Todo mundo reclama. Ninguém faz nada. Eu cansei.', shot:{ f:'robert', z:2.6 }, grade:'red', tag:['ROBERT', 'o mais rápido da cidade'], do:C => tremble(C, 'robert', 1) } ] },
 
+  // 4 · o chamado
   { fase:1, music:'misteriosa', cam:[STAGE_X, 270], crabs:'alegre',
     actors:[ ch('marina', -68, 330, 'triste', CASUAL), ch('tiago', -34, 342, 'triste', CASUAL), ch('robert', 0, 336, 'zangado', CASUAL), ch('cida', 34, 342, 'triste', { flip:true, ...CASUAL }), ch('leo', 68, 330, 'triste', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 6, { hidden:true }) ], lines:[
     { card:'O CHAMADO' },
-    { who:'narr', text:'Naquela tarde, os cinco foram até o mar sem saber direito por quê.', shot:'wide' },
-    { who:'narr', text:'Então a água começou a se mexer.', fx:'shake', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 76; setMoods(C, HEROIS, 'surpreso'); setMoods(C, ['robert'], 'preocupado'); } },
-    { who:'caretta', text:'Faz cem anos que eu guardo esta praia.', shot:{ f:'caretta', z:2.6 } },
-    { who:'caretta', text:'E faz cem anos que eu espero alguém que se importe.', shot:{ f:'caretta', z:3 } },
-    { who:'tiago', mood:'surpreso', text:'Calma aí... uma tartaruga falando? Eu bati a cabeça no recife, né?', shot:{ f:'tiago', z:2.4 } },
-    { who:'caretta', text:'Vocês cinco sentiram a mesma dor que eu. Isso não é coincidência.', shot:{ f:'caretta', z:2.4 } },
-    { who:'caretta', text:'O mar vai dar força a vocês.', shot:{ f:'caretta', z:2.8 } },
-    { who:'caretta', text:'É um chamado.', shot:'wide', fx:'flash', do:C => { setMoods(C, HEROIS, 'alegre'); setMoods(C, ['robert'], 'preocupado'); } } ] },
+    { cap:'Naquela tarde, os cinco foram até o mar sem saber direito por quê.', shot:'wide' },
+    { cap:'Então a água se mexeu.', shot:'wide', fx:'shake', sfxWord:'SPLOOSH!', do:C => { const c = actor(C, 'caretta'); c.hidden = false; c.tx = c.x; c.ty = SHORE + 76; setMoods(C, HEROIS, 'surpreso'); setMoods(C, ['robert'], 'preocupado'); } },
+    { say:[{ who:'caretta', text:'Cem anos guardando esta praia. Cem anos esperando alguém que se importe.' }], shot:{ f:'caretta', z:2.6 } },
+    { say:[{ who:'tiago', mood:'surpreso', text:'Pera, pera... uma tartaruga FALANDO? Mano, eu bati a cabeça no recife.' }], shot:{ f:'tiago', z:2.4 } },
+    { say:[{ who:'caretta', text:'Vocês cinco sentiram a mesma dor que eu. O mar ouviu.' }], shot:{ f:'caretta', z:2.8 }, page:true },
+    { say:[{ who:'leo', mood:'surpreso', text:'Isso contraria tudo o que eu estudei... e eu adorei.' }, { who:'cida', mood:'preocupado', text:'Menino, isso não tá nos teus livros.' }], shot:{ at:[STAGE_X + 50, 330], z:2 } },
+    { say:[{ who:'caretta', text:'É um chamado.' }], shot:'wide', fx:'flash', do:C => { setMoods(C, HEROIS, 'alegre'); setMoods(C, ['robert'], 'preocupado'); } } ] },
 
+  // 5 · o treinamento: uma página com as cinco transformações
   { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre',
     actors:[ ch('marina', -100, 380, 'alegre', CASUAL), ch('tiago', -50, 396, 'alegre', CASUAL), ch('robert', 0, 404, 'preocupado', CASUAL), ch('cida', 50, 396, 'alegre', { flip:true, ...CASUAL }), ch('leo', 100, 380, 'alegre', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 64) ], lines:[
     { card:'O TREINAMENTO' },
-    { who:'caretta', text:'Marina. Coragem para chegar perto do que todo mundo evita.', shot:{ f:'caretta', z:2.2 } },
-    { who:'marina', mood:'comemorando', text:'Pode deixar comigo!', shot:{ f:'marina', z:2.6 }, do:C => transform(C, 'marina') },
-    { who:'caretta', text:'Tiago. Você lê as ondas como ninguém: acerte o que está longe.', shot:{ f:'caretta', z:2.2 } },
-    { who:'tiago', mood:'comemorando', text:'Agora sim. Isso eu sei fazer.', shot:{ f:'tiago', z:2.6 }, do:C => transform(C, 'tiago') },
-    { who:'caretta', text:'Cida. Ninguém conhece o lixo melhor que você. Use a água a seu favor.', shot:{ f:'caretta', z:2.2 } },
-    { who:'cida', mood:'alegre', text:'Trinta anos separando o que os outros jogam fora. Finalmente alguém percebeu.', shot:{ f:'cida', z:2.6 }, do:C => transform(C, 'cida') },
-    { who:'caretta', text:'Léo. O que vai, volta. Na natureza, nada se perde.', shot:{ f:'caretta', z:2.2 } },
-    { who:'leo', mood:'comemorando', text:'Tudo se transforma. Eu sei, eu sei.', shot:{ f:'leo', z:2.6 }, do:C => transform(C, 'leo') },
-    { who:'caretta', text:'Robert... você é o mais rápido de todos.', shot:{ f:'robert', z:2.6 } },
-    { who:'robert', mood:'zangado', text:'Eu sei.', shot:{ f:'robert', z:2.8 }, do:C => transform(C, 'robert') },
-    { who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.', shot:{ f:'caretta', z:2.8 }, do:C => setMoods(C, ['robert'], 'preocupado') },
-    { who:'robert', mood:'preocupado', text:'...', shot:{ f:'robert', z:3.2 }, grade:'red' },
-    { who:'caretta', text:'Lembrem: limpar é importante. Mas o segredo é separar o lixo na origem. Cada resíduo na sua lixeira.', shot:'wide' } ] },
+    { say:[{ who:'caretta', text:'Marina: coragem de chegar perto do que todos evitam.' }, { who:'marina', mood:'comemorando', text:'Ninguém fica pra trás. Pode contar comigo.' }], shot:{ f:'marina', z:2.4 }, do:C => transform(C, 'marina') },
+    { say:[{ who:'caretta', text:'Tiago: você lê o mar como ninguém.' }, { who:'tiago', mood:'comemorando', text:'Irado! Agora o mar tá do meu lado.' }], shot:{ f:'tiago', z:2.4 }, do:C => transform(C, 'tiago') },
+    { say:[{ who:'caretta', text:'Cida: ninguém conhece o lixo como você.' }, { who:'cida', mood:'alegre', text:'Trinta anos esperando alguém reparar, minha filha.' }], shot:{ f:'cida', z:2.4 }, do:C => transform(C, 'cida') },
+    { say:[{ who:'caretta', text:'Léo: na natureza, nada se perde.' }, { who:'leo', mood:'comemorando', text:'...tudo se transforma! Lavoisier já dizia!' }], shot:{ f:'leo', z:2.4 }, do:C => transform(C, 'leo') },
+    { say:[{ who:'caretta', text:'Robert: você é o mais rápido de todos.' }, { who:'robert', mood:'zangado', text:'Eu sei.' }], shot:{ f:'robert', z:2.6 }, do:C => transform(C, 'robert') },
+    { say:[{ who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.' }], shot:{ f:'caretta', z:2.8 }, page:true, do:C => setMoods(C, ['robert'], 'preocupado') },
+    { say:[{ who:'robert', mood:'preocupado', text:'...' }], shot:{ f:'robert', z:3.2 }, grade:'red' },
+    { say:[{ who:'caretta', text:'Lembrem: o segredo é separar na origem. Cada resíduo na sua lixeira.' }], shot:'wide' } ] },
 
+  // 6 · a briga
   { fase:1, music:'tensa', cam:[STAGE_X, 380], crabs:'triste', trash:50,
     actors:[ ch('marina', -90, 392, 'triste'), ch('cida', -54, 402, 'triste'), ch('tiago', -120, 410, 'triste'), ch('leo', -70, 424, 'triste'), ch('robert', 30, 386, 'zangado', { flip:true, outfit:'hero' }) ], lines:[
     { card:'MESES DEPOIS', sub:'um domingo à tarde' },
-    { who:'robert', mood:'zangado', text:'Ontem esta praia estava limpa. LIMPA!', shot:{ f:'robert', z:2.4 }, fx:'shake', do:C => tremble(C, 'robert', 1.4) },
-    { who:'robert', mood:'zangado', text:'Olha isso. Olha!', shot:{ at:[STAGE_X + 40, 420], z:1.6 } },
-    { who:'cida', mood:'triste', text:'Robert, calma. A gente limpa de novo. A gente ensina. Um dia eles aprendem.', shot:{ f:'cida', z:2.4 } },
-    { who:'robert', mood:'zangado', text:'UM DIA? Quantos verões mais? Quantas tartarugas mais?!', shot:{ f:'robert', z:3 }, grade:'red', fx:'lines', do:C => setMoods(C, ['marina','tiago','cida','leo'], 'preocupado') },
-    { who:'marina', mood:'triste', text:'Robert... a Caretta disse que...', shot:{ f:'marina', z:2.4 } },
-    { who:'robert', mood:'zangado', text:'A Caretta está aqui há cem anos e NADA mudou!', shot:{ f:'robert', z:3.2 }, grade:'red', fx:'shake' },
-    { who:'robert', mood:'triste', text:'Vocês limpam. Eles sujam. É sempre assim.', shot:{ f:'robert', z:2.6 }, do:C => setMoods(C, ['marina','tiago','cida','leo'], 'triste') },
-    { who:'robert', mood:'zangado', text:'Se ninguém se importa com esta praia... então que o lixo fique com ela.', shot:'wide', do:C => walk(C, 'robert', 300, 20, true) },
-    { who:'marina', mood:'triste', text:'Robert, espera!', shot:{ f:'marina', z:2.2 } } ] },
+    { say:[{ who:'robert', mood:'zangado', text:'Ontem esta praia estava LIMPA!' }], shot:{ f:'robert', z:2.4 }, fx:'shake', do:C => tremble(C, 'robert', 1.4) },
+    { say:[{ who:'robert', text:'Olha isso. OLHA!' }], shot:{ at:[STAGE_X + 40, 420], z:1.6 } },
+    { say:[{ who:'cida', mood:'triste', text:'Calma, menino. A gente limpa de novo. Eu faço isso há trinta anos.' }], shot:{ f:'cida', z:2.4 } },
+    { say:[{ who:'robert', mood:'zangado', text:'TRINTA ANOS?! E quantas tartarugas morreram nesse tempo?!' }], shot:{ f:'robert', z:3 }, grade:'red', fx:'lines', do:C => setMoods(C, ['marina','tiago','cida','leo'], 'preocupado') },
+    { say:[{ who:'marina', mood:'triste', text:'Robert... a Caretta disse que...' }, { who:'robert', mood:'zangado', text:'A Caretta está aqui há CEM anos e NADA mudou!' }], shot:{ at:[STAGE_X - 20, 380], z:2 }, grade:'red', fx:'shake', page:true },
+    { say:[{ who:'robert', mood:'triste', text:'Vocês limpam. Eles sujam. Pra sempre.' }], shot:{ f:'robert', z:2.8 }, do:C => setMoods(C, ['marina','tiago','cida','leo'], 'triste') },
+    { say:[{ who:'robert', mood:'zangado', text:'Se ninguém liga pra esta praia... que o lixo fique com ela.' }, { who:'marina', mood:'triste', text:'Robert, espera!' }], shot:'wide', do:C => walk(C, 'robert', 300, 20, true) } ] },
 
+  // 7 · a noite em que o lixo acordou
   { fase:2, music:'tensa', cam:[STAGE_X, 400], crabs:'triste', trash:44, glow:true, thunder:true, rain:true,
     actors:[ ch('robert', 0, 420, 'zangado', { outfit:'hero' }) ], lines:[
-    { who:'narr', text:'Naquela noite, Robert voltou sozinho para a praia.', shot:'wide' },
-    { who:'robert', mood:'triste', text:'A Caretta me ensinou a ouvir o mar.', shot:{ f:'robert', z:2.6 } },
-    { who:'robert', mood:'zangado', text:'Mas eu aprendi a ouvir outra coisa. Tudo o que vocês jogaram fora...', shot:{ f:'robert', z:3.2 }, grade:'red' },
-    { who:'robert', mood:'zangado', text:'...ACORDE!', shot:'wide', fx:'thunder', do:C => { riseMonsters(C, STAGE_X, 420); corrupt(C, 'robert'); } },
-    { who:'narr', text:'O lixo esquecido ganhou vida. A roupa de Robert escureceu. E ele ganhou outro nome.', shot:{ f:'robert', z:2.2 } },
+    { cap:'Naquela noite, Robert voltou sozinho para a praia.', shot:'wide', page:true },
+    { say:[{ who:'robert', mood:'triste', text:'A Caretta me ensinou a ouvir o mar.' }], shot:{ f:'robert', z:2.6 } },
+    { say:[{ who:'robert', mood:'zangado', text:'Mas eu aprendi a ouvir outra coisa. Tudo o que vocês jogaram fora...' }], shot:{ f:'robert', z:3.2 }, grade:'red' },
+    { say:[{ who:'robert', mood:'zangado', text:'...ACORDE!' }], shot:'wide', fx:'thunder', do:C => { riseMonsters(C, STAGE_X, 420); corrupt(C, 'robert'); } },
     { card:'ROBERT, O DESCARTE', red:true } ] },
 
+  // 8 · a confissão
   { fase:0, music:'misteriosa', cam:[STAGE_X, 330], crabs:'triste',
     actors:[ ch('cida', -66, 388, 'triste'), ch('marina', -22, 396, 'triste'), ch('tiago', 22, 396, 'triste', { flip:true }), ch('leo', 66, 388, 'triste', { flip:true }), carettaAt(0, SHORE + 62) ], lines:[
     { card:'NA MANHÃ SEGUINTE' },
-    { who:'leo', mood:'triste', text:'O Robert... virou aquilo. Como isso é possível?', shot:{ f:'leo', z:2.4 } },
-    { who:'caretta', mood:'triste', text:'Eu preciso contar uma coisa a vocês. Algo que eu escondi desde o primeiro dia.', shot:{ f:'caretta', z:2.6 } },
-    { who:'tiago', mood:'surpreso', text:'Escondeu? Escondeu o quê?', shot:{ f:'tiago', z:2.4 } },
-    { who:'caretta', mood:'triste', text:'Eu disse que a força de vocês vinha do mar.', shot:{ f:'caretta', z:2.8 } },
-    { who:'caretta', mood:'triste', text:'Eu menti.', shot:{ f:'caretta', z:3.4 }, music:'triste', grade:'gray', do:C => setMoods(C, HEROIS, 'surpreso') },
-    { who:'caretta', mood:'triste', text:'Ela vem do lixo.', shot:'wide', fx:'shake', do:C => setMoods(C, HEROIS, 'preocupado') },
-    { who:'caretta', mood:'triste', text:'Todo resíduo carrega o descaso de quem jogou fora. Separado e reciclado, esse descaso vira força. Foi isso que eu dei a vocês.', shot:{ f:'caretta', z:2.4 } },
-    { who:'caretta', mood:'triste', text:'Mas o lixo esquecido apodrece. E o descaso apodrecido procura um coração cansado para morar.', shot:{ f:'caretta', z:2.8 }, grade:'gray' } ] },
+    { say:[{ who:'leo', mood:'triste', text:'O Robert virou... aquilo. Biologicamente, isso é impossível.' }], shot:{ f:'leo', z:2.4 } },
+    { say:[{ who:'caretta', mood:'triste', text:'Preciso contar uma coisa. Algo que escondi desde o primeiro dia.' }, { who:'tiago', mood:'surpreso', text:'Escondeu? Escondeu o quê, mestra?' }], shot:{ at:[STAGE_X + 10, 330], z:1.8 } },
+    { say:[{ who:'caretta', mood:'triste', text:'Eu disse que a força de vocês vinha do mar. Eu menti.' }], shot:{ f:'caretta', z:3.2 }, music:'triste', grade:'gray', do:C => setMoods(C, HEROIS, 'surpreso') },
+    { say:[{ who:'caretta', mood:'triste', text:'Ela vem do lixo.' }], shot:'wide', fx:'shake', page:true, do:C => setMoods(C, HEROIS, 'preocupado') },
+    { say:[{ who:'caretta', mood:'triste', text:'Separado e reciclado, o descaso das pessoas vira força. Foi isso que eu dei a vocês.' }], shot:{ f:'caretta', z:2.4 } },
+    { say:[{ who:'caretta', mood:'triste', text:'Mas o lixo esquecido apodrece... e procura um coração cansado para morar.' }], shot:{ f:'caretta', z:2.8 }, grade:'gray' } ] },
 
+  // 9 · o primeiro aprendiz
   { fase:0, music:'triste', cam:[STAGE_X, 330], crabs:'triste', grade:'sepia', trash:20,
     actors:[ ch('robert', 30, 392, 'triste', { silhouette:true, flip:true }), carettaAt(-40, SHORE + 70) ], lines:[
     { card:'CINQUENTA ANOS ATRÁS' },
-    { who:'caretta', mood:'triste', text:'Eu já tive outro aprendiz. Ele também se cansou de ver a praia suja.', shot:{ f:'robert', z:2.4 } },
-    { who:'caretta', mood:'triste', text:'Eu não consegui salvá-lo. E prometi a mim mesma que ninguém nunca mais saberia de onde vem esta força.', shot:'wide', do:C => walk(C, 'robert', 260, 0, true) } ] },
+    { say:[{ who:'caretta', mood:'triste', text:'Eu já tive outro aprendiz. Ele também se cansou de ver a praia suja.' }], shot:{ f:'robert', z:2.4 } },
+    { say:[{ who:'caretta', mood:'triste', text:'Não consegui salvá-lo. E jurei que ninguém mais saberia de onde vem esta força.' }], shot:'wide', do:C => walk(C, 'robert', 260, 0, true) } ] },
 
+  // 10 · a união
   { fase:0, music:'triste', cam:[STAGE_X, 330], crabs:'triste',
     actors:[ ch('cida', -66, 388, 'zangado'), ch('marina', -22, 396, 'triste'), ch('tiago', 22, 396, 'zangado', { flip:true }), ch('leo', 66, 388, 'triste', { flip:true }), carettaAt(0, SHORE + 62, { mood:'triste' }) ], lines:[
-    { who:'cida', mood:'zangado', text:'Você mentiu para a gente esse tempo todo!', shot:{ f:'cida', z:2.8 }, fx:'shake' },
-    { who:'tiago', mood:'zangado', text:'E deixou o Robert carregar isso sozinho!', shot:{ f:'tiago', z:2.6 } },
-    { who:'caretta', mood:'triste', text:'Eu tive medo. Medo de perder vocês como perdi ele.', shot:{ f:'caretta', z:2.8 } },
-    { who:'leo', mood:'triste', text:'Então o Robert não escolheu isso. Ele foi contaminado.', shot:{ f:'leo', z:2.4 } },
-    { who:'marina', mood:'zangado', text:'Mentira ou não... o Robert é um de nós.', shot:{ f:'marina', z:3 }, music:'heroica', do:C => setMoods(C, ['tiago','cida','leo'], 'preocupado') },
-    { who:'marina', mood:'zangado', text:'A gente não vai lutar contra ele. A gente vai trazer ele de volta.', shot:{ f:'marina', z:2.6 } },
-    { who:'caretta', mood:'alegre', text:'Cada resíduo separado na lixeira certa enfraquece o Descarte. Limpem a praia... e talvez Robert volte a ser quem era.', shot:{ f:'caretta', z:2.4 } },
-    { who:'tiago', mood:'comemorando', text:'Então é isso. Bora salvar aquele cabeça-dura!', shot:{ f:'tiago', z:2.6 }, do:C => { hop(C, ['tiago']); setMoods(C, ['cida','leo'], 'alegre'); } },
-    { who:'todos', mood:'comemorando', text:'Pela praia, pelo mar, pelo Robert: GUARDIÕES DA MARÉ!', shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
+    { say:[{ who:'cida', mood:'zangado', text:'Você mentiu pra gente esse tempo todo, Caretta!' }], shot:{ f:'cida', z:2.8 }, fx:'shake', page:true },
+    { say:[{ who:'tiago', mood:'zangado', text:'E deixou o Robert carregar isso sozinho. Sinistro, mestra.' }], shot:{ f:'tiago', z:2.6 } },
+    { say:[{ who:'caretta', mood:'triste', text:'Eu tive medo. Medo de perder vocês como perdi ele.' }], shot:{ f:'caretta', z:2.8 } },
+    { say:[{ who:'leo', mood:'triste', text:'Então ele não escolheu isso. Foi contaminado.' }], shot:{ f:'leo', z:2.4 } },
+    { say:[{ who:'marina', mood:'zangado', text:'Mentira ou não... o Robert é um de nós. Ninguém fica pra trás.' }], shot:{ f:'marina', z:3 }, music:'heroica', page:true, do:C => setMoods(C, ['tiago','cida','leo'], 'preocupado') },
+    { say:[{ who:'caretta', mood:'alegre', text:'Cada resíduo na lixeira certa enfraquece o Descarte. Limpem a praia... e talvez ele volte.' }], shot:{ f:'caretta', z:2.4 } },
+    { say:[{ who:'tiago', mood:'comemorando', text:'Então bora salvar aquele cabeça-dura!' }, { who:'cida', mood:'alegre', text:'Bora, que eu não tenho o dia todo.' }], shot:{ at:[STAGE_X + 20, 380], z:2 }, do:C => { hop(C, ['tiago']); setMoods(C, ['leo'], 'alegre'); } },
+    { say:[{ who:'todos', mood:'comemorando', text:'PELA PRAIA, PELO MAR, PELO ROBERT: GUARDIÕES DA MARÉ!' }], shot:'wide', fx:'flash', do:C => hop(C, HEROIS) } ] },
 ];
 
 /* Robert provoca antes de cada chefe (usa a praia da fase atual) */
@@ -3473,7 +3517,13 @@ function cineScene(i){
     }
     C.fade = C.comic ? 0 : 1;
   }
-  if (C.comic){ const n = sc.lines.length, pages = Math.ceil(n / 4); C.plan = { n, per:Math.ceil(n / pages) }; C.pageScene = -1; }
+  if (C.comic){
+    // página nova: no início da cena, em "page:true", em cada cartela e depois dela, ou com 5 quadros cheios
+    const pages = []; let cur = null;
+    sc.lines.forEach((ln, i) => { const prevCard = i > 0 && sc.lines[i - 1].card; if (!cur || ln.page || ln.card || prevCard || cur.length >= 5){ cur = []; pages.push(cur); } cur.push(i); });
+    C.plan = []; pages.forEach((pg, k) => pg.forEach((li, slot) => { C.plan[li] = { pg:k, slot, count:pg.length }; }));
+    C.pageScene = -1;
+  }
   if (sc.actorsAdd) C.actors.push(...sc.actorsAdd.map(a => ({ anim:0, ...a, mood:villainMood(a.id, a.mood) })));
   if (sc.camPlayer && G) C.wide = { x:G.player.x + 40, y:G.player.y - 10 };
   else if (sc.cam) C.wide = { x:sc.cam[0], y:sc.cam[1] };
@@ -3515,6 +3565,7 @@ function cineLine(){
   else if (shot && shot.f === 'player') shot = { ...shot, f:'__player' };
   setShot(C, shot);
   if (C.comic){ // enquadra na hora: cada quadro já nasce com o close certo
+    if (C.focus){ C.goal.z = Math.min(4.2, C.goal.z * 1.45); C.focusDy = -34; }   // personagem maior e mais embaixo, o balão fica no alto
     if (C.focus){ const f = C.focus === '__player' ? (G && G.player) : actor(C, C.focus); if (f){ C.goal.x = f.x; C.goal.y = f.y + (C.focusDy ?? -14); } }
     C.view = { ...C.goal };
   }
@@ -3522,13 +3573,18 @@ function cineLine(){
   if (ln.fx === 'shake') cam.shake = 0.45;
   if (ln.fx === 'lines') C.lines = 1.4;
   if (ln.fx === 'thunder'){ C.flash = 1; C.light = 0.5; cam.shake = 0.5; sfx('boss'); }
+  if (C.comic){
+    if (ln.say) for (const sy of ln.say) if (sy.mood) setMoods(C, [sy.who], sy.mood);
+    comicPanel(C, ln, who);
+    C.text = [ln.cap, ln.text, ...(ln.say || []).map(x => x.text)].filter(Boolean).join(' '); C.typed = C.text.length; C.wait = 0;
+    return;
+  }
   const a = actor(C, who), cnv = $('#dlg-face'), hasFace = who !== 'narr' && who !== 'todos';
   $('#dlg-name').textContent = ln.name || (a && a.nome) || NOMES[who] || '';
   $('#dlg-name').style.color = COR_NOME[who] || '';
   cnv.hidden = !hasFace;
   if (hasFace){ const mood = villainMood(who, ln.mood || (a && a.mood) || 'alegre'); if (who === 'caretta') carettaPortrait(cnv, mood); else portraitCanvas(cnv, who, mood, a && a.sick, a ? spriteSet(a) : null); }
   $('#dlg').classList.toggle('narr', who === 'narr');
-  if (C.comic) comicPanel(C, ln, who);
   C.text = ln.text; C.typed = 0; cineText('');
 }
 function cineNext(){
@@ -3548,46 +3604,53 @@ const COMIC_LAYOUT = {
   2:[[0, 0, 1, .5], [0, .5, 1, .5]],
   3:[[0, 0, 1, .52], [0, .52, .5, .48], [.5, .52, .5, .48]],
   4:[[0, 0, .6, .5], [.6, 0, .4, .5], [0, .5, .4, .5], [.4, .5, .6, .5]],
+  5:[[0, 0, .34, .5], [.34, 0, .33, .5], [.67, 0, .33, .5], [0, .5, .5, .5], [.5, .5, .5, .5]],
 };
 const COMIC_LAYOUT_TALL = {
   1:[[0, 0, 1, 1]],
   2:[[0, 0, 1, .5], [0, .5, 1, .5]],
   3:[[0, 0, 1, .36], [0, .36, 1, .32], [0, .68, 1, .32]],
   4:[[0, 0, 1, .3], [0, .3, .5, .36], [.5, .3, .5, .36], [0, .66, 1, .34]],
+  5:[[0, 0, .5, .33], [.5, 0, .5, .33], [0, .33, .5, .33], [.5, .33, .5, .33], [0, .66, 1, .34]],
 };
 function comicPanel(C, ln, who){
   const root = $('#comic'); if (!root) return;
-  // fecha o quadro anterior: última imagem e texto completo
-  if (C.activePanel){ comicCapture(); } if (C.balloonText && C.prevText) C.balloonText.textContent = C.prevText;
-  C.prevText = ln.text || '';
-  const idx = C.line, per = C.plan.per, pg = Math.floor(idx / per), slot = idx % per, count = Math.min(per, C.plan.n - pg * per);
-  if (!C.pageEl || C.pageNo !== pg || C.pageScene !== C.i){
+  if (C.activePanel) comicCapture();   // congela o quadro anterior com a última imagem
+  const info = C.plan[C.line] || { pg:0, slot:0, count:1 };
+  if (!C.pageEl || C.pageNo !== info.pg || C.pageScene !== C.i){
     if (C.pageEl){ const old = C.pageEl; old.classList.add('out'); setTimeout(() => old.remove(), 550); sfx('swing'); }
-    C.pageEl = document.createElement('div'); C.pageEl.className = 'cpage'; root.append(C.pageEl); C.pageNo = pg; C.pageScene = C.i;
+    C.pageEl = document.createElement('div'); C.pageEl.className = 'cpage'; root.append(C.pageEl); C.pageNo = info.pg; C.pageScene = C.i;
   }
-  const tall = matchMedia('(orientation:portrait)').matches, R = (tall ? COMIC_LAYOUT_TALL : COMIC_LAYOUT)[count][slot], gap = 0.9;
+  const tall = matchMedia('(orientation:portrait)').matches, R = (tall ? COMIC_LAYOUT_TALL : COMIC_LAYOUT)[info.count][info.slot], gap = 0.9;
   const el = document.createElement('div'); el.className = 'cpanel';
   Object.assign(el.style, { left:(R[0] * 100 + gap / 2) + '%', top:(R[1] * 100 + gap / 2) + '%', width:(R[2] * 100 - gap) + '%', height:(R[3] * 100 - gap) + '%' });
-  C.pageEl.append(el); C.balloonText = null;
+  if (R[2] * R[3] < 0.2) el.classList.add('small');
+  C.pageEl.append(el);
   if (ln.card){
     el.classList.add('card'); el.classList.toggle('red', !!ln.red);
     const t = document.createElement('div'); t.className = 'ctitle'; t.textContent = ln.card; el.append(t);
     if (ln.sub){ const sub = document.createElement('div'); sub.className = 'csub'; sub.textContent = ln.sub; el.append(sub); }
     C.activePanel = null; return;
   }
-  const cnv = document.createElement('canvas'); el.append(cnv); C.activePanel = { el, cnv, who, placed:false };
-  if (who === 'narr'){ const cap = document.createElement('div'); cap.className = 'caption'; el.append(cap); C.balloonText = cap; }
-  else {
-    const shout = ['lines', 'shake', 'thunder'].includes(ln.fx) || (/!/.test(ln.text) && /[A-ZÀ-Ú]{3,}/.test(ln.text));
-    const think = /^\.+$/.test(ln.text.trim());
-    const b = document.createElement('div'); b.className = 'balloon' + (shout ? ' shout' : '') + (think ? ' think' : '');
-    const nm = document.createElement('b'); const a = actor(C, who); nm.textContent = ln.name || (a && a.nome) || NOMES[who] || ''; nm.style.color = COR_NOME[who] ? 'color-mix(in srgb,' + COR_NOME[who] + ' 55%, #111)' : '#444';
-    const tx = document.createElement('span'); const tail = document.createElement('i'); tail.className = 'tail';
+  const cnv = document.createElement('canvas'); el.append(cnv); C.activePanel = { el, cnv, balloons:[] };
+  const cap = ln.cap || (who === 'narr' ? ln.text : null);
+  if (cap){ const c2 = document.createElement('div'); c2.className = 'caption'; c2.textContent = cap; el.append(c2); }
+  const says = ln.say || (who && who !== 'narr' ? [{ who, text:ln.text, name:ln.name }] : []);
+  says.forEach((sy, k) => {
+    const loud = ['lines', 'shake', 'thunder'].includes(ln.fx) || /[A-ZÀ-Ú]{4,}/.test(sy.text);
+    const think = /^\.+$/.test(sy.text.trim());
+    const b = document.createElement('div'); b.className = 'balloon' + (loud ? ' shout' : '') + (think ? ' think' : '');
+    b.style.top = ((cap ? 20 : 5) + k * 26) + '%';
+    const a = actor(C, sy.who), nm = document.createElement('b');
+    nm.textContent = sy.name || (a && a.nome) || NOMES[sy.who] || ''; nm.style.color = COR_NOME[sy.who] ? 'color-mix(in srgb,' + COR_NOME[sy.who] + ' 55%, #111)' : '#444';
+    const tx = document.createElement('span'); tx.textContent = sy.text;
+    const tail = document.createElement('i'); tail.className = 'tail';
     b.append(nm, tx, tail); b.style.left = '50%'; tail.style.left = '50%'; el.append(b);
-    C.balloonText = tx; C.activePanel.balloon = b; C.activePanel.tail = tail;
-  }
+    C.activePanel.balloons.push({ b, tail, who:sy.who, placed:false });
+  });
+  if (ln.tag){ const tg = document.createElement('div'); tg.className = 'ctag'; tg.style.setProperty('--tagc', COR_NOME[ln.tagWho || who] || '#ffd23f'); tg.innerHTML = '<span></span><small></small>'; tg.firstChild.textContent = ln.tag[0]; tg.lastChild.textContent = ln.tag[1] || ''; el.append(tg); }
   const word = ln.sfxWord || { thunder:'KRAKOOM!', shake:'TUM!', flash:'FLASH!' }[ln.fx];
-  if (word){ const w = document.createElement('div'); w.className = 'sfxw'; w.textContent = word; w.style.left = (52 + Math.random() * 14) + '%'; w.style.top = (58 + Math.random() * 14) + '%'; el.append(w); }
+  if (word){ const w = document.createElement('div'); w.className = 'sfxw'; w.textContent = word; w.style.left = (54 + Math.random() * 12) + '%'; w.style.top = (60 + Math.random() * 12) + '%'; el.append(w); }
 }
 // o quadro da vez é uma janela ao vivo da cena: copia a tela do jogo, recortada no formato do quadro
 function comicCapture(){
@@ -3597,13 +3660,19 @@ function comicCapture(){
   cw = Math.max(8, Math.round(cw)); ch = Math.max(8, Math.round(ch)); const ox = Math.round((VW - cw) / 2), oy = Math.round((VH - ch) / 2);
   if (P.cnv.width !== cw || P.cnv.height !== ch){ P.cnv.width = cw; P.cnv.height = ch; }
   const g = P.cnv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, cw, ch); g.drawImage(cv, ox, oy, cw, ch, 0, 0, cw, ch);
-  if (!P.placed && P.balloon){
-    P.placed = true;
-    const a = P.who === '__player' ? (G && G.player) : actor(C, P.who);
-    let fx = 0.5;
-    if (a){ let px = a.x - Math.round(cam.x); if (C.zoom){ px = (px - C.zoom.sx) * C.zoom.z; } fx = clamp((px - ox) / cw, 0.04, 0.96); }
-    const X = clamp(fx * 100, 26, 74); P.balloon.style.left = X + '%';
-    P.tail.style.left = clamp(50 + (fx * 100 - X) * 2.2, 14, 86) + '%';
+  const todo = P.balloons.filter(x => !x.placed); if (!todo.length) return;
+  // cada balão fica acima de quem fala, sem sair do quadro; com dois, o segundo vem logo abaixo do primeiro
+  const fxOf = who => { const a = actor(C, who); if (!a) return 0.5; let px = a.x - Math.round(cam.x); if (C.zoom) px = (px - C.zoom.sx) * C.zoom.z; return (px - ox) / cw; };
+  const PW = P.el.clientWidth, all = P.balloons.map(x => ({ x, fx:fxOf(x.who) }));   // na ordem do roteiro: quem fala primeiro fica em cima
+  let top = null;
+  for (const o of all){
+    const b = o.x.b, w = b.offsetWidth, cx = clamp(o.fx, -0.1, 1.1) * PW;
+    const left = clamp(cx - w / 2, PW * 0.03, Math.max(PW * 0.03, PW * 0.97 - w));
+    b.style.left = left + 'px';
+    if (top != null) b.style.top = top + 'px';
+    top = b.offsetTop + b.offsetHeight + 8;
+    o.x.tail.style.left = clamp((cx - left) / w * 100, 12, 88) + '%';
+    o.x.placed = true;
   }
 }
 const VOZ = { chorume:110, caretta:300, robert:170, marina:620, tiago:520, cida:440, leo:480, todos:560 };
@@ -3627,7 +3696,7 @@ function cineUpdate(dt){
         if (now % 3 === 0 && chr !== ' ') talkBlip(C.speaker);
       }
     }
-  } else { C.wait += dt; if (C.wait > (0.75 + C.text.length * 0.011) / TEXTO_VEL()){ cineLine(); if (CINE !== C) return; } }
+  } else { C.wait += dt; if (C.wait > (C.comic ? 1.6 + C.text.length * 0.032 : 0.75 + C.text.length * 0.011) / TEXTO_VEL()){ cineLine(); if (CINE !== C) return; } }
   // atores
   for (const a of C.actors){
     a.anim = (a.anim || 0) + dt;
@@ -3843,7 +3912,7 @@ function watchCine(build, run){
 }
 function chapterList(){
   const list = [];
-  const NOMES_CAP = [['Praia do Sol','muitos verões atrás · começa a abertura'], ['Vinte verões depois','a praia suja'], ['Os cinco da cidade','quem são os aprendizes'], ['O chamado','a Caretta aparece'], ['O treinamento','os poderes e as roupas de herói'], ['A briga','meses depois'], ['Robert, o Descarte','o lixo acorda'], ['A confissão','a Caretta mentiu'], ['Cinquenta anos atrás','o primeiro aprendiz'], ['A união dos Guardiões','vamos salvar o Robert']];
+  const NOMES_CAP = [['Praia do Sol','muitos verões atrás · começa a abertura'], ['Vinte verões depois','a praia suja'], ['Os cinco','uma página para cada um'], ['O chamado','a Caretta aparece'], ['O treinamento','os poderes e as roupas de herói'], ['A briga','meses depois'], ['Robert, o Descarte','o lixo acorda'], ['A confissão','a Caretta mentiu'], ['Cinquenta anos atrás','o primeiro aprendiz'], ['A união dos Guardiões','vamos salvar o Robert']];
   OPENING().forEach((sc, i) => { const c = sc.lines.find(l => l.card), [t, sub] = NOMES_CAP[i] || [c ? c.card : 'Cena ' + (i + 1), 'abertura']; list.push({ t, sub, who:i === 6 ? 'robert' : 'caretta', go:() => watchCine(() => comicScenes(OPENING().slice(i))) }); });
   [0, 1, 2].forEach(f => list.push({ t:'Antes do chefe ' + (f + 1), sub:FASES[f].nome, who:'robert', go:() => watchCine(BOSS_CINE[f], { hero:jumpHero === 'robert' ? 'tiago' : jumpHero, fase:f }) }));
   list.push({ t:'O final', sub:'a Marina é infectada', who:'marina', go:() => watchCine(FINAL_CINE) });
