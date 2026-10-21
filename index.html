@@ -112,7 +112,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .char{all:unset;box-sizing:border-box;cursor:pointer;background:rgba(0,0,0,.25);border:3px solid transparent;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;min-width:0}
 .char:hover{border-color:var(--muted)}
 .char.sel{border-color:var(--sun);background:rgba(255,210,63,.1)}
-.char canvas.body{width:78px;height:108px}
+.char canvas.body{width:84px;height:112px}
 .char .cls{font-family:var(--f-display);font-size:7px;color:var(--ink);background:var(--sun);padding:3px 5px}
 .char .nm{font-family:var(--f-display);font-size:11px}
 .char .rl{color:var(--muted);font-size:15px}
@@ -294,7 +294,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   #coach-t{font-size:9px}
   .chars{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .char{padding:8px;gap:4px}
-  .char canvas.body{width:52px;height:72px}
+  .char canvas.body{width:54px;height:72px}
   .char .rl,.char .burst,.char .moods,#scr-select .panel > p.muted{display:none}
   .char .wp{font-size:13px}
   .stats{font-size:11px;gap:2px 4px}
@@ -344,7 +344,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
   #coach .btn{font-size:8px;padding:6px 9px}
   .chars{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
   .char{padding:8px;gap:4px}
-  .char canvas.body{width:44px;height:60px}
+  .char canvas.body{width:45px;height:60px}
   .char .rl,.char .burst,.char .moods,.char .stats,#scr-select .panel > p.muted,.lead,.how{display:none}
   .actions{position:sticky;bottom:-14px;z-index:2;background:linear-gradient(rgba(19,32,61,0),#13203d 35%);padding-block:10px 4px}
 }
@@ -512,7 +512,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 
   <section class="screen logo" id="scr-logo" hidden>
     <div class="in">
-      <canvas id="logo-heroes" class="px" width="96" height="30" aria-hidden="true"></canvas>
+      <canvas id="logo-heroes" class="px" width="100" height="34" aria-hidden="true"></canvas>
       <div class="t">LIMPANDO<br>A PRAIA</div>
       <div class="s">GUARDIÕES DA MARÉ</div>
       <div class="k">TOQUE PARA CONTINUAR</div>
@@ -1145,6 +1145,31 @@ function charRows(style, frame, extras){
   return g.map(a => a.join(''));
 }
 
+// Marina: atlética e de ombros largos · Tiago: o mais alto e magro · Cida: baixa e forte
+// Léo: médio e esguio · Robert: o maior de todos, largo e alto (a cabeça fica proporcionalmente menor)
+const BODY = { marina:{ widen:2, add:[20] }, tiago:{ add:[15, 20, 21] }, cida:{ widen:4, del:[17, 21] }, leo:{ add:[20] }, robert:{ widen:4, add:[15, 16, 20, 21] } };
+function shapeRows(rows, id){
+  const B = BODY[id]; let g = rows.map(r => r.split('')), fx = 6, hx = 5, hy = 18;
+  if (!B) return { rows, fx, hx, hy };
+  const half = (B.widen || 0) / 2;
+  if (half){
+    g = g.map((r, y) => {
+      if (y < 13) return [...Array(half).fill('.'), ...r, ...Array(half).fill('.')];
+      const out = []; r.forEach((c, x) => { out.push(c); if (x === 5 || x === 10) for (let k = 0; k < half; k++) out.push(c); }); return out;
+    });
+    fx += half; hx += half;
+  }
+  const add = B.add || [], del = B.del || [];
+  const ops = [...add.map(i => [i, 1]), ...del.map(i => [i, -1])].sort((a, b) => b[0] - a[0]);
+  for (const [i, op] of ops){ if (op > 0) g.splice(i + 1, 0, [...g[i]]); else g.splice(i, 1); }
+  hy += add.filter(i => i < 17).length - del.filter(i => i < 17).length;
+  return { rows:g.map(r => r.join('')), fx, hx, hy };
+}
+// sprite de personagem com o molde de corpo dele; guarda onde fica a mão (hx, hy)
+function charSprite(id, rows, pal, face){
+  const sh = shapeRows(rows, id), sp = wrap(fromRows(sh.rows, pal), { x:sh.fx, y:8, style:'big', ...(face || {}) });
+  sp.hx = sh.hx; sp.hy = sh.hy; return sp;
+}
 function makeEnemy(w, h, body, face, feet, arms){
   return [0, 1].map(f => {
     const pad = 2, W = w + pad * 2, H = h + (feet ? 2 : 0);
@@ -1179,19 +1204,19 @@ function buildSprites(){
   };
   SPR.casual = {};
   for (const c of CLASSES){
-    SPR.chars[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f, HERO_EXTRA[c.id]), { ...c.pal, ...HERO_PAL[c.id] }), { x:6, y:8, style:'big' }));
+    SPR.chars[c.id] = [0, 1, 0, 2].map(f => charSprite(c.id, charRows(c.style, f, HERO_EXTRA[c.id]), { ...c.pal, ...HERO_PAL[c.id] }));
     const cp = { ...c.pal, ...CASUAL_PAL[c.id] }; delete cp.W; delete cp.w; delete cp.Y; delete cp.y;
-    SPR.casual[c.id] = [0, 1, 0, 2].map(f => wrap(fromRows(charRows(c.style, f, []), cp), { x:6, y:8, style:'big' }));
+    SPR.casual[c.id] = [0, 1, 0, 2].map(f => charSprite(c.id, charRows(c.style, f, []), cp));
   }
   const ROBERT_PAL = { H:'#33363d', h:'#1b1c21', L:'#4a4e57', S:'#e0b896', s:'#b08a6c', A:'#2c2f35', a:'#1c1e22', B:'#5b6068', C:'#4a3f35', P:'#26282d', p:'#16171a', K:'#1c1916', k:'#38312a', V:'#33363d' };
   // Robert, o Descarte: o Rei da Podridão. Tudo preto, capa rasgada, coroa de sucata e gosma tóxica
   const DESCARTE_PAL = { H:'#121216', h:'#060608', L:'#24242a', S:'#cfc7b0', s:'#9a937e', A:'#141418', a:'#09090b', B:'#141418', O:'#2b3320', o:'#1a1f14',
     E:'#8bd450', T:'#0d0d10', G:'#5f7a3a', N:'#09090b', P:'#141418', p:'#09090b', K:'#09090b', k:'#1d1d22', X:'#0e0e11', x:'#040405', R:'#b08a3e', r:'#6b5530', V:'#121216', C:'#141418' };
-  SPR.chars.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['suit', 'torn', 'crown', 'ooze']), DESCARTE_PAL), { x:6, y:8, style:'big', col:'#8bd450' }));
+  SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('hood', f, ['suit', 'torn', 'crown', 'ooze']), DESCARTE_PAL, { col:'#8bd450' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
-  SPR.casual.robert = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }), { x:6, y:8, style:'big' }));
+  SPR.casual.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }));
   SPR.chars.chorume = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('hood', f, ['torn', 'beard']), { H:'#3d4a2a', h:'#232b16', L:'#5a6b3a', S:'#b8b49a', s:'#8a866c', A:'#4a3a26', a:'#2e2416', B:'#8bd450', C:'#8bd450', P:'#2e2a1e', p:'#1e1a12', K:'#1a1a12', k:'#3a3a28', X:'#3d4a2a', x:'#232b16', G:'#8bd450', Q:'#e6e4d6' }), { x:6, y:8, style:'big', col:'#a8ff5a' }));
-  SPR.robertHero = [0, 1, 0, 2].map(f => wrap(fromRows(charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }), { x:6, y:8, style:'big' }));
+  SPR.robertHero = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
     B:'#f2efe6', b:'#c9c4b4', T:'#6b3f1a', t:'#3f2410', Y:'#b77a38', z:'#4f2e12',
@@ -1717,7 +1742,7 @@ function paintBinCanvases(root){ root.querySelectorAll('canvas[data-bin]').forEa
 function portraitCanvas(cnv, id, mood, sick, set){
   mood = villainMood(id, mood);
   const base = (set || SPR.chars[id])[0], g = cnv.getContext('2d'), s = sick ? sickOf(base) : base; g.imageSmoothingEnabled = false;
-  g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, 0, 0, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x + 1, s.face.y + 3, mood, s.face);
+  const sx = s.face.x - 7; g.clearRect(0, 0, cnv.width, cnv.height); g.drawImage(s.img, sx, 0, 18, 16, 1, 3, 18, 16); drawFace(g, s.face.x - sx + 1, s.face.y + 3, mood, s.face);
 }
 function buildSelect(){
   const box = $('#chars'); box.innerHTML = '';
@@ -1729,9 +1754,9 @@ function buildSelect(){
     const locked = infected && c.id === 'marina';
     const b = document.createElement('button'); b.type = 'button'; b.className = 'char' + (c.id === selected ? ' sel' : '') + (locked ? ' locked' : ''); b.setAttribute('aria-pressed', c.id === selected);
     if (locked){ b.disabled = true; b.title = 'Marina foi infectada pelo Robert, o Descarte'; }
-    const body = document.createElement('canvas'); body.className = 'body px'; body.width = 26; body.height = 36;
-    const s = locked ? sickOf(SPR.chars[c.id][0]) : SPR.chars[c.id][0], g = body.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(s.img, 4, 6); drawFace(g, s.face.x + 4, s.face.y + 6, locked ? 'exausto' : 'alegre', s.face);
-    drawHeld(g, c.id, 18, 24, 0, false, 0);
+    const body = document.createElement('canvas'); body.className = 'body px'; body.width = 30; body.height = 40;
+    const s = locked ? sickOf(SPR.chars[c.id][0]) : SPR.chars[c.id][0], g = body.getContext('2d'); g.imageSmoothingEnabled = false; const ox = (30 - s.w) >> 1, oy = 39 - s.h; g.drawImage(s.img, ox, oy); drawFace(g, s.face.x + ox, s.face.y + oy, locked ? 'exausto' : 'alegre', s.face);
+    drawHeld(g, c.id, ox + (s.w >> 1) + s.hx, oy + s.hy, 0, false, 0);
     b.append(body);
     const statRows = Object.entries(c.stats).map(([k, v]) => `<span>${k}</span><span class="sb">${[1,2,3,4,5].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`).join('');
     b.insertAdjacentHTML('beforeend', `<span class="cls">${locked ? 'INFECTADA' : c.classe.toUpperCase()}</span><span class="nm">${c.nome}</span><span class="rl">${c.papel}</span><span class="wp">Arma: <b>${WEAPONS[c.weapon].nome}</b></span><div class="stats">${statRows}</div>${c.skill ? `<span class="burst">Habilidade (Q): ${c.skillNome}. ${c.skillDesc}</span>` : ''}<span class="burst">Burst: ${c.burstNome}. ${c.burstDesc}</span>`);
@@ -2611,7 +2636,7 @@ function drawPlayer(p, x, y, t){
   const fr = p.moving ? ((p.anim * 8) | 0) % 4 : 0, s = SPR.chars[p.id][fr];
   const bob = !p.moving && ((t * 2) | 0) % 2 ? 1 : 0;
   const x0 = x - (s.w >> 1), y0 = y - s.h + 4 + bob;
-  shadow(x, y + 2, p.dashT > 0 || p.skillT > 0 ? 18 : 14);
+  shadow(x, y + 2, Math.max(12, s.w - 4) + (p.dashT > 0 || p.skillT > 0 ? 4 : 0));
   if (p.skillT > 0 && p.skillKind === 'rasgada') drawSurf(x, y, t, p.flip);
   const pose = playerPose(p, t, fr);
   ctx.save(); ctx.translate(x + pose.ox, y + 4 + pose.oy); ctx.rotate(pose.rot); ctx.scale(pose.sx, pose.sy); ctx.translate(-x, -(y + 4));
@@ -2619,7 +2644,7 @@ function drawPlayer(p, x, y, t){
   const swinging = L.fx.some(f => f.kind === 'swing' || f.kind === 'thrust') || (p.burstT > 0 && p.burstKind === 'tornado');
   if (p.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, playerMood(), s.face); }
   else { ctx.drawImage(s.img, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, playerMood(), s.face); }
-  if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, x + (p.flip ? -5 : 5) + pose.hx, y0 + 18 + pose.hy, p.aim, p.flip, t);
+  if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, x + (p.flip ? -s.hx : s.hx) + pose.hx, y0 + s.hy + pose.hy, p.aim, p.flip, t);
   ctx.restore();
   const m = playerMood();
   if (m === 'sonolento'){ const k = (t * 0.7) % 1; ctx.globalAlpha = 1 - k; pixText('z', x + 8 + Math.round(k * 4), y0 - 1 - Math.round(k * 9), '#ffffff', 'small'); ctx.globalAlpha = 1; }
@@ -2855,7 +2880,7 @@ function render(dt){
   if (L.helpers) for (const h of L.helpers){ const fr2 = h.moving ? ((h.anim * 8) | 0) % 4 : 0, s2 = SPR.casual.cida[fr2], x = Math.round(h.x - cx), y = Math.round(h.y - cy), x0 = x - (s2.w >> 1), y0 = y - s2.h + 4 - (h.moving && fr2 % 2 ? 1 : 0);
     shadow(x, y + 2, 12); if (h.flip){ ctx.save(); ctx.translate(x0 + s2.w, y0); ctx.scale(-1, 1); ctx.drawImage(s2.img, 0, 0); ctx.restore(); } else ctx.drawImage(s2.img, x0, y0);
     drawFace(ctx, h.flip ? x0 + s2.w - s2.face.x - 7 : x0 + s2.face.x, y0 + s2.face.y, 'alegre', s2.face);
-    ctx.fillStyle = '#3c9a5f'; ctx.fillRect(x0 + 5, y0 + 15, s2.w - 10, 4);
+    ctx.fillStyle = '#3c9a5f'; ctx.fillRect(x0 + 5, y0 + (s2.hy || 18) - 3, s2.w - 10, 4);
     if (h.carry){ const si = SPR.item[h.carry]; ctx.drawImage(si.img, x - (si.w >> 1), y0 - si.h + 2); } }
   if (L.allies) for (const c of L.allies){ const s2 = SPR.crab[(c.anim * 10 | 0) % 2], x = Math.round(c.x - cx), y = Math.round(c.y - cy) - (c.pinch > 0 ? 2 : 0);
     shadow(x, y + 4, 12); if (c.flip){ ctx.save(); ctx.translate(x + (s2.w >> 1), y - (s2.h >> 1)); ctx.scale(-1, 1); ctx.drawImage(s2.img, 0, 0); ctx.restore(); } else ctx.drawImage(s2.img, x - (s2.w >> 1), y - (s2.h >> 1));
@@ -3529,7 +3554,7 @@ function drawActor(a, x, y, t){
     shadow(x - jx, y - jy + 2, 14);
     if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); if (!a.silhouette) drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
     else { ctx.drawImage(s.img, x0, y0); if (!a.silhouette) drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
-    if ((HEROIS.includes(a.id) || a.hammer) && !a.sick && a.outfit !== 'casual') drawHeld(ctx, a.id, x + (a.flip ? -5 : 5), y0 + 18, a.flip ? Math.PI : 0, a.flip, t);
+    if ((HEROIS.includes(a.id) || a.hammer) && !a.sick && a.outfit !== 'casual') drawHeld(ctx, a.id, x + (a.flip ? -(s.hx || 5) : (s.hx || 5)), y0 + (s.hy || 18), a.flip ? Math.PI : 0, a.flip, t);
     if (a.sick || a.id === 'robert'){ ctx.fillStyle = '#8bd450'; const k = (t * 1.5 + a.x * 0.01) % 1; ctx.globalAlpha = 1 - k; ctx.fillRect(x - 7, Math.round(y0 + 6 - k * 10), 2, 2); ctx.fillRect(x + 6, Math.round(y0 + 12 - ((k + 0.5) % 1) * 10), 2, 2); ctx.globalAlpha = 1; }
     return { top:y0 };
   }
@@ -3766,7 +3791,7 @@ function showLogo(){
   store('lp-hist', true);
   L = makeLevel(0); playMusic('heroica');
   const c = $('#logo-heroes'), g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
-  HEROIS.forEach((id, i) => { const sp = SPR.chars[id][0], x = 4 + i * 23; g.drawImage(sp.img, x, 3); drawFace(g, x + sp.face.x, 3 + sp.face.y, 'comemorando', sp.face); drawHeld(g, id, x + 14, 3 + 17, 0, false, 0); });
+  HEROIS.forEach((id, i) => { const sp = SPR.chars[id][0], x = 2 + i * 25, y = 33 - sp.h; g.drawImage(sp.img, x, y); drawFace(g, x + sp.face.x, y + sp.face.y, 'comemorando', sp.face); drawHeld(g, id, x + (sp.w >> 1) + sp.hx, y + sp.hy - 1, 0, false, 0); });
   setState('logo');
   clearTimeout(logoTimer); logoTimer = setTimeout(leaveLogo, 6500);
 }
@@ -3918,7 +3943,7 @@ function putSpr(g, s, x, base, mood, held, sil){
   const y = base - s.h;
   g.drawImage(sil ? silOf(s).img : s.img, x, y);
   if (!sil && s.face && mood) drawFace(g, x + s.face.x, y + s.face.y, mood, s.face);
-  if (!sil && held) drawHeld(g, held, x + 14, y + 17, 0, false, 0);
+  if (!sil && held) drawHeld(g, held, x + (s.w >> 1) + (s.hx || 5), y + (s.hy || 18) - 1, 0, false, 0);
 }
 function drawMenuArt(k){
   const c = $('#m-art'), g = c.getContext('2d'), base = c.height - 3; g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
