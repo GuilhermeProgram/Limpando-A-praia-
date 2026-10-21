@@ -3500,7 +3500,21 @@ const FINAL_CINE = () => [
 ];
 
 /* ---------- motor das cenas ---------- */
+function cineLines(scenes){
+  for (const sc of scenes){
+    const out = [];
+    for (const ln of sc.lines){
+      if (ln.card || (!ln.say && !ln.cap)){ out.push(ln.tag ? { ...ln, name:ln.tag[0].charAt(0) + ln.tag[0].slice(1).toLowerCase() + ' · ' + ln.tag[1] } : ln); continue; }
+      const { say, cap, tag, page, sfxWord, ...base } = ln; let first = true;
+      if (cap){ out.push({ ...base, who:'narr', text:cap }); first = false; }
+      for (const sy of say || []){ out.push(first ? { ...base, who:sy.who, mood:sy.mood, text:sy.text } : { who:sy.who, mood:sy.mood, text:sy.text }); first = false; }
+    }
+    sc.lines = out;
+  }
+  return scenes;
+}
 function playCine(scenes, done){
+  if (!(scenes[0] && scenes[0].comic)) cineLines(scenes);
   CINE = { scenes, i:0, line:-1, actors:[], fx:[], text:'', typed:0, wait:0, hold:0, done, crabs:'alegre', speaker:null,
            view:{ x:STAGE_X, y:300, z:1 }, goal:{ x:STAGE_X, y:300, z:1 }, focus:null, cam:{ x:STAGE_X, y:300 },
            flash:0, lines:0, fade:1, light:0, rainDrops:[], grade:null, lineGrade:null, card:null };
@@ -3921,7 +3935,7 @@ function watchCine(build, run){
 function chapterList(){
   const list = [];
   const NOMES_CAP = [['Praia do Sol','muitos verões atrás · começa a abertura'], ['Vinte verões depois','a praia suja'], ['Os cinco','uma página para cada um'], ['O chamado','a Caretta aparece'], ['O treinamento','os poderes e as roupas de herói'], ['A briga','meses depois'], ['Robert, o Descarte','o lixo acorda'], ['A confissão','a Caretta mentiu'], ['Cinquenta anos atrás','o primeiro aprendiz'], ['A união dos Guardiões','vamos salvar o Robert']];
-  OPENING().forEach((sc, i) => { const c = sc.lines.find(l => l.card), [t, sub] = NOMES_CAP[i] || [c ? c.card : 'Cena ' + (i + 1), 'abertura']; list.push({ t, sub, who:i === 6 ? 'robert' : 'caretta', go:() => watchCine(() => comicScenes(OPENING().slice(i))) }); });
+  OPENING().forEach((sc, i) => { const c = sc.lines.find(l => l.card), [t, sub] = NOMES_CAP[i] || [c ? c.card : 'Cena ' + (i + 1), 'abertura']; list.push({ t, sub, who:i === 6 ? 'robert' : 'caretta', go:() => watchCine(() => OPENING().slice(i)) }); });
   [0, 1, 2].forEach(f => list.push({ t:'Antes do chefe ' + (f + 1), sub:FASES[f].nome, who:'robert', go:() => watchCine(BOSS_CINE[f], { hero:jumpHero === 'robert' ? 'tiago' : jumpHero, fase:f }) }));
   list.push({ t:'O final', sub:'a Marina é infectada', who:'marina', go:() => watchCine(FINAL_CINE) });
   list.push({ t:'Créditos finais', sub:'equipe e referências', who:'leo', go:() => { initAudio(); rollCredits(backToChapters); } });
@@ -3999,7 +4013,7 @@ function rollCredits(done){
 function endCredits(){ if (state !== 'credits' || !creditsDone) return; const d = creditsDone; creditsDone = null; d(); }
 
 /* abertura automática e logo do jogo */
-function startOpening(){ playCine(comicScenes(OPENING()), showLogo); }
+function startOpening(){ playCine(OPENING(), showLogo); }
 function beginGame(){ if (state !== 'start') return; initAudio(); applyVolumes(); if (OPTS.historia) startOpening(); else showLogo(); }
 let logoTimer = null;
 function showLogo(){
