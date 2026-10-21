@@ -1301,9 +1301,9 @@ function buildSprites(){
   SPR.robertMax = [0, 1, 0, 2].map(f => charSprite('robert', twoFace(charRows('curto', f, ['noble', 'cape', 'coat'])), SUPREMO_PAL, { col:'#6b3fa8' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }));
-  // Chorume: alto, cabelo loiro espetado, óculos vermelhos, casaco de penas cor-de-rosa, camisa de bolinhas e calça laranja
-  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('spiky', f, ['shades', 'dots']), { H:'#ffe14a', h:'#c9a227', L:'#fff3a0', S:'#d9a06c', s:'#a8743f', A:'#f4f4f8', a:'#c3c3d2', B:'#f4f4f8', C:'#ffe14a', E:'#2a2a33',
-    P:'#e8803a', p:'#b85a1f', K:'#2a2a33', k:'#4a4a58', V:'#ff3b3b', v:'#7a1020', N:'#d9a06c' }, { col:'#ffd0d0' }, { wings:8, feather:true }));
+  // Chorume: pele verde de chorume, alto, cabelo loiro espetado, óculos vermelhos, casaco de penas cor-de-rosa, camisa de bolinhas e calça laranja
+  SPR.chars.chorume = [0, 1, 0, 2].map(f => charSprite('chorume', charRows('spiky', f, ['shades', 'dots']), { H:'#ffe14a', h:'#c9a227', L:'#fff3a0', S:'#6fae3c', s:'#4a7a24', A:'#f4f4f8', a:'#c3c3d2', B:'#f4f4f8', C:'#ffe14a', E:'#2a2a33',
+    P:'#e8803a', p:'#b85a1f', K:'#2a2a33', k:'#4a4a58', V:'#ff3b3b', v:'#7a1020', N:'#6fae3c' }, { col:'#ffd0d0' }, { wings:8, feather:true }));
   SPR.robertHero = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['suit','cape']), { ...ROBERT_BASE, A:'#2a4fa8', a:'#1d3a80', O:'#1d3a80', o:'#14295e', E:'#f4f4f8', T:'#14151a', G:'#c9d0db', N:'#14151a', P:'#2a4fa8', p:'#1d3a80', K:'#14151a', k:'#2a2c33', X:'#f4f4f8', x:'#c3c3d2' }));
   // Mestra Caretta: tartaruga anciã, curvada sob um casco grande, barba branca e cajado de coral
   const CARETTA_PAL = { G:'#2f4f22', g:'#4a6a32', S:'#7f9f5a', s:'#a3bf7f', M:'#5c7a3e', k:'#c9a45a',
