@@ -15,6 +15,8 @@ Abra o `index.html` no navegador ou acesse a página do GitHub Pages do reposit�
 |---|---|---|
 | Mover | W A S D ou setas | Arrastar o dedo na tela |
 | Poder especial (Burst) | Espaço | Botão BURST |
+| Habilidade da classe | Q | Botão vermelho |
+| Esquiva | Shift | Botão azul |
 | Pausa | P ou Esc | Botão PAUSA |
 | Música | M | Botão MÚSICA |
 
@@ -56,7 +58,7 @@ Personagens e Sobre o jogo abrem a **Enciclopédia da Praia**, com cinco abas: P
 
 | Personagem | Classe | Arma | Poder especial |
 |---|---|---|---|
-| Marina | Guerreira | Espada de Brinquedo | Tornado de Espuma |
+| Marina | Guerreira | Espada de Brinquedo (sequência de 3 golpes) | Bandeira Vermelha · habilidade Resgate (Q) |
 | Tiago | Atirador | Lança-Esponja | Chuva de Esponjas |
 | Cida | Alquimista | Lançador de Limpeza | Maré Limpa |
 | Léo | Coletor | Frisbee Reciclado | Ímã Reciclador |
