@@ -1179,6 +1179,7 @@ function charRows(style, frame, extras){
     put(6, 14, 'Q'); put(9, 14, 'Q'); put(7, 15, 'G'); put(8, 16, 'G'); put(7, 17, 'I');
     for (const [x, y] of [[4, 15], [4, 17], [11, 16], [11, 18], [5, 18]]) put(x, y, 'O');
     put(6, 6, 'L'); put(7, 6, 'H'); put(10, 6, 'L');
+    g[21] = g[21].map(c => c === 'S' ? 'K' : c);   // botas altas
   }
   // Chorume estilo Doflamingo: óculos vermelhos e camisa branca de bolinhas
   if (ex.includes('shades')){ for (let x = 5; x <= 12; x++) put(x, 8, x === 8 || x === 9 ? 'v' : 'V'); put(4, 8, 'v'); put(13, 8, 'v'); }
@@ -1289,10 +1290,15 @@ function buildSprites(){
   const DESCARTE_PAL = { H:'#c9cdd6', h:'#7d828f', L:'#eef0f5', S:'#e6c4a6', s:'#b8927a', A:'#1c1c24', a:'#0d0d12', B:'#3f7f8a', C:'#1c1c24', O:'#e8e8f0',
     Q:'#f4f0ea', G:'#e0b24a', I:'#8a3ce0', P:'#1c1c24', p:'#0d0d12', K:'#0d0d12', k:'#2a2a33', N:'#e6c4a6', X:'#1c1c24', x:'#7a1020', V:'#c9cdd6' };
   SPR.chars.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, ['noble', 'cape', 'coat']), DESCARTE_PAL, { col:'#6b3fa8' }));
-  // Descarte Supremo: depois de absorver o Chorume. Cabelo verde arrepiado, asas maiores, tudo brilhando
-  const SUPREMO_PAL = { H:'#7dff4f', h:'#2f8a1f', L:'#e6ffb0', S:'#d8d2bc', s:'#a39c86', A:'#1f6b2a', a:'#0f3d18', B:'#1f6b2a', O:'#8bd450', o:'#4f8a2a',
-    E:'#ffffff', T:'#0b1f0f', G:'#d6ff8a', N:'#0f3d18', P:'#1f6b2a', p:'#0f3d18', K:'#0b1f0f', k:'#1f3d22', C:'#d6ff8a', c:'#8bd450', V:'#7dff4f' };
-  SPR.robertMax = [0, 1, 0, 2].map(f => charSprite('robert', charRows('spiky', f, ['suit', 'mohawk', 'ooze']), SUPREMO_PAL, { col:'#d6ff8a' }, { wings:9 }));
+  // Descarte Supremo (estilo Duas-Caras): metade é o Robert nobre, metade foi tomada pelo lixo.
+  // Do meio do rosto para a direita: pele verde-podre com cicatrizes, cabelo desgrenhado e terno branco com colete roxo
+  const twoFace = rows => rows.map((r, y) => r.split('').map((c, x) => {
+    if (x < 8) return c;
+    if (y >= 9 && y <= 11 && (x === 10 || x === 12) && (c === 'S' || c === 's')) return 'Z';
+    return { S:'Y', s:'y', H:'J', h:'j', L:'j', A:'U', a:'u', P:'U', p:'u', B:'D', O:'Z' }[c] || c;
+  }).join('')).map((r, y) => y === 0 || y === 1 ? r.replace(/.(?=J|j)/, 'j') : r);
+  const SUPREMO_PAL = { ...DESCARTE_PAL, Y:'#8fb36a', y:'#5f7d42', J:'#2f4a2a', j:'#18261a', U:'#ecebe2', u:'#b9b6a8', D:'#5a2a7a', Z:'#2a3a1e' };
+  SPR.robertMax = [0, 1, 0, 2].map(f => charSprite('robert', twoFace(charRows('curto', f, ['noble', 'cape', 'coat'])), SUPREMO_PAL, { col:'#6b3fa8' }));
   const ROBERT_BASE = { H:'#2b2230', h:'#151018', L:'#4a3b52', S:'#e0b896', s:'#b08a6c' };
   SPR.casual.robert = [0, 1, 0, 2].map(f => charSprite('robert', charRows('curto', f, []), { ...ROBERT_BASE, A:'#6b7280', a:'#4b5260', B:'#6b7280', C:'#3a3f4a', P:'#2f3a55', p:'#1f2840', K:'#2a2a33', k:'#4a4a58' }));
   // Chorume: alto, cabelo loiro espetado, óculos vermelhos, casaco de penas cor-de-rosa, camisa de bolinhas e calça laranja
@@ -3954,6 +3960,7 @@ const DLC_FINAL = () => [
     { who:'chorume', mood:'preocupado', text:'Robert... o que tu vai fazer?!', shot:{ f:'chorume', z:3 }, fx:'shake' },
     { who:'narr', text:'O martelo brilhou. E o Robert puxou toda a força do Chorume para dentro de si.', shot:'wide', fx:'thunder', do:absorbChorume },
     { card:'O DESCARTE SUPREMO', red:true },
+    { who:'robert', mood:'zangado', text:'Metade de mim ainda lembra da praia. A outra metade... é lixo.', shot:{ f:'robert', z:3.4 }, grade:'red' },
     { who:'robert', mood:'zangado', text:'Agora eu não preciso de professor. Nem de ninguém.', shot:{ f:'robert', z:3 }, grade:'red' },
     { who:'robert', mood:'zangado', text:'Os Guardiões acham que vão me salvar. Eles nem imaginam o que vem por aí.', shot:{ f:'robert', z:3.4 }, grade:'red', fx:'thunder', do:C => riseMonsters(C, STAGE_X, 405) },
     { who:'narr', text:'Cada lixo jogado fora sem cuidado deixou o Descarte mais forte.', shot:'wide', grade:'gray' },
