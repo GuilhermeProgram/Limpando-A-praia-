@@ -59,9 +59,9 @@ Personagens e Sobre o jogo abrem a **Enciclopédia da Praia**, com cinco abas: P
 | Personagem | Classe | Arma | Poder especial |
 |---|---|---|---|
 | Marina | Guerreira | Espada de Brinquedo (sequência de 3 golpes) | Bandeira Vermelha · habilidade Resgate (Q) |
-| Tiago | Atirador | Lança-Esponja | Chuva de Esponjas |
-| Cida | Alquimista | Lançador de Limpeza | Maré Limpa |
-| Léo | Coletor | Frisbee Reciclado | Ímã Reciclador |
+| Tiago | Atirador | Lança-Esponja (a cada 5 tiros, uma esponja encharcada que estoura) | Tubo Perfeito · habilidade Rasgada (Q) |
+| Cida | Alquimista | Lançador de Limpeza (a cada 3 disparos, um jato pressurizado) | Mutirão · habilidade Carrinho (Q) |
+| Léo | Coletor | Frisbee Reciclado (marca os monstros, que levam mais dano) | Ecossistema · habilidade Caranguejos (Q) |
 
 O rosto do personagem muda conforme a partida: alegre, com dor ao levar dano, comemorando ao separar o lixo, surpreso quando o chefe aparece, triste ou exausto com pouca vida, preocupado com a mochila cheia e com sono quando fica parado.
 

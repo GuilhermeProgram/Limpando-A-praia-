@@ -959,23 +959,27 @@ const CLASSES = [
     skill:'resgate', skillNome:'Resgate', skillCd:6, skillDesc:'Avança atravessando os monstros e puxa o lixo do caminho.',
     base:{ hp:130, speed:70, cap:6, dmg:1.1, magnet:24 }, stats:{ Vida:5, Dano:4, Alcance:1, Velocidade:3, Mochila:2 },
     pal:{ H:'#d8462f', h:'#8f2420', L:'#ff8a5c', S:'#f2c29b', s:'#c98e6a', A:'#d93a3a', a:'#9b2228', B:'#ffffff', C:'#ffd23f', P:'#ffcf5a', p:'#d39a2a', K:'#c23b2b', k:'#ff7a5c' } },
-  { id:'tiago', nome:'Tiago', classe:'Atirador', papel:'Surfista', style:'spiky', weapon:'esponja', burst:'chuva',
-    burstNome:'Chuva de Esponjas', burstDesc:'Dispara uma rajada de esponjas em todas as direções.',
+  { id:'tiago', nome:'Tiago', classe:'Atirador', papel:'Surfista', style:'spiky', weapon:'esponja', burst:'tubo',
+    burstNome:'Tubo Perfeito', burstDesc:'Uma onda gigante atravessa a tela com o Tiago surfando nela: arrasta os monstros e o lixo, e ele fica invencível.',
+    skill:'rasgada', skillNome:'Rasgada', skillCd:7, skillDesc:'Surfa numa onda rápida que atropela os monstros e deixa um rastro de espuma que machuca.',
     base:{ hp:90, speed:80, cap:6, dmg:1, magnet:24 }, stats:{ Vida:2, Dano:3, Alcance:5, Velocidade:5, Mochila:2 },
     pal:{ H:'#f3cf55', h:'#b8892a', L:'#fff1a8', S:'#f0c39a', s:'#c48f69', A:'#2bb3c0', a:'#167b88', B:'#e9fbff', C:'#ff6b5b', P:'#2f5fd6', p:'#1d3e99', K:'#3a3a4a', k:'#6a6a7a' } },
-  { id:'cida', nome:'Cida', classe:'Alquimista', papel:'Catadora de recicláveis', style:'cap', weapon:'limpeza', burst:'mare',
-    burstNome:'Maré Limpa', burstDesc:'Uma onda varre a tela, empurra e machuca o lixo e recupera sua vida.',
+  { id:'cida', nome:'Cida', classe:'Alquimista', papel:'Catadora de recicláveis', style:'cap', weapon:'limpeza', burst:'mutirao',
+    burstNome:'Mutirão', burstDesc:'Chama três catadores que recolhem o lixo e levam cada item para a lixeira certa, e recupera parte da vida.',
+    skill:'carrinho', skillNome:'Carrinho', skillCd:8, skillDesc:'Lança o carrinho de reciclagem, que atropela os monstros e puxa o lixo do caminho.',
     base:{ hp:105, speed:72, cap:8, dmg:1, magnet:28 }, stats:{ Vida:3, Dano:3, Alcance:3, Velocidade:3, Mochila:3 },
     pal:{ H:'#d9d9e0', h:'#9a9aa8', L:'#ffffff', S:'#9b6243', s:'#6f412b', A:'#3c9a5f', a:'#24693f', B:'#ffd23f', C:'#f5a623', c:'#c27c12', P:'#6b4f3a', p:'#4a3526', K:'#2a2a33', k:'#55556a', W:'#5aa9e6', w:'#2f6fb0' } },
-  { id:'leo', nome:'Léo', classe:'Coletor', papel:'Biólogo marinho', style:'hat', weapon:'frisbee', burst:'ima',
-    burstNome:'Ímã Reciclador', burstDesc:'Puxa todo o lixo da tela, separa e deposita sozinho, e atordoa os monstros.',
+  { id:'leo', nome:'Léo', classe:'Coletor', papel:'Biólogo marinho', style:'hat', weapon:'frisbee', burst:'ecossistema',
+    burstNome:'Ecossistema', burstDesc:'Tartarugas e peixes giram em volta do Léo e machucam os monstros, enquanto todo o lixo da tela é puxado e separado sozinho.',
+    skill:'caranguejos', skillNome:'Caranguejos', skillCd:9, skillDesc:'Chama quatro caranguejos que correm até os monstros e beliscam.',
     base:{ hp:95, speed:76, cap:11, dmg:0.95, magnet:38 }, stats:{ Vida:2, Dano:2, Alcance:4, Velocidade:4, Mochila:5 },
     pal:{ H:'#2b1d14', h:'#120b07', L:'#5a3b28', S:'#c98b62', s:'#9a6342', A:'#c9b07a', a:'#8f7a4c', B:'#7b5cd6', C:'#a68a55', c:'#7a6236', P:'#5d6b3a', p:'#3f4a26', K:'#5a3a1c', k:'#8b5a2b', Y:'#a0652d', y:'#6d4219' } },
 ];
 
 // DLC: Robert, o Descarte (só aparece depois de terminar a história)
 CLASSES.push({ id:'robert', dlc:true, nome:'Robert', classe:'Demolidor', papel:'Ex-aprendiz da Caretta', style:'hood', weapon:'martelo', burst:'terremoto',
-  burstNome:'Terremoto de Sucata', burstDesc:'Bate o martelo no chão várias vezes, machuca e atordoa tudo na tela.',
+  burstNome:'Terremoto de Sucata', burstDesc:'Bate o martelo no chão várias vezes, racha a areia, machuca e atordoa tudo na tela.',
+  skill:'arrastao', skillNome:'Arrastão', skillCd:7, skillDesc:'Bate o martelo e abre uma fenda em linha reta que machuca e atordoa.',
   base:{ hp:125, speed:72, cap:7, dmg:1.15, magnet:24 }, stats:{ Vida:4, Dano:5, Alcance:2, Velocidade:3, Mochila:2 },
   pal:{ H:'#3b2a55', h:'#22183a', L:'#5a4380', S:'#e0b896', s:'#b08a6c', A:'#4a3a6a', a:'#2c2142', B:'#8bd450', C:'#8bd450', P:'#2a2438', p:'#1a1626', K:'#1a1a22', k:'#3a3a48' } });
 
@@ -1947,7 +1951,7 @@ function showDmg(x, y, v, crit){ if (!L.dmgs) L.dmgs = []; if (L.dmgs.length > 4
 function hitEnemy(e, dmg, kx = 0, ky = 0){
   if (e.dead) return;
   const crit = Math.random() < 0.1;
-  dmg *= G.player.dmgMul * (crit ? 1.8 : 1); e.hp -= dmg; e.flash = 0.08; e.squash = 1;
+  dmg *= G.player.dmgMul * (crit ? 1.8 : 1) * (e.mark > 0 ? 1.25 : 1); e.hp -= dmg; e.flash = 0.08; e.squash = 1;
   showDmg(e.x, e.y - (e.r || 6) - 6, dmg, crit);
   if (crit || dmg >= 30){ spark(e.x, e.y - (e.r || 6) * 0.6, crit); hitstop(crit ? 0.055 : 0.035); }
   else if (Math.random() < 0.4) spark(e.x, e.y - (e.r || 6) * 0.6, false); if (!e.boss || dmg >= 20) e.hitT = e.boss ? 0.35 : 0.22;
@@ -1991,7 +1995,7 @@ function addXp(v){
   while (p.xp >= p.xpNext){ p.xp -= p.xpNext; p.level++; p.xpNext = Math.floor(10 + p.level * 5 + p.level * p.level * 0.15); G.pendingLv++; p.cheer = Math.max(p.cheer, 1.2); say(p.x, p.y - 30, 'NÍVEL ' + p.level + '!', '#ffd23f', 1.2); }
 }
 function hurtPlayer(d){
-  const p = G.player; if (p.inv > 0 || p.hp <= 0 || p.dashT > 0 || p.skillT > 0 || (p.burstT > 0 && p.burstKind === 'tornado')) return;
+  const p = G.player; if (p.inv > 0 || p.hp <= 0 || p.dashT > 0 || p.skillT > 0 || (p.burstT > 0 && (p.burstKind === 'tornado' || p.burstKind === 'tubo'))) return;
   if (d <= 0) return;
   d = Math.max(1, d); p.hp -= d; p.inv = 0.55; p.hurt = 0.8; cam.shake = Math.max(cam.shake, 0.18); sfx('hurt');
   say(p.x, p.y - 20, '-' + Math.round(d), '#ff6b5b', 0.7);
@@ -2093,22 +2097,31 @@ function fireWeapon(w){
     if (L.time - (w.lastHit || -9) > 1.4) w.combo = 0;
     const step = w.combo || 0; w.lastHit = L.time; w.combo = (step + 1) % 3;
     if (step < 2){
-      const dir = step === 0 ? 1 : -1; swing(a, s, dir); if (s.golpes > 1) swing(a + Math.PI, s, dir);
+      const dir = step === 0 ? 1 : -1; p.atkKind = 'swing'; p.atkDir = dir; swing(a, s, dir); if (s.golpes > 1) swing(a + Math.PI, s, dir);
       if (w.evo) L.projs.push({ kind:'onda', x:p.x, y:p.y, vx:Math.cos(a) * 150, vy:Math.sin(a) * 150, r:9, dmg:s.dano * 0.6, pierce:99, life:0.7, hit:new Set(), kb:120, a });
       w.t = cd * 0.6;
     } else {
-      thrust(a, s);
+      p.atkKind = 'thrust'; thrust(a, s);
       L.projs.push({ kind:'onda', x:p.x, y:p.y, vx:Math.cos(a) * 170, vy:Math.sin(a) * 170, r:w.evo ? 13 : 9, dmg:s.dano * (w.evo ? 1 : 0.7), pierce:99, life:w.evo ? 0.9 : 0.55, hit:new Set(), kb:150, a, big:w.evo });
       w.t = cd * 1.35;
     }
     sfx('swing');
   } else if (w.id === 'esponja'){
-    const ts = nearestN(p.x, p.y, s.esponjas, 230);
+    const ts = nearestN(p.x, p.y, s.esponjas, 230); w.shots = (w.shots || 0) + 1; const soaked = w.shots % 5 === 0;
     for (let i = 0; i < s.esponjas; i++){ const t = ts[i % Math.max(1, ts.length)]; const a = t ? Math.atan2(t.y - p.y, t.x - p.x) + (i >= ts.length ? (i - 1) * 0.25 : 0) : p.face + (i - (s.esponjas - 1) / 2) * 0.3; p.aim = a;
-      L.projs.push({ kind:'esponja', x:p.x, y:p.y - 4, vx:Math.cos(a) * 190, vy:Math.sin(a) * 190, r:3, dmg:s.dano, bounce:s.quiques, life:1.8, hit:new Set(), rot:0 }); }
+      const big = soaked && i === 0;
+      L.projs.push({ kind:'esponja', x:p.x, y:p.y - 4, vx:Math.cos(a) * 190, vy:Math.sin(a) * 190, r:big ? 5 : 3, dmg:s.dano * (big ? 1.5 : 1), bounce:big ? 0 : s.quiques, life:1.8, hit:new Set(), rot:0, big, splash:big ? 26 : 0 }); }
+    L.fx.push({ kind:'muzzle', x:p.x + Math.cos(p.aim) * 12, y:p.y - 5 + Math.sin(p.aim) * 8, t:0, dur:0.08 });
     w.t = cd;
   } else if (w.id === 'limpeza'){
-    const t = nearest(p.x, p.y, 150); w.aim = t ? Math.atan2(t.y - p.y, t.x - p.x) : p.face; p.aim = w.aim; w.burst = s.jatos; w.burstT = 0; w.t = cd;
+    const t = nearest(p.x, p.y, 150); w.aim = t ? Math.atan2(t.y - p.y, t.x - p.x) : p.face; p.aim = w.aim; w.t = cd;
+    w.shots = (w.shots || 0) + 1;
+    if (w.shots % 3 === 0){
+      // a cada três disparos, um jato pressurizado em linha reta que atravessa tudo
+      const len = 150 * (w.evo ? 1.3 : 1), ca = Math.cos(w.aim), sa = Math.sin(w.aim);
+      for (const e of targets()){ const dx = e.x - p.x, dy = e.y - p.y, along = dx * ca + dy * sa, side = Math.abs(dx * sa - dy * ca); if (along > 0 && along < len && side < 8 + e.r) hitEnemy(e, s.dano * 3, ca * 160, sa * 160); }
+      L.fx.push({ kind:'jet', x:p.x, y:p.y - 4, a:w.aim, len, t:0, dur:0.22 }); sfx('swing');
+    } else { w.burst = s.jatos; w.burstT = 0; }
   } else if (w.id === 'frisbee'){
     const ts = nearestN(p.x, p.y, s.discos, 220);
     for (let i = 0; i < s.discos; i++){ const t = ts[i]; const a = t ? Math.atan2(t.y - p.y, t.x - p.x) : p.face + i * 2.1;
@@ -2117,7 +2130,11 @@ function fireWeapon(w){
   } else if (w.id === 'martelo'){
     const R = s.raio * (G.dlc ? 1 + Math.min(0.7, (G.corr || 0) * 0.005) : 1);
     const t = nearest(p.x, p.y, 40 + R); const a = t ? Math.atan2(t.y - p.y, t.x - p.x) : p.face; p.aim = a;
-    slam(p.x + Math.cos(a) * 16, p.y + Math.sin(a) * 12, R, s.dano, true);
+    if (L.time - (w.lastHit || -9) > 1.6) w.combo = 0;
+    const step = w.combo || 0; w.lastHit = L.time; w.combo = (step + 1) % 3;
+    const big = step === 2, R2 = big ? R * 1.5 : R;
+    slam(p.x + Math.cos(a) * 16, p.y + Math.sin(a) * 12, R2, s.dano * (big ? 1.4 : 1), true);
+    if (big){ L.fx.push({ kind:'cracks', x:p.x + Math.cos(a) * 16, y:p.y + Math.sin(a) * 12, r:R2 * 1.4, t:0, dur:0.7, seed:Math.random() * 1000 }); cam.shake = Math.max(cam.shake, 0.3); G.stop = Math.max(G.stop || 0, 0.05); }
     if (w.evo) slam(p.x, p.y, s.raio * 1.8, s.dano * 0.5, false);
     sfx('swing'); w.t = cd;
   } else if (w.id === 'rede'){
@@ -2193,6 +2210,7 @@ function updateProjectiles(dt){
       else { const dx = p.x - pr.x, dy = p.y - pr.y, d = Math.hypot(dx, dy) || 1; pr.vx = dx / d * 220; pr.vy = dy / d * 220; if (d < 8) pr.life = 0; }
     }
     pr.x += pr.vx * dt; pr.y += pr.vy * dt;
+    if (pr.kind === 'cart'){ for (const it of L.items) if (!it.coco && !it.fly && (it.x - pr.x) ** 2 + (it.y - pr.y) ** 2 < 22 * 22) it.pull = true; if (L.time % 0.1 < dt) L.parts.push({ x:pr.x, y:pr.y + 5, vx:-pr.vx * 0.2, vy:rand(-20, -5), life:.25, col:'#e8c98a', s:1 }); }
     if (pr.life <= 0) continue;
     for (const e of query(pr.x, pr.y, pr.r + 30)){
       if (e.dead || pr.hit.has(e)) continue;
@@ -2201,6 +2219,11 @@ function updateProjectiles(dt){
       const sp = Math.hypot(pr.vx, pr.vy) || 1, kb = pr.kb || 50;
       hitEnemy(e, pr.dmg, pr.vx / sp * kb, pr.vy / sp * kb);
       if (pr.slow) e.root = Math.max(e.root, 0.6);
+      if (pr.kind === 'esponja' && pr.splash){
+        for (const e2 of query(pr.x, pr.y, pr.splash + 30)) if (e2 !== e && !e2.dead && (e2.x - pr.x) ** 2 + (e2.y - pr.y) ** 2 < (pr.splash + e2.r) ** 2) hitEnemy(e2, pr.dmg * 0.6, (e2.x - pr.x) * 4, (e2.y - pr.y) * 4);
+        L.fx.push({ kind:'splash', x:pr.x, y:pr.y, r:pr.splash, t:0, dur:0.3 }); pr.life = 0; break;
+      }
+      if (pr.kind === 'frisbee') e.mark = 3;
       if (pr.kind === 'esponja'){
         if (pr.bounce > 0){ pr.bounce--; const t = nearest(pr.x, pr.y, 110, pr.hit); if (t){ const a = Math.atan2(t.y - pr.y, t.x - pr.x); pr.vx = Math.cos(a) * 190; pr.vy = Math.sin(a) * 190; pr.life = Math.max(pr.life, 0.8); } else pr.life = 0; }
         else pr.life = 0;
@@ -2317,16 +2340,33 @@ function dash(){
 function useSkill(){
   const p = G && G.player; if (!p || state !== 'play' || p.hp <= 0 || p.skillCd > 0 || p.skillT > 0) return;
   const cl = CLASSES.find(c => c.id === p.id); if (!cl.skill) return;
-  if (cl.skill === 'resgate'){
-    [p.skillX, p.skillY] = moveDir(p); p.skillT = 0.3; p.skillHit = new Set(); p.skillCd = cl.skillCd * p.cdMul; p.skillCdMax = p.skillCd;
-    p.flip = p.skillX < 0; cam.shake = Math.max(cam.shake, 0.15); sfx('burst'); say(p.x, p.y - 34, 'RESGATE!', '#ff9a7a', 0.8);
+  const lvl = (p.weapons[0] && p.weapons[0].lvl) || 1, [dx, dy] = moveDir(p);
+  p.skillCd = cl.skillCd * p.cdMul; p.skillCdMax = p.skillCd; p.skillKind = cl.skill; sfx('burst');
+  say(p.x, p.y - 34, cl.skillNome.toUpperCase() + '!', '#ff9a7a', 0.8);
+  if (cl.skill === 'resgate' || cl.skill === 'rasgada'){
+    p.skillX = dx; p.skillY = dy; p.skillT = cl.skill === 'resgate' ? 0.3 : 0.5; p.skillHit = new Set(); p.flip = dx < 0;
+    cam.shake = Math.max(cam.shake, 0.15);
+  } else if (cl.skill === 'carrinho'){
+    p.atkT = 0.12; p.aim = Math.atan2(dy, dx);
+    L.projs.push({ kind:'cart', x:p.x + dx * 8, y:p.y + dy * 6, vx:dx * 150, vy:dy * 150, r:9, dmg:20 + lvl * 5, pierce:99, life:1.8, hit:new Set(), kb:220, rot:0 });
+  } else if (cl.skill === 'caranguejos'){
+    if (!L.allies) L.allies = [];
+    for (let i = 0; i < 4; i++){ const a = i * TAU / 4 + 0.4; L.allies.push({ x:p.x + Math.cos(a) * 14, y:p.y + Math.sin(a) * 10, t:0, dur:5.5, tick:0, anim:Math.random(), dmg:8 + lvl * 3, flip:false });
+      for (let k = 0; k < 6; k++) L.parts.push({ x:p.x + Math.cos(a) * 14, y:p.y + Math.sin(a) * 10, vx:rand(-30, 30), vy:rand(-50, -10), life:.4, col:'#e8c98a', s:1 }); }
+  } else if (cl.skill === 'arrastao'){
+    p.atkT = 0.12; p.aim = Math.atan2(dy, dx);
+    if (!L.fissures) L.fissures = [];
+    L.fissures.push({ x:p.x, y:p.y + 2, dx, dy, len:150, t:0, dur:0.9, hit:new Set(), dmg:20 + lvl * 6, seed:Math.random() * 1000 });
+    cam.shake = Math.max(cam.shake, 0.3);
   }
 }
 function updateSkillMove(dt){
   const p = G.player; p.skillT -= dt;
-  p.x = clamp(p.x + p.skillX * 340 * dt, 8, WORLD_W - 8); p.y = clamp(p.y + p.skillY * 340 * dt, SHORE + 14, WORLD_H - 18); collide(p, p.r);
-  afterimage(p, 'rgba(255,107,91,.6)');
-  const w = p.weapons.find(x => x.id === 'espada'), dmg = 16 + (w ? w.lvl * 6 : 0);
+  const surf = p.skillKind === 'rasgada', sp = surf ? 250 : 340;
+  p.x = clamp(p.x + p.skillX * sp * dt, 8, WORLD_W - 8); p.y = clamp(p.y + p.skillY * sp * dt, SHORE + 14, WORLD_H - 18); collide(p, p.r);
+  afterimage(p, surf ? 'rgba(90,169,230,.6)' : 'rgba(255,107,91,.6)');
+  const w = p.weapons[0], dmg = (surf ? 12 : 16) + (w ? w.lvl * (surf ? 4 : 6) : 0);
+  if (surf){ if (!L.trails) L.trails = []; p.trailT = (p.trailT || 0) - dt; if (p.trailT <= 0){ p.trailT = 0.035; L.trails.push({ x:p.x, y:p.y + 2, t:0, dur:2.4, r:9, dmg:6 + (w ? w.lvl * 2 : 0) }); } }
   for (const e of query(p.x, p.y, 40)){
     if (p.skillHit.has(e) || (e.x - p.x) ** 2 + (e.y - p.y) ** 2 > (16 + e.r) ** 2) continue;
     p.skillHit.add(e); const side = ((e.x - p.x) * -p.skillY + (e.y - p.y) * p.skillX) >= 0 ? 1 : -1;
@@ -2334,6 +2374,53 @@ function updateSkillMove(dt){
   }
   for (const it of L.items) if (!it.coco && !it.fly && (it.x - p.x) ** 2 + (it.y - p.y) ** 2 < 70 * 70) it.pull = true;
   if (p.skillT <= 0){ p.skillT = 0; p.inv = Math.max(p.inv, 0.25); }
+}
+
+/* ---- efeitos que vivem na praia: rastro, onda, catadores, caranguejos, órbita, fenda ---- */
+function helperDeposit(type, b){
+  const p = G.player; L.stats[type] = (L.stats[type] || 0) + 1; L.deposited++; G.sep++; G.credits += 1; addXp(4); addScore(15); p.burst = Math.min(100, p.burst + 2);
+  say(b.x, b.y - 26, '+1 ' + MATS[b.mat].nome.toUpperCase(), MATS[b.mat].cor, 1); hudDirty = true;
+  for (let i = 0; i < 6; i++) L.parts.push({ x:b.x, y:b.y - 8, vx:rand(-30, 30), vy:rand(-70, -20), life:rand(.3, .6), col:i % 2 ? '#ffffff' : MATS[b.mat].cor, s:1 });
+}
+function updateExtras(dt){
+  const p = G.player;
+  if (L.trails){ for (const tr of L.trails){ tr.t += dt; for (const e of query(tr.x, tr.y, 30)) if (!e.dead && (e.x - tr.x) ** 2 + (e.y - tr.y) ** 2 < (tr.r + e.r) ** 2 && L.time - (e.trailHit || -9) > 0.45){ e.trailHit = L.time; hitEnemy(e, tr.dmg, 0, 0); e.root = Math.max(e.root, 0.3); } } L.trails = L.trails.filter(tr => tr.t < tr.dur); }
+  if (L.wave){ const W = L.wave; W.t += dt; const wx = W.x0 + W.dir * (VW + 80) * (W.t / W.dur);
+    for (const e of targets()) if (!W.hit.has(e) && Math.abs(e.x - wx) < 18 && Math.abs(e.y - p.y) < VH){ W.hit.add(e); hitEnemy(e, W.dmg, W.dir * 260, 0); if (!e.boss) e.stun = Math.max(e.stun || 0, 0.8); }
+    for (const it of L.items) if (!it.coco && !it.fly && Math.abs(it.x - wx) < 16) it.vx = W.dir * 160;
+    if (W.t >= W.dur) L.wave = null; }
+  if (L.helpers){
+    for (const h of L.helpers){
+      h.anim += dt; h.tick -= dt;
+      let tx = null, ty = null;
+      if (!h.carry){ let best = null, bd = 260 * 260; for (const it of L.items){ if (it.coco || it.fly || it.dead || it.claimed) continue; const d = (it.x - h.x) ** 2 + (it.y - h.y) ** 2; if (d < bd){ bd = d; best = it; } }
+        if (best){ tx = best.x; ty = best.y; if (bd < 36){ best.dead = true; h.carry = best.type; } } else { tx = p.x + Math.cos(h.anim) * 20; ty = p.y + 10; } }
+      else { const b = L.bins.find(b => b.mat === ETYPES[h.carry].mat); if (b){ tx = b.x; ty = b.y + 4; if ((b.x - h.x) ** 2 + (b.y + 4 - h.y) ** 2 < 196){ helperDeposit(h.carry, b); h.carry = null; } } }
+      if (tx != null){ const dx = tx - h.x, dy = ty - h.y, d = Math.hypot(dx, dy) || 1; h.x += dx / d * Math.min(95 * dt, d); h.y += dy / d * Math.min(95 * dt, d); h.flip = dx < 0; h.moving = d > 2; }
+      if (h.tick <= 0){ h.tick = 0.5; for (const e of query(h.x, h.y, 24)) if (!e.dead && (e.x - h.x) ** 2 + (e.y - h.y) ** 2 < (12 + e.r) ** 2) hitEnemy(e, 8, (e.x - h.x) * 8, (e.y - h.y) * 8); }
+    }
+    L.items = L.items.filter(i => !i.dead);
+    if (!(p.burstT > 0 && p.burstKind === 'mutirao')){ for (const h of L.helpers){ if (h.carry) dropItem(h.carry, h.x, h.y, { spread:20 }); for (let k = 0; k < 8; k++) L.parts.push({ x:h.x, y:h.y - 8, vx:rand(-40, 40), vy:rand(-50, -10), life:.4, col:'#ffffff', s:2 }); } L.helpers = null; }
+  }
+  if (L.allies){
+    for (const c of L.allies){
+      c.t += dt; c.anim += dt; c.tick -= dt;
+      const e = nearest(c.x, c.y, 170);
+      if (e){ const dx = e.x - c.x, dy = e.y - c.y, d = Math.hypot(dx, dy) || 1; c.flip = dx < 0;
+        if (d > e.r + 5){ c.x += dx / d * 100 * dt; c.y += dy / d * 100 * dt; }
+        else if (c.tick <= 0){ c.tick = 0.4; hitEnemy(e, c.dmg, dx / d * 40, dy / d * 40); if (!e.boss) e.stun = Math.max(e.stun || 0, 0.2); c.pinch = 0.15; } }
+      c.pinch = Math.max(0, (c.pinch || 0) - dt);
+    }
+    for (const c of L.allies) if (c.t >= c.dur) for (let k = 0; k < 6; k++) L.parts.push({ x:c.x, y:c.y, vx:rand(-30, 30), vy:rand(-50, -10), life:.4, col:'#e8c98a', s:1 });
+    L.allies = L.allies.filter(c => c.t < c.dur);
+  }
+  if (L.orbit){ const O = L.orbit; O.t += dt;
+    for (let i = 0; i < 6; i++){ const a = O.t * 3.2 + i * TAU / 6, cx2 = p.x + Math.cos(a) * 52, cy2 = p.y + Math.sin(a) * 36;
+      for (const e of query(cx2, cy2, 30)) if (!e.dead && (e.x - cx2) ** 2 + (e.y - cy2) ** 2 < (9 + e.r) ** 2 && L.time - (O.hit.get(e) || -9) > 0.5){ O.hit.set(e, L.time); hitEnemy(e, O.dmg, (e.x - p.x) * 4, (e.y - p.y) * 4); } }
+    if (!(p.burstT > 0 && p.burstKind === 'ecossistema')) L.orbit = null; }
+  if (L.fissures){ for (const f of L.fissures){ f.t += dt; const cur = f.len * Math.min(1, f.t / 0.35);
+      for (const e of targets()){ if (f.hit.has(e)) continue; const dx = e.x - f.x, dy = e.y - f.y, along = dx * f.dx + dy * f.dy, side = Math.abs(dx * f.dy - dy * f.dx); if (along > -4 && along < cur && side < 12 + e.r){ f.hit.add(e); hitEnemy(e, f.dmg, -f.dy * 120 * Math.sign(dx * f.dy - dy * f.dx || 1), f.dx * 120); if (!e.boss) e.stun = Math.max(e.stun || 0, 0.9); } } }
+    L.fissures = L.fissures.filter(f => f.t < f.dur); }
 }
 
 /* ---- Bandeira Vermelha (especial da Marina) ---- */
@@ -2352,6 +2439,12 @@ function useBurst(){
   p.burst = 0; p.burstKind = cl.burst; p.burstTick = 0; sfx('burst'); cam.shake = 0.3;
   banner(cl.burstNome.toUpperCase() + '!', 1.6);
   if (cl.burst === 'tornado') p.burstT = 2.5 + lv * 0.75;
+  else if (cl.burst === 'tubo'){ const dir = p.flip ? -1 : 1; p.burstT = 1.9; L.wave = { dir, x0:dir > 0 ? cam.x - 40 : cam.x + VW + 40, t:0, dur:1.9, hit:new Set(), dmg:35 + lv * 20 }; }
+  else if (cl.burst === 'mutirao'){
+    p.burstT = 6 + lv; p.hp = Math.min(p.maxHp, p.hp + p.maxHp * (0.15 + lv * 0.05)); L.helpers = [];
+    for (let i = 0; i < 3; i++){ const a = i * TAU / 3; L.helpers.push({ x:p.x + Math.cos(a) * 18, y:p.y + Math.sin(a) * 12, carry:null, anim:Math.random(), tick:0, flip:false });
+      for (let k = 0; k < 10; k++) L.parts.push({ x:p.x + Math.cos(a) * 18, y:p.y + Math.sin(a) * 12 - 8, vx:rand(-40, 40), vy:rand(-60, -10), life:.5, col:k % 2 ? '#3c9a5f' : '#ffffff', s:2 }); }
+  }
   else if (cl.burst === 'bandeira'){ p.burstT = 4.5 + lv; L.flag = { x:p.x, y:p.y + 2, r:72 + lv * 8, dmg:45 + lv * 20, t:0 }; G.stop = 0.06; }
   else if (cl.burst === 'chuva') p.burstT = 2 + lv * 0.6;
   else if (cl.burst === 'mare'){
@@ -2361,7 +2454,7 @@ function useBurst(){
     L.eprojs = L.eprojs.filter(b => Math.abs(b.x - p.x) > VW / 2 || Math.abs(b.y - p.y) > VH / 2);
   } else if (cl.burst === 'terremoto'){
     p.burstT = 1.6 + lv * 0.5;
-  } else if (cl.burst === 'ima'){
+  } else if (cl.burst === 'ima' || cl.burst === 'ecossistema'){
     p.burstT = 1.4; L.fx.push({ kind:'ima', x:p.x, y:p.y, t:0, dur:1.4 });
     let n = 0; const got = [...p.bag];
     for (const it of L.items){ if (it.coco || it.fly) continue; if (Math.abs(it.x - p.x) < VW / 2 + 40 && Math.abs(it.y - p.y) < VH / 2 + 40){ it.dead = true; got.push(it.type); n++; L.fx.push({ kind:'beam', x:it.x, y:it.y, t:0, dur:0.5 }); } }
@@ -2369,6 +2462,7 @@ function useBurst(){
     p.bag = []; L.items = L.items.filter(i => !i.dead); sfx('deposit');
     for (const e of targets()) if (Math.abs(e.x - p.x) < VW / 2 && Math.abs(e.y - p.y) < VH / 2) e.stun = 1.5 + lv * 0.5;
     say(p.x, p.y - 34, got.length ? `${got.length} ITENS SEPARADOS!` : 'NADA PARA SEPARAR', '#7ee081', 1.4);
+    if (cl.burst === 'ecossistema'){ p.burstT = 3 + lv * 0.5; L.orbit = { t:0, hit:new Map(), dmg:25 + lv * 12 }; }
   }
 }
 function updateBurst(dt){
@@ -2382,7 +2476,7 @@ function updateBurst(dt){
     if (p.burstTick <= 0){ p.burstTick = 0.15; for (const e of query(p.x, p.y, 80)) if ((e.x - p.x) ** 2 + (e.y - p.y) ** 2 < (52 + e.r) ** 2){ const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy) || 1; hitEnemy(e, 10 + p.burstLvl * 6, dx / d * 120, dy / d * 120); } }
   } else if (p.burstKind === 'terremoto'){
     if (p.burstTick <= 0){
-      p.burstTick = 0.45; L.fx.push({ kind:'slam', x:p.x, y:p.y, r:VW * 0.6, t:0, dur:0.5, own:true }); cam.shake = 0.35; sfx('swing');
+      p.burstTick = 0.45; L.fx.push({ kind:'slam', x:p.x, y:p.y, r:VW * 0.6, t:0, dur:0.5, own:true }); L.fx.push({ kind:'cracks', x:p.x, y:p.y, r:90, t:0, dur:0.9, seed:Math.random() * 1000 }); p.atkT = 0.12; cam.shake = 0.35; sfx('swing');
       for (const e of targets()) if (Math.abs(e.x - p.x) < VW / 2 + 20 && Math.abs(e.y - p.y) < VH / 2 + 20){ const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy) || 1; hitEnemy(e, 12 + p.burstLvl * 6, dx / d * 90, dy / d * 90); if (!e.boss) e.stun = 0.6; }
     }
   } else if (p.burstKind === 'chuva'){
@@ -2448,6 +2542,7 @@ function update(dt){
   if (L.boss) updateBoss(L.boss, dt);
   updateWeapons(dt);
   updateBurst(dt);
+  updateExtras(dt);
   updateProjectiles(dt);
   updateItems(dt);
   updateCritters(dt);
@@ -2457,10 +2552,13 @@ function update(dt){
   L.fx = L.fx.filter(f => f.t < f.dur);
   for (const t of L.texts){ t.life -= dt; t.y -= 14 * dt; }
   if (L.dmgs){ for (const d of L.dmgs){ d.life -= dt; d.y += d.vy * dt; d.vy += 70 * dt; } L.dmgs = L.dmgs.filter(d => d.life > 0); }
-  for (const e of L.enemies) if (e.squash > 0) e.squash = Math.max(0, e.squash - dt * 7);
+  for (const e of L.enemies){ if (e.squash > 0) e.squash = Math.max(0, e.squash - dt * 7); if (e.mark > 0) e.mark -= dt; }
   if (L.boss && L.boss.squash > 0) L.boss.squash = Math.max(0, L.boss.squash - dt * 7);
   if (G.comboT > 0){ G.comboT -= dt; if (G.comboT <= 0) G.combo = 0; }
-  p.atkT = Math.max(0, (p.atkT || 0) - dt); p.dashCd = Math.max(0, (p.dashCd || 0) - dt); p.skillCd = Math.max(0, (p.skillCd || 0) - dt);
+  p.atkT = Math.max(0, (p.atkT || 0) - dt); p.dashCd = Math.max(0, (p.dashCd || 0) - dt); p.landT = Math.max(0, (p.landT || 0) - dt);
+  if (p.wasDash && !(p.dashT > 0) && !(p.skillT > 0)) p.landT = 0.12; p.wasDash = p.dashT > 0 || p.skillT > 0;
+  p.dustT = (p.dustT || 0) - dt; if (p.moving && p.dustT <= 0){ p.dustT = 0.14; L.parts.push({ x:p.x + rand(-3, 3), y:p.y + 3, vx:-(p.lastIx || 0) * 20 + rand(-8, 8), vy:rand(-22, -8), life:rand(.2, .35), col:'#e8c98a', s:1 }); }
+  p.spraying = p.weapons.some(w => w.id === 'limpeza' && w.burst > 0); p.skillCd = Math.max(0, (p.skillCd || 0) - dt);
   L.texts = L.texts.filter(t => t.life > 0);
   if (G.pendingLv > 0 && state === 'play' && p.hp > 0 && !L.forming) openLevelUp();
 }
@@ -2505,26 +2603,66 @@ function drawHeld(g, id, hx, hy, aim, flip, t){
   else if (id === 'tiago'){ g.rotate(clamp(ang, -0.9, 0.9)); g.drawImage(SPR.blaster.img, -3, -5); }
   else if (id === 'cida'){ g.rotate(clamp(ang, -0.9, 0.9) * 0.6 + 0.2); g.drawImage(SPR.lance.img, -2, -2); }
   else if (id === 'robert'){ const sl = G && L && L.fx.find(f => f.kind === 'slam' && f.own); g.rotate(sl ? -2.2 + 2.6 * Math.min(1, sl.t / sl.dur * 2) : -1.1 + Math.sin(t * 3) * 0.05); g.drawImage(SPR.hammer.img, -2, -4); }
-  else g.drawImage(SPR.frisbee.img, -2, -6);
+  else if (!(id === 'leo' && G && L && L.projs.some(pr => pr.kind === 'frisbee'))) g.drawImage(SPR.frisbee.img, -2, -6);
   g.restore();
 }
 function drawPlayer(p, x, y, t){
   if (p.inv > 0 && p.hp > 0 && p.burstT <= 0 && ((p.inv * 20) | 0) % 2) return;
   const fr = p.moving ? ((p.anim * 8) | 0) % 4 : 0, s = SPR.chars[p.id][fr];
   const bob = !p.moving && ((t * 2) | 0) % 2 ? 1 : 0;
-  const lunge = (p.atkT || 0) / 0.12; x += Math.round(Math.cos(p.aim || 0) * 2 * lunge);
   const x0 = x - (s.w >> 1), y0 = y - s.h + 4 + bob;
-  shadow(x, y + 2, 14);
+  shadow(x, y + 2, p.dashT > 0 || p.skillT > 0 ? 18 : 14);
+  if (p.skillT > 0 && p.skillKind === 'rasgada') drawSurf(x, y, t, p.flip);
+  const pose = playerPose(p, t, fr);
+  ctx.save(); ctx.translate(x + pose.ox, y + 4 + pose.oy); ctx.rotate(pose.rot); ctx.scale(pose.sx, pose.sy); ctx.translate(-x, -(y + 4));
   if (G.dlc){ const r = 10 + Math.min(16, (G.corr || 0) * 0.12), k = 0.18 + 0.1 * Math.sin(t * 5); ctx.fillStyle = `rgba(139,212,80,${k})`; ctx.beginPath(); ctx.ellipse(x, y - 8, r, r * 1.2, 0, 0, TAU); ctx.fill(); }
   const swinging = L.fx.some(f => f.kind === 'swing' || f.kind === 'thrust') || (p.burstT > 0 && p.burstKind === 'tornado');
   if (p.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, playerMood(), s.face); }
   else { ctx.drawImage(s.img, x0, y0); drawFace(ctx, x0 + s.face.x, y0 + s.face.y, playerMood(), s.face); }
-  if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, x + (p.flip ? -5 : 5), y0 + 18, p.aim, p.flip, t);
+  if (!(p.id === 'marina' && swinging)) drawHeld(ctx, p.id, x + (p.flip ? -5 : 5) + pose.hx, y0 + 18 + pose.hy, p.aim, p.flip, t);
+  ctx.restore();
   const m = playerMood();
   if (m === 'sonolento'){ const k = (t * 0.7) % 1; ctx.globalAlpha = 1 - k; pixText('z', x + 8 + Math.round(k * 4), y0 - 1 - Math.round(k * 9), '#ffffff', 'small'); ctx.globalAlpha = 1; }
   if (m === 'comemorando' && ((t * 8) | 0) % 2){ ctx.fillStyle = '#ffe066'; ctx.fillRect(x0 - 2, y0 + 2, 1, 3); ctx.fillRect(x0 - 3, y0 + 3, 3, 1); ctx.fillRect(x0 + s.w + 1, y0, 1, 3); ctx.fillRect(x0 + s.w, y0 + 1, 3, 1); }
   if (m === 'dor'){ ctx.fillStyle = '#ffffff'; ctx.fillRect(x0 + s.w, y0 + 4, 3, 1); ctx.fillRect(x0 + s.w + 1, y0 + 2, 1, 1); ctx.fillRect(x0 - 3, y0 + 5, 3, 1); ctx.fillRect(x0 - 2, y0 + 3, 1, 1); }
   if (p.slow > 0){ ctx.strokeStyle = 'rgba(95,196,180,.8)'; ctx.lineWidth = 1; for (let i = -6; i <= 6; i += 4){ ctx.beginPath(); ctx.moveTo(x0 + 1, y0 + 12 + i); ctx.lineTo(x0 + s.w - 1, y0 + 12 - i); ctx.stroke(); } }
+}
+// pose do corpo: inclina ao correr, balança a cada passo, estica na esquiva, recua ao levar dano
+// e tem uma pose de ataque própria para cada personagem
+function playerPose(p, t, fr){
+  const P = { sx:1, sy:1, rot:0, ox:0, oy:0, hx:0, hy:0 }, face = p.flip ? -1 : 1, k = Math.min(1, (p.atkT || 0) / 0.12);
+  const ca = Math.cos(p.aim || 0), sa = Math.sin(p.aim || 0);
+  if (p.dashT > 0 || p.skillT > 0){ P.sx = 1.22; P.sy = 0.84; P.rot = 0.16 * face; return P; }
+  if (p.landT > 0){ const q = p.landT / 0.12; P.sx = 1 + 0.14 * q; P.sy = 1 - 0.12 * q; }
+  if (p.moving){ P.oy = fr % 2 ? -1 : 0; P.rot = 0.07 * face; }
+  else { const b = Math.sin(t * 3); P.sy *= 1 + 0.025 * b; P.sx *= 1 - 0.015 * b; }
+  if (p.hurt > 0.45){ P.rot = -0.14 * face; P.ox = -face; }
+  else if (k > 0){
+    if (p.id === 'marina'){
+      if (p.atkKind === 'thrust'){ P.ox = Math.round(ca * 3 * k); P.oy += Math.round(sa * 2 * k); P.sx *= 1 + 0.12 * k; P.sy *= 1 - 0.06 * k; }
+      else { P.rot = (p.atkDir || 1) * 0.16 * k * (ca >= 0 ? 1 : -1); P.ox = Math.round(ca * 2 * k); }
+    } else if (p.id === 'tiago'){ P.ox = -Math.round(ca * 2 * k); P.rot = -0.1 * k * (ca >= 0 ? 1 : -1); P.hx = -Math.round(ca * 2 * k); }
+    else if (p.id === 'leo'){ P.rot = (k > 0.55 ? -0.22 : 0.2) * (ca >= 0 ? 1 : -1); P.ox = Math.round(ca * (k > 0.55 ? -1 : 2)); }
+    else if (p.id === 'robert'){ if (k > 0.5){ P.sy *= 1.1; P.sx *= 0.94; P.oy -= 1; } else { P.sy *= 0.82; P.sx *= 1.14; } }
+    else { P.ox = Math.round(ca * 2 * k); }
+  }
+  if (p.id === 'cida' && p.spraying){ P.ox += Math.round(rand(-1, 1)); P.rot += -0.06 * face; P.hy = Math.round(rand(-1, 1)); }
+  return P;
+}
+// prancha e onda embaixo do Tiago durante a Rasgada
+function drawCart(x, y, pr){
+  const b = Math.round(Math.sin(pr.life * 40)), d = pr.vx < 0 ? -1 : 1;
+  shadow(x, y + 6, 18); ctx.fillStyle = OUT; ctx.fillRect(x - 9, y - 7 + b, 18, 11);
+  ctx.fillStyle = '#3c9a5f'; ctx.fillRect(x - 8, y - 6 + b, 16, 9); ctx.fillStyle = '#5cc77e'; ctx.fillRect(x - 8, y - 6 + b, 16, 2);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 2, y - 3 + b, 4, 1); ctx.fillRect(x - 3, y - 2 + b, 1, 2); ctx.fillRect(x + 2, y - 2 + b, 1, 2); ctx.fillRect(x - 1, y + 1 + b, 3, 1);
+  ctx.fillStyle = OUT; ctx.fillRect(x - d * 11, y - 9 + b, 2, 6);
+  ctx.fillStyle = '#24324a'; ctx.fillRect(x - 6, y + 4, 4, 3); ctx.fillRect(x + 3, y + 4, 4, 3); ctx.fillStyle = '#8c94a3'; ctx.fillRect(x - 5, y + 5, 1, 1); ctx.fillRect(x + 4, y + 5, 1, 1);
+}
+function drawSurf(x, y, t, flip){
+  const d = flip ? -1 : 1;
+  ctx.fillStyle = 'rgba(90,169,230,.75)'; ctx.beginPath(); ctx.ellipse(x - d * 6, y + 2, 16, 5, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#ffffff'; for (let i = 0; i < 7; i++) ctx.fillRect(Math.round(x - d * (16 + i * 2)), Math.round(y - 1 + Math.sin(t * 20 + i) * 2), 2, 2);
+  ctx.fillStyle = OUT; ctx.fillRect(x - 10, y + 1, 21, 4); ctx.fillStyle = '#ffd23f'; ctx.fillRect(x - 9, y + 2, 19, 2); ctx.fillStyle = '#ff6b5b'; ctx.fillRect(x - 1, y + 2, 3, 2);
 }
 function sortY(o, k){ return k === 'prop' ? o.y + o.spr.h / 2 - (o.kind === 'palm' ? 4 : 0) : k === 'bin' ? o.y + 8 : k === 'b' ? o.y + 10 : o.y + 4; }
 
@@ -2550,6 +2688,17 @@ function render(dt){
     ctx.save(); ctx.lineWidth = 3; ctx.setLineDash([8, 5]); ctx.lineDashOffset = -t * 30;
     ctx.strokeStyle = '#ffd23f'; ctx.beginPath(); ctx.ellipse(x, y, f.r * grow, f.r * 0.7 * grow, 0, 0, TAU); ctx.stroke();
     ctx.lineDashOffset = -t * 30 + 6.5; ctx.strokeStyle = '#e5484d'; ctx.beginPath(); ctx.ellipse(x, y, f.r * grow, f.r * 0.7 * grow, 0, 0, TAU); ctx.stroke(); ctx.restore(); }
+  if (L.trails) for (const tr of L.trails){ const x = Math.round(tr.x - cx), y = Math.round(tr.y - cy), k = 1 - tr.t / tr.dur;
+    ctx.fillStyle = 'rgba(127,216,255,' + (0.35 * k) + ')'; ctx.beginPath(); ctx.ellipse(x, y, tr.r, tr.r * 0.55, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,' + (0.8 * k) + ')'; ctx.fillRect(x - 3 + Math.round(Math.sin(tr.x) * 3), y - 1, 2, 2); ctx.fillRect(x + 2, y + 1 + Math.round(Math.cos(tr.y) * 1), 2, 1); }
+  if (L.fissures) for (const f of L.fissures){ const cur = f.len * Math.min(1, f.t / 0.35), fade = Math.min(1, (f.dur - f.t) / 0.3), R = mulberry(f.seed | 0);
+    ctx.globalAlpha = fade; let px = f.x, py = f.y;
+    for (let d = 6; d <= cur; d += 6){ const j = (R() - 0.5) * 6, nx = f.x + f.dx * d - f.dy * j, ny = f.y + f.dy * d + f.dx * j;
+      ctx.strokeStyle = '#2a2016'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px - cx, py - cy); ctx.lineTo(nx - cx, ny - cy); ctx.stroke();
+      ctx.strokeStyle = '#8bd450'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px - cx, py - cy); ctx.lineTo(nx - cx, ny - cy); ctx.stroke();
+      if (d > cur - 14 && f.t < 0.5){ ctx.fillStyle = '#6b5a44'; ctx.fillRect(Math.round(nx - cx) - 2, Math.round(ny - cy) - 7, 4, 6); ctx.fillStyle = '#8a7658'; ctx.fillRect(Math.round(nx - cx) - 1, Math.round(ny - cy) - 7, 2, 2); }
+      px = nx; py = ny; }
+    ctx.globalAlpha = 1; }
   for (const it of L.items){
     if (it.fly || !onScr(it.x, it.y)) continue;
     const x = Math.round(it.x - cx), y = Math.round(it.y - cy);
@@ -2588,6 +2737,7 @@ function render(dt){
     else if (k === 'e'){ const s = SPR[o.type][(o.anim * 5 | 0) % 2]; const bob = o.type === 'sacola' ? Math.round(Math.sin(o.anim * 4) * 2) - 3 : 0;
       shadow(x, y + (s.h >> 1) - 1, s.w - 4); const sq = o.squash || 0; if (sq > 0){ ctx.save(); ctx.translate(x, y + (s.h >> 1)); ctx.scale(1 + 0.32 * sq, 1 - 0.26 * sq); ctx.translate(-x, -(y + (s.h >> 1))); }
       drawSpr(s, x - (s.w >> 1), y - (s.h >> 1) + bob, o.hitT > 0 ? 'dor' : o.hp / o.maxHp < 0.4 ? 'triste' : 'zangado', o.flash > 0); if (sq > 0) ctx.restore();
+      if (o.mark > 0){ const my = y - (s.h >> 1) - 6 - (((t * 4) | 0) % 2); ctx.fillStyle = OUT; ctx.fillRect(x - 3, my - 1, 7, 5); ctx.fillStyle = '#b37cff'; ctx.fillRect(x - 2, my, 5, 3); ctx.fillRect(x, my + 3, 1, 1); }
       if (o.stun > 0){ ctx.fillStyle = '#ffe066'; const a = t * 6; ctx.fillRect(Math.round(x + Math.cos(a) * 5), y - (s.h >> 1) - 3, 1, 1); ctx.fillRect(Math.round(x - Math.cos(a) * 5), y - (s.h >> 1) - 2, 1, 1); } }
     else if (k === 'b'){ const s = SPR[o.type][(o.anim * 3 | 0) % 2], g = o.grow;
       shadow(x, y + (s.h >> 1) - 4, s.w - 10); shadow(x, y + (s.h >> 1) - 2, s.w - 4);
@@ -2612,7 +2762,8 @@ function render(dt){
   for (const pr of L.projs){
     const x = Math.round(pr.x - cx), y = Math.round(pr.y - cy);
     if (pr.kind === 'drop') ctx.drawImage(SPR.drop.img, x - 2, y - 2);
-    else if (pr.kind === 'esponja') ctx.drawImage(SPR.sponge.img, x - 4, y - 3);
+    else if (pr.kind === 'esponja'){ if (pr.big){ ctx.drawImage(SPR.sponge.img, x - 7, y - 5, 14, 10); ctx.fillStyle = '#7fd8ff'; ctx.fillRect(x - 1, y + 5, 1, 2); ctx.fillRect(x + 3, y + 4, 1, 2); } else ctx.drawImage(SPR.sponge.img, x - 4, y - 3); }
+    else if (pr.kind === 'cart') drawCart(x, y, pr);
     else if (pr.kind === 'frisbee'){ if (pr.big) ctx.drawImage(SPR.frisbee.img, x - 8, y - 8, 16, 16); else ctx.drawImage(SPR.frisbee.img, x - 5, y - 5); ctx.fillStyle = '#fff'; ctx.fillRect(Math.round(x + Math.cos(pr.rot) * 3), Math.round(y + Math.sin(pr.rot) * 3), 1, 1); }
     else if (pr.kind === 'redevoa') ctx.drawImage(ICONS.rede, x - 5, y - 5);
     else if (pr.kind === 'onda'){ ctx.save(); ctx.translate(x, y); ctx.rotate(pr.a); if (pr.big) ctx.scale(1.4, 1.5); ctx.fillStyle = 'rgba(127,216,255,.8)'; ctx.fillRect(-2, -8, 4, 16); ctx.fillStyle = '#ffffff'; ctx.fillRect(1, -7, 2, 14); ctx.restore(); }
@@ -2639,6 +2790,24 @@ function render(dt){
       ctx.globalAlpha = fade; ctx.fillStyle = 'rgba(127,216,255,.6)'; ctx.fillRect(4, -4, len, 8); ctx.fillStyle = '#ffffff'; ctx.fillRect(6, -1, len - 2, 2);
       ctx.fillRect(len + 2, -3, 2, 6); ctx.fillRect(len + 4, -1, 3, 2);
       ctx.globalAlpha = 1; ctx.drawImage(SPR.sword.img, len - 14, -3, 18, 7); ctx.restore();
+    } else if (f.kind === 'muzzle'){
+      const x = Math.round(f.x - cx), y = Math.round(f.y - cy); ctx.fillStyle = '#fff1a8'; ctx.fillRect(x - 3, y - 1, 7, 3); ctx.fillRect(x - 1, y - 3, 3, 7); ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - 1, 3, 3);
+    } else if (f.kind === 'splash'){
+      const k = f.t / f.dur, x = Math.round(f.x - cx), y = Math.round(f.y - cy); ctx.globalAlpha = 1 - k;
+      ctx.strokeStyle = '#7fd8ff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, f.r * (0.4 + k), f.r * 0.7 * (0.4 + k), 0, 0, TAU); ctx.stroke();
+      ctx.fillStyle = '#ffffff'; for (let i = 0; i < 8; i++){ const a = i * TAU / 8; ctx.fillRect(Math.round(x + Math.cos(a) * f.r * k), Math.round(y + Math.sin(a) * f.r * 0.7 * k - 6 * Math.sin(k * Math.PI)), 2, 2); } ctx.globalAlpha = 1;
+    } else if (f.kind === 'jet'){
+      const k = f.t / f.dur, x = Math.round(f.x - cx), y = Math.round(f.y - cy);
+      ctx.save(); ctx.translate(x, y); ctx.rotate(f.a); ctx.globalAlpha = 1 - k;
+      ctx.fillStyle = 'rgba(90,169,230,.7)'; ctx.fillRect(6, -4, f.len, 8); ctx.fillStyle = '#d5f0ff'; ctx.fillRect(6, -2, f.len, 4); ctx.fillStyle = '#ffffff'; ctx.fillRect(6, -1, f.len, 2);
+      for (let i = 0; i < 10; i++){ const d = 10 + ((i * 37 + f.t * 400) % f.len); ctx.fillRect(d, (i % 2 ? -5 : 4), 2, 1); }
+      ctx.restore(); ctx.globalAlpha = 1;
+    } else if (f.kind === 'cracks'){
+      const k = f.t / f.dur, x = f.x - cx, y = f.y - cy, R = mulberry(f.seed | 0); ctx.globalAlpha = 1 - k * k;
+      for (let i = 0; i < 7; i++){ let a = R() * TAU, px = x, py = y; const len = f.r * (0.6 + R() * 0.4) * Math.min(1, k * 5);
+        for (let d = 5; d < len; d += 5){ a += (R() - 0.5) * 0.7; const nx = px + Math.cos(a) * 5, ny = py + Math.sin(a) * 5 * 0.7;
+          ctx.strokeStyle = '#2a2016'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(nx, ny); ctx.stroke(); ctx.strokeStyle = '#8bd450'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(nx, ny); ctx.stroke(); px = nx; py = ny; } }
+      ctx.globalAlpha = 1;
     } else if (f.kind === 'spark'){
       const k = f.t / f.dur, x = Math.round(f.x - cx), y = Math.round(f.y - cy), r1 = 2 + k * (f.crit ? 9 : 6), r0 = k * (f.crit ? 5 : 3);
       ctx.fillStyle = f.crit ? '#ffd23f' : '#ffffff';
@@ -2683,6 +2852,28 @@ function render(dt){
       ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 50, 0, TAU); ctx.stroke();
       for (let i = 0; i < 3; i++){ const a = t * 14 + i * TAU / 3; ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.drawImage(SPR.sword.img, 6, -3, 44, 7); ctx.restore(); } }
   }
+  if (L.helpers) for (const h of L.helpers){ const fr2 = h.moving ? ((h.anim * 8) | 0) % 4 : 0, s2 = SPR.casual.cida[fr2], x = Math.round(h.x - cx), y = Math.round(h.y - cy), x0 = x - (s2.w >> 1), y0 = y - s2.h + 4 - (h.moving && fr2 % 2 ? 1 : 0);
+    shadow(x, y + 2, 12); if (h.flip){ ctx.save(); ctx.translate(x0 + s2.w, y0); ctx.scale(-1, 1); ctx.drawImage(s2.img, 0, 0); ctx.restore(); } else ctx.drawImage(s2.img, x0, y0);
+    drawFace(ctx, h.flip ? x0 + s2.w - s2.face.x - 7 : x0 + s2.face.x, y0 + s2.face.y, 'alegre', s2.face);
+    ctx.fillStyle = '#3c9a5f'; ctx.fillRect(x0 + 5, y0 + 15, s2.w - 10, 4);
+    if (h.carry){ const si = SPR.item[h.carry]; ctx.drawImage(si.img, x - (si.w >> 1), y0 - si.h + 2); } }
+  if (L.allies) for (const c of L.allies){ const s2 = SPR.crab[(c.anim * 10 | 0) % 2], x = Math.round(c.x - cx), y = Math.round(c.y - cy) - (c.pinch > 0 ? 2 : 0);
+    shadow(x, y + 4, 12); if (c.flip){ ctx.save(); ctx.translate(x + (s2.w >> 1), y - (s2.h >> 1)); ctx.scale(-1, 1); ctx.drawImage(s2.img, 0, 0); ctx.restore(); } else ctx.drawImage(s2.img, x - (s2.w >> 1), y - (s2.h >> 1));
+    drawFace(ctx, x - (s2.w >> 1) + s2.face.x, y - (s2.h >> 1) + s2.face.y, 'zangado', s2.face);
+    if (c.pinch > 0){ ctx.fillStyle = '#ffffff'; ctx.fillRect(x + (c.flip ? -9 : 7), y - 6, 2, 2); } }
+  if (L.orbit && G){ const O = L.orbit, p = G.player;
+    for (let i = 0; i < 6; i++){ const a = O.t * 3.2 + i * TAU / 6, x = Math.round(p.x - cx + Math.cos(a) * 52), y = Math.round(p.y - cy + Math.sin(a) * 36), dir = -Math.sin(a) >= 0 ? 1 : -1;
+      if (i % 2 === 0){ ctx.fillStyle = OUT; ctx.beginPath(); ctx.ellipse(x, y, 7, 5, 0, 0, TAU); ctx.fill(); ctx.fillStyle = '#7a4a1e'; ctx.beginPath(); ctx.ellipse(x, y, 6, 4, 0, 0, TAU); ctx.fill();
+        ctx.fillStyle = '#cf9248'; ctx.fillRect(x - 2, y - 2, 4, 3); ctx.fillStyle = '#86b85a'; ctx.fillRect(x + dir * 6, y - 2, 3, 3); ctx.fillRect(x - 5, y + 3, 2, 2); ctx.fillRect(x + 3, y + 3, 2, 2); }
+      else { ctx.fillStyle = OUT; ctx.fillRect(x - 5, y - 3, 10, 6); ctx.fillStyle = '#ff9f43'; ctx.fillRect(x - 4, y - 2, 8, 4); ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - 2, 1, 4);
+        ctx.fillStyle = '#ff9f43'; ctx.fillRect(x - dir * 7, y - 3, 2, 6); ctx.fillStyle = OUT; ctx.fillRect(x + dir * 3, y - 1, 1, 1); }
+      ctx.fillStyle = 'rgba(210,244,255,.6)'; ctx.fillRect(x - dir * 10, y, 2, 2); } }
+  if (L.wave && G){ const W = L.wave, wx = Math.round(W.x0 + W.dir * (VW + 80) * (W.t / W.dur) - cx);
+    ctx.fillStyle = 'rgba(43,140,196,.55)'; ctx.fillRect(W.dir > 0 ? wx - 70 : wx, 0, 70, VH);
+    ctx.fillStyle = 'rgba(90,169,230,.85)'; ctx.fillRect(W.dir > 0 ? wx - 18 : wx, 0, 18, VH);
+    ctx.fillStyle = '#ffffff'; for (let yy = 0; yy < VH; yy += 3){ const o = Math.round(Math.sin(yy * 0.3 + t * 18) * 3); ctx.fillRect(wx + o - (W.dir > 0 ? 3 : 0), yy, 3, 2); }
+    const sT = SPR.chars.tiago[0], ty2 = Math.round(G.player.y - cy) - 10; drawSurf(wx - W.dir * 10, ty2 + 8, t, W.dir < 0);
+    ctx.save(); if (W.dir < 0){ ctx.translate(wx + 10 + (sT.w >> 1), ty2 - sT.h + 6); ctx.scale(-1, 1); ctx.drawImage(sT.img, 0, 0); } else ctx.drawImage(sT.img, wx - 10 - (sT.w >> 1), ty2 - sT.h + 6); ctx.restore(); }
   for (const q of L.parts){ ctx.globalAlpha = Math.min(1, q.life * 3); ctx.fillStyle = q.col; ctx.fillRect(Math.round(q.x - cx), Math.round(q.y - cy), q.s, q.s); }
   ctx.globalAlpha = 1;
 
@@ -3755,11 +3946,11 @@ function paintMenu(){
 /* ============================ enciclopédia ============================ */
 const ELENCO = [
   { id:'marina', nome:'Marina', papel:'A SALVA-VIDAS', bio:'Corre na direção do perigo quando todo mundo foge. Foi a primeira a aceitar o chamado da Caretta e é quem mantém o grupo unido.', ficha:['Classe: Guerreira', 'Arma: Espada de Brinquedo', 'Habilidade: Resgate', 'Poder: Bandeira Vermelha'] },
-  { id:'tiago', nome:'Tiago', papel:'O SURFISTA', bio:'Conhece cada onda da costa e não leva quase nada a sério, menos a mira. Nunca deixa uma garrafa boiando no mar.', ficha:['Classe: Atirador', 'Arma: Lança-Esponja', 'Poder: Chuva de Esponjas'] },
-  { id:'cida', nome:'Cida', papel:'A CATADORA DE RECICLÁVEIS', bio:'Trinta anos separando o que os outros jogam fora. Ninguém conhece o lixo melhor que ela.', ficha:['Classe: Alquimista', 'Arma: Lançador de Limpeza', 'Poder: Maré Limpa'] },
-  { id:'leo', nome:'Léo', papel:'O BIÓLOGO MARINHO', bio:'Sabe o nome científico de cada bicho da praia e repete que, na natureza, nada se perde: tudo se transforma.', ficha:['Classe: Coletor', 'Arma: Frisbee Reciclado', 'Poder: Ímã Reciclador'] },
+  { id:'tiago', nome:'Tiago', papel:'O SURFISTA', bio:'Conhece cada onda da costa e não leva quase nada a sério, menos a mira. Nunca deixa uma garrafa boiando no mar.', ficha:['Classe: Atirador', 'Arma: Lança-Esponja', 'Habilidade: Rasgada', 'Poder: Tubo Perfeito'] },
+  { id:'cida', nome:'Cida', papel:'A CATADORA DE RECICLÁVEIS', bio:'Trinta anos separando o que os outros jogam fora. Ninguém conhece o lixo melhor que ela.', ficha:['Classe: Alquimista', 'Arma: Lançador de Limpeza', 'Habilidade: Carrinho', 'Poder: Mutirão'] },
+  { id:'leo', nome:'Léo', papel:'O BIÓLOGO MARINHO', bio:'Sabe o nome científico de cada bicho da praia e repete que, na natureza, nada se perde: tudo se transforma.', ficha:['Classe: Coletor', 'Arma: Frisbee Reciclado', 'Habilidade: Caranguejos', 'Poder: Ecossistema'] },
   { id:'caretta', nome:'Mestra Caretta', papel:'A GUARDIÃ DA PRAIA', bio:'Uma tartaruga-cabeçuda que guarda a praia há mais de cem anos. Treinou os Guardiões da Maré, mas escondeu deles de onde vem a força.', ficha:['Inspirada na Caretta caretta, espécie ameaçada que desova no litoral brasileiro'] },
-  { id:'robert', nome:'Robert', papel:'O APRENDIZ QUE DESISTIU', bio:'O mais rápido dos cinco aprendizes. Cansou de ver a praia suja de novo, deixou o lixo esquecido tomar conta dele e virou o Descarte.', ficha:['Arma na DLC: Martelo Compactador', 'Poder: Terremoto de Sucata'] },
+  { id:'robert', nome:'Robert', papel:'O APRENDIZ QUE DESISTIU', bio:'O mais rápido dos cinco aprendizes. Cansou de ver a praia suja de novo, deixou o lixo esquecido tomar conta dele e virou o Descarte.', ficha:['Arma na DLC: Martelo Compactador', 'Habilidade: Arrastão', 'Poder: Terremoto de Sucata'] },
   { id:'chorume', nome:'Chorume', papel:'O PRIMEIRO APRENDIZ', secreto:true, bio:'Há cinquenta anos também foi aprendiz da Caretta. Hoje vive no lixão e escorre por baixo de tudo o que a cidade esquece.', ficha:['Chorume é o líquido tóxico que escorre do lixo acumulado. Ele contamina o solo, os rios e o mar.'] },
 ];
 const ABAS = [['personagens', 'PERSONAGENS'], ['monstros', 'MONSTROS'], ['lixeiras', 'COLETA SELETIVA'], ['comojogar', 'COMO JOGAR'], ['projeto', 'O PROJETO']];
