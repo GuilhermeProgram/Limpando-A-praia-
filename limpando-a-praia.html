@@ -151,6 +151,17 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
 .shop .it b{font-family:var(--f-display);font-size:9px}
 .shop .it span{font-size:15px;color:var(--muted)}
 .credits{font-family:var(--f-display);font-size:12px;color:var(--sun)}
+.shop .it.lock{opacity:.55;border-left-color:var(--muted)}
+.shop .it.got{border-left-color:var(--sun)}
+.shop .it .lv{display:flex;gap:3px}
+.shop .it .lv i{width:12px;height:6px;background:rgba(255,255,255,.15)}
+.shop .it .lv i.on{background:var(--kelp)}
+.shop .it small{font-family:var(--f-display);font-size:8px;color:var(--sun)}
+#ach{position:absolute;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translate(-50%,-8px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:30;background:var(--ink);color:var(--foam);border:3px solid var(--sun);box-shadow:4px 4px 0 rgba(0,0,0,.4);padding:8px 14px;text-align:center;max-width:calc(100% - 24px)}
+#ach.on{opacity:1;transform:translate(-50%,0)}
+#ach h4{margin:0 0 4px;font-family:var(--f-display);font-size:8px;color:var(--sun)}
+#ach p{margin:0;font-size:16px}
+@media (prefers-reduced-motion:reduce){#ach{transition:none}}
 .nickrow{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 220px;max-width:340px}
 .field label{font-family:var(--f-display);font-size:8px;color:var(--sun);letter-spacing:.06em}
@@ -520,6 +531,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     <div id="dlg" aria-live="polite"><canvas id="dlg-face" class="px" width="20" height="20"></canvas><div class="dt"><b id="dlg-name"></b><p id="dlg-text"></p></div><span class="nx"></span></div>
   </div>
   <div id="banner" aria-live="polite"></div>
+  <div id="ach" role="status" aria-live="polite"><h4>CONQUISTA DESBLOQUEADA</h4><p id="ach-p"></p></div>
   <div id="toast" class="off" aria-live="polite"><h4 id="toast-h">VOCÊ SABIA?</h4><p id="toast-p"></p></div>
 
   <section class="screen" id="scr-start">
@@ -558,6 +570,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
             <li><button class="mitem main" id="btn-play" type="submit" form="nick-form" data-k="jogar">JOGAR</button></li>
             <li><button class="mitem" id="btn-story" type="button" data-k="historia">HISTÓRIA</button></li>
             <li><button class="mitem" id="btn-dlc" type="button" data-k="dlc">O DESCARTE <small id="dlc-sub">DLC</small></button></li>
+            <li><button class="mitem" id="btn-oficina" type="button" data-k="oficina">OFICINA <small id="of-sub"></small></button></li>
             <li><button class="mitem" id="btn-codex" type="button" data-k="personagens">PERSONAGENS</button></li>
             <li><button class="mitem" id="btn-about" type="button" data-k="sobre">SOBRE O JOGO</button></li>
             <li><button class="mitem" id="btn-rank" type="button" data-k="ranking">RANKING</button></li>
@@ -654,6 +667,17 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
     </div>
   </section>
 
+  <section class="screen" id="scr-oficina" hidden>
+    <div class="panel">
+      <h2>OFICINA DOS GUARDIÕES</h2>
+      <p class="muted">Cada lixo separado vira conchas. As melhorias valem para todos os Guardiões, em todas as partidas.</p>
+      <div class="seg" id="of-tabs" role="group" aria-label="Seção da oficina"><button type="button" data-v="melhorias" aria-pressed="true">MELHORIAS</button><button type="button" data-v="conquistas" aria-pressed="false">CONQUISTAS</button></div>
+      <div class="credits" id="of-conchas" style="margin-block:10px">CONCHAS: 0</div>
+      <div class="shop" id="of-items"></div>
+      <div class="row"><button class="btn" id="of-back" type="button">VOLTAR AO MENU</button></div>
+    </div>
+  </section>
+
   <section class="screen" id="scr-pause" hidden>
     <div class="panel">
       <h2>PAUSA</h2>
@@ -673,6 +697,7 @@ kbd{font-family:var(--f-display);font-size:8px;background:var(--foam);color:var(
       <h3 id="clear-what">O QUE VOCÊ SEPAROU NESTA FASE</h3>
       <div class="tally" id="clear-tally"></div>
       <div class="fact"><h3>VOCÊ SABIA?</h3><p id="clear-fact"></p></div>
+      <p class="scoreline" id="clear-conchas"></p>
       <div class="row"><button class="btn" id="btn-next" type="button">IR PARA A COOPERATIVA</button></div>
     </div>
   </section>
@@ -954,22 +979,22 @@ const ETYPES = {
              fato:'Vidro: quebrado na areia, vira caco e machuca quem anda descalço. Pode ser reciclado muitas vezes. Vai na lixeira VERDE.', curto:'Caco machuca quem anda descalço. Lixeira VERDE.' },
 };
 const FASES = [
-  { nome:'Praia do Sol', musica:'main', meta:22, rate:0.8, hpMul:1, tipos:{ pet:4, lata:3, bituca:3, papelao:2 }, boss:'garrafao',
+  { nome:'Praia do Sol', musica:'main', meta:22, rate:0.8, hpMul:1, tipos:{ pet:4, lata:3, bituca:3, papelao:2 }, boss:'garrafao', clima:'mare',
     desc:'Um domingo de sol deixou a areia cheia de garrafas, latinhas, caixas e bitucas. Os banhistas foram embora, mas o lixo ficou.',
     tema:{ s:['#d9a95e','#e8bf78','#f3d49a','#fbe6bd'], wet:'#c9a06a', deep:'#1f6fae', mid:'#2f8fcc', shallow:'#56b7e0', foam:'#ffffff', spark:'#d8f6ff' } },
-  { nome:'Enseada do Pôr do Sol', musica:'enseada', meta:32, rate:1.15, hpMul:1.7, tipos:{ pet:3, lata:2, bituca:3, papelao:2, sacola:4, isopor:1 }, boss:'sacolao',
+  { nome:'Enseada do Pôr do Sol', musica:'enseada', meta:32, rate:1.15, hpMul:1.7, tipos:{ pet:3, lata:2, bituca:3, papelao:2, sacola:4, isopor:1 }, boss:'sacolao', clima:'vento',
     desc:'No fim da tarde, o vento espalha sacolas e pedaços de isopor. A maré começa a levar tudo para o mar.',
     tema:{ s:['#cf9658','#e0ae72','#edc48e','#f7d9ad'], wet:'#b98858', deep:'#2b5a92', mid:'#3d76ac', shallow:'#6f9fc8', foam:'#fff1e0', spark:'#ffd2a8' }, overlay:'rgba(255,110,60,0.12)' },
-  { nome:'Recife da Lua', musica:'recife', meta:42, rate:1.5, hpMul:2.5, tipos:{ pet:2, lata:2, bituca:3, papelao:2, sacola:3, isopor:2, vidro:3 }, boss:'lixao',
+  { nome:'Recife da Lua', musica:'recife', meta:42, rate:1.5, hpMul:2.5, tipos:{ pet:2, lata:2, bituca:3, papelao:2, sacola:3, isopor:2, vidro:3 }, boss:'lixao', clima:'chuva',
     desc:'À noite, cacos de vidro e todo tipo de lixo ameaçam os animais do recife. Última limpeza!',
     tema:{ s:['#b9a07c','#cbb38e','#dac6a3','#e8d8b9'], wet:'#a08a6a', deep:'#123e66', mid:'#1b5585', shallow:'#2c6c9c', foam:'#e8f4ff', spark:'#cfe8ff' }, night:true },
 ];
 const BOSSES = {
-  garrafao: { nome:'GARRAFÃO PET GIGANTE', hp:520, spd:24, dmg:14, r:20, restos:['pet','pet','pet','lata'],
+  garrafao: { nome:'GARRAFÃO PET GIGANTE', titulo:'O REI DAS DESCARTÁVEIS', hp:520, spd:24, dmg:14, r:20, restos:['pet','pet','pet','lata'],
     fato:'Reduzir vem antes de reciclar: uma garrafinha reutilizável substitui muitas garrafas descartáveis ao longo do ano.' },
-  sacolao:  { nome:'SACOLÃO GIGANTE', hp:950, spd:32, dmg:16, r:24, restos:['sacola','sacola','isopor','pet'],
+  sacolao:  { nome:'SACOLÃO GIGANTE', titulo:'A PRAGA QUE O VENTO LEVA', hp:950, spd:32, dmg:16, r:24, restos:['sacola','sacola','isopor','pet'],
     fato:'Lixo deixado na areia é levado pela maré e pelo vento até o mar, onde animais podem se enroscar nele ou engoli-lo.' },
-  lixao:    { nome:'LIXÃO GIGANTE', hp:1800, spd:20, dmg:18, r:26, restos:['pet','lata','vidro','papelao','sacola','isopor','bituca'],
+  lixao:    { nome:'LIXÃO GIGANTE', titulo:'TUDO O QUE NINGUÉM SEPAROU', hp:1800, spd:20, dmg:18, r:26, restos:['pet','lata','vidro','papelao','sacola','isopor','bituca'],
     fato:'Quando o lixo não é separado, ele se mistura e quase nada pode ser reciclado. Separar na origem é o passo mais importante.' },
 };
 
@@ -1047,6 +1072,82 @@ const SHOP = [
   { id:'tenis', nome:'Tênis de Corrida', desc:'+6% de velocidade.', base:12, apply:p => { p.speed *= 1.06; } },
   { id:'solar', nome:'Energia Solar', desc:'Começa a próxima fase com o Burst cheio.', base:10, once:true, apply:p => { p.burst = 100; } },
 ];
+
+/* ============================ oficina e conquistas ============================
+   Conchas ficam salvas no aparelho: cada lixo separado rende conchas, que compram melhorias permanentes. */
+const OFICINA = [
+  { id:'vida', nome:'Coração de Guardião', desc:'+10 de vida máxima.', max:5, base:12, apply:(p, n) => { p.maxHp += 10 * n; p.hp = p.maxHp; } },
+  { id:'forca', nome:'Braço Forte', desc:'+5% de dano.', max:5, base:15, apply:(p, n) => { p.dmgMul *= 1 + 0.05 * n; } },
+  { id:'pernas', nome:'Pé na Areia', desc:'+4% de velocidade.', max:5, base:12, apply:(p, n) => { p.speed *= 1 + 0.04 * n; } },
+  { id:'mochila', nome:'Mochila de Lona', desc:'+1 espaço na mochila.', max:3, base:20, apply:(p, n) => { p.cap += n; } },
+  { id:'ima', nome:'Ímã de Tampinhas', desc:'+15% de alcance para puxar o lixo.', max:4, base:12, apply:(p, n) => { p.magnet *= 1 + 0.15 * n; } },
+  { id:'sol', nome:'Placa Solar', desc:'Começa cada fase com +15% de Burst.', max:4, base:15, apply:(p, n) => { p.burstStart = 15 * n; } },
+];
+const CONQUISTAS = [
+  { id:'primeiro', nome:'Primeiro Passo', desc:'Separe o primeiro lixo na lixeira certa.', premio:5 },
+  { id:'cem', nome:'Separador', desc:'Separe 100 lixos no total.', premio:20, stat:'sep', meta:100 },
+  { id:'quinhentos', nome:'Mestre da Reciclagem', desc:'Separe 500 lixos no total.', premio:60, stat:'sep', meta:500 },
+  { id:'chefe0', nome:'Garrafão Esvaziado', desc:'Derrote o Garrafão PET Gigante.', premio:15 },
+  { id:'chefe1', nome:'Sacolão Rasgado', desc:'Derrote o Sacolão Gigante.', premio:20 },
+  { id:'chefe2', nome:'Lixão Desmontado', desc:'Derrote o Lixão Gigante.', premio:30 },
+  { id:'intocavel', nome:'Intocável', desc:'Derrote um chefe sem levar dano.', premio:40 },
+  { id:'combo', nome:'Combo x30', desc:'Acerte 30 golpes seguidos sem parar.', premio:15 },
+  { id:'burst', nome:'Poder Total', desc:'Use o poder especial 10 vezes.', premio:15, stat:'burst', meta:10 },
+  { id:'olho', nome:'Olho Clínico', desc:'Termine uma fase sem encostar em lixeira errada.', premio:25 },
+  { id:'mare', nome:'O Mar Devolve', desc:'Recolha 10 lixos que a maré trouxe de volta.', premio:15, stat:'mare', meta:10 },
+  { id:'vento', nome:'Pega no Vento', desc:'Recolha 15 lixos durante as rajadas de vento.', premio:15, stat:'vento', meta:15 },
+  { id:'raio', nome:'Para-raios', desc:'Deixe os raios da tempestade derrotarem 10 monstros.', premio:20, stat:'raio', meta:10 },
+  { id:'zerou', nome:'Guardião da Maré', desc:'Limpe as três praias.', premio:50 },
+  { id:'time', nome:'Time Completo', desc:'Limpe as três praias com Marina, Tiago, Cida e Léo.', premio:100 },
+  { id:'oficina', nome:'Investidor', desc:'Compre 10 melhorias na Oficina.', premio:20, stat:'compras', meta:10 },
+];
+const conchas = () => load('lp-conchas', 0);
+function ganhaConchas(n){ if (n <= 0) return 0; store('lp-conchas', conchas() + n); return n; }
+function oficinaApply(p){ const lv = load('lp-oficina', {}); for (const u of OFICINA) if (lv[u.id]) u.apply(p, lv[u.id]); }
+const achQ = []; let achT = 0;
+function conq(id){
+  if (!G || (L && L.tut)) return;
+  const got = load('lp-conq', {}); if (got[id]) return;
+  const c = CONQUISTAS.find(x => x.id === id); if (!c) return;
+  got[id] = Date.now(); store('lp-conq', got); ganhaConchas(c.premio);
+  achQ.push(c.nome + ' · +' + c.premio + ' conchas'); if (!achT) nextAch();
+}
+function nextAch(){ const m = achQ.shift(); if (!m){ achT = 0; $('#ach').classList.remove('on'); return; } $('#ach-p').textContent = m; $('#ach').classList.add('on'); achT = 1; sfx('deposit'); setTimeout(nextAch, 3200); }
+function conqStat(k, n = 1){
+  if (!G || (L && L.tut)) return;
+  const st = load('lp-cstats', {}); st[k] = (st[k] || 0) + n; store('lp-cstats', st);
+  for (const c of CONQUISTAS) if (c.stat === k && st[k] >= c.meta) conq(c.id);
+}
+let ofAba = 'melhorias';
+function openOficina(aba){ if (aba) ofAba = aba; renderOficina(); setState('oficina'); }
+function renderOficina(){
+  $('#of-tabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === ofAba));
+  const box = $('#of-items'); box.innerHTML = '';
+  const got = load('lp-conq', {}), st = load('lp-cstats', {});
+  if (ofAba === 'melhorias'){
+    $('#of-conchas').textContent = 'CONCHAS: ' + conchas();
+    const lv = load('lp-oficina', {});
+    for (const u of OFICINA){
+      const n = lv[u.id] || 0, price = u.base * (n + 1), full = n >= u.max;
+      const d = document.createElement('div'); d.className = 'it';
+      d.innerHTML = `<b>${u.nome}</b><span>${u.desc}</span><div class="lv">${Array.from({ length:u.max }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ghost'; b.textContent = full ? 'NÍVEL MÁXIMO' : `MELHORAR · ${price} CONCHAS`;
+      b.disabled = full || conchas() < price;
+      b.onclick = () => { store('lp-conchas', conchas() - price); lv[u.id] = n + 1; store('lp-oficina', lv); sfx('deposit');
+        const G0 = G; G = G || {}; conqStat('compras'); G = G0; renderOficina(); $('#of-items').querySelectorAll('.btn')[OFICINA.indexOf(u)].focus(); };
+      d.append(b); box.append(d);
+    }
+  } else {
+    const n = CONQUISTAS.filter(c => got[c.id]).length;
+    $('#of-conchas').textContent = `CONQUISTAS: ${n} DE ${CONQUISTAS.length}`;
+    for (const c of CONQUISTAS){
+      const ok = !!got[c.id], d = document.createElement('div'); d.className = 'it ' + (ok ? 'got' : 'lock');
+      const prog = !ok && c.stat ? ` (${Math.min(c.meta, st[c.stat] || 0)}/${c.meta})` : '';
+      d.innerHTML = `<b>${ok ? '★ ' : ''}${c.nome}</b><span>${c.desc}${prog}</span><small>${ok ? 'CONQUISTADA' : '+' + c.premio + ' CONCHAS'}</small>`;
+      box.append(d);
+    }
+  }
+}
 
 /* ============================ sprites ============================ */
 const SPR = {};
@@ -1717,7 +1818,7 @@ function buildBg(f){
 const BG_CACHE = {};
 function makeLevel(f){
   const lv = { fase:f, bg:BG_CACHE[f] || (BG_CACHE[f] = buildBg(f)), time:0, spawnAcc:0, waveT:26, enemies:[], projs:[], eprojs:[], items:[], parts:[], fx:[], texts:[], critters:[], props:[], bins:[], zones:[],
-    boss:null, forming:null, bossDone:false, cleanup:false, clearT:0, deposited:0, stats:{} };
+    boss:null, forming:null, bossDone:false, cleanup:false, clearT:0, deposited:0, stats:{}, weather:{ kind:FASES[f].clima, cycle:0, next:14, reach:0, taken:0, flash:0, bolts:[], drops:[] } };
   const cx = WORLD_W / 2, cy = 560;
   ['plastico','papel','vidro','metal','rejeito'].forEach((m, i) => { const a = -Math.PI / 2 + i * TAU / 5; lv.bins.push({ mat:m, x:cx + Math.cos(a) * 430, y:cy + Math.sin(a) * 250, wrongT:0 }); });
   for (const [x, y, v] of [[210, 330, 0], [1290, 320, 2], [150, 720, 1], [1360, 760, 0], [760, 880, 2]]){ const s = SPR.rock[v]; lv.props.push({ kind:'rock', spr:s, x, y, rect:{ x:x - s.w / 2 + 2, y:y - s.h / 2 + 3, w:s.w - 4, h:s.h - 5 } }); }
@@ -1743,6 +1844,7 @@ function makePlayer(id){
   const p = { id, x:WORLD_W / 2, y:560, r:5, hp:b.hp, maxHp:b.hp, speed:b.speed, magnet:b.magnet, dmgMul:b.dmg, cdMul:1, regen:0, cap:b.cap, bag:[],
     level:1, xp:0, xpNext:12, face:0, aim:0, flip:false, inv:0, hurt:0, slow:0, anim:0, moving:false, weapons:[], passives:{}, burst:0, burstLvl:1, burstT:0, fullT:0, cheer:0, surprise:0, idle:0 };
   addWeapon(p, cl.weapon);
+  oficinaApply(p);
   return p;
 }
 function addWeapon(p, id){ p.weapons.push({ id, lvl:1, evo:false, t:0.4, ang:0, burst:0, burstT:0, aim:0, tick:0 }); }
@@ -1760,7 +1862,7 @@ function playerMood0(){
   if (p.hp <= 0) return 'triste';
   if (p.hurt > 0.35) return 'dor';
   if (p.cheer > 0) return 'comemorando';
-  if (p.surprise > 0 || L.forming) return 'surpreso';
+  if (p.surprise > 0 || L.forming || L.bossIntro) return 'surpreso';
   if (r < 0.2) return 'exausto';
   if (r < 0.4) return 'triste';
   if (p.hurt > 0 || L.boss) return 'zangado';
@@ -1841,14 +1943,15 @@ function tutUpdate(){
 function startFase(f){
   G.fase = f; L = makeLevel(f);
   const p = G.player; p.x = WORLD_W / 2; p.y = 560; p.hp = p.maxHp; p.bag = []; p.inv = 0; p.hurt = 0; p.slow = 0; p.burstT = 0;
+  if (p.burstStart) p.burst = Math.max(p.burst, p.burstStart);
   G.snap = snapshot(p); G.pendingLv = 0; G.rerolls = 2; hudDirty = true; G.scoreSnap = G.score; G.sepSnap = G.sep;
   playMusic(FASES[f].musica);
   showIntro();
 }
-const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits','chapters','codex'];
+const screens = ['start','logo','title','select','intro','levelup','pause','clear','shop','over','win','rank','opts','credits','chapters','codex','oficina'];
 function show(id){
   for (const s of screens) $('#scr-' + s).hidden = s !== id;
-  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits','chapters','codex'].includes(id)) || state === 'cutscene';
+  $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits','chapters','codex','oficina'].includes(id)) || state === 'cutscene';
   if (id === 'title') paintMenu();
 }
 function setState(s, scr){
@@ -1896,7 +1999,7 @@ function showIntro(){
   const F = FASES[G.fase], B = BOSSES[F.boss];
   $('#intro-n').textContent = (G.dlc ? 'DLC O DESCARTE · ' : '') + `FASE ${G.fase + 1} DE ${FASES.length}`;
   $('#intro-t').textContent = F.nome.toUpperCase();
-  $('#intro-d').textContent = F.desc;
+  $('#intro-d').textContent = F.desc + ' ' + { mare:'Clima: a maré sobe e desce, levando e devolvendo o lixo.', vento:'Clima: rajadas de vento espalham o lixo leve.', chuva:'Clima: tempestade com raios que acertam qualquer um.' }[F.clima];
   $('#intro-foes').innerHTML = Object.keys(F.tipos).map(k => `<div style="border-left-color:${MATS[ETYPES[k].mat].cor}"><span>${ETYPES[k].nome}</span><span class="muted">${MATS[ETYPES[k].mat].lixeira}</span></div>`).join('');
   $('#intro-goal').textContent = G.dlc ? `Esmague os monstros e passe por cima de ${F.meta} restos de lixo para absorver o poder deles. Depois, o que sobrar vira o ${B.nome}.` : `Deposite ${F.meta} recicláveis nas lixeiras certas. Depois, todo o lixo que sobrar na praia vai se juntar no ${B.nome}.`;
   const first = G.fase === 0 && !G.dlc && !G.jump, tutDone = !!load('lp-tut', false);
@@ -2023,6 +2126,8 @@ function showClear(){
   $('#clear-what').textContent = G.dlc ? 'O QUE O DESCARTE ABSORVEU' : 'O QUE VOCÊ SEPAROU NESTA FASE';
   $('#clear-tally').innerHTML = tallyHTML(L.stats);
   $('#clear-fact').textContent = BOSSES[F.boss].fato;
+  if (!L.wrong && !G.dlc) conq('olho');
+  $('#clear-conchas').textContent = `+${ganhaConchas(L.deposited + 10 * (G.fase + 1))} CONCHAS PARA A OFICINA`;
   $('#btn-next').textContent = G.fase + 1 < FASES.length ? (G.dlc ? 'PRÓXIMA LIÇÃO' : 'IR PARA A COOPERATIVA') : 'VER RESULTADO';
   portraitCanvas($('#clear-face'), G.player.id, 'alegre');
   jingle(); setState('clear');
@@ -2042,7 +2147,8 @@ function showShop(){
   setState('shop');
 }
 function showWin(){
-  addScore(1000);
+  addScore(1000); ganhaConchas(30);
+  if (!G.dlc){ conq('zerou'); const com = new Set(load('lp-zerou-com', [])); com.add(G.player.id); store('lp-zerou-com', [...com]); if (['marina','tiago','cida','leo'].every(h => com.has(h))) conq('time'); }
   $('#win-score').textContent = `${G.nick}: ${G.score.toLocaleString('pt-BR')} PONTOS`;
   finishRun(true);
   $('#win-tally').innerHTML = tallyHTML(G.totals);
@@ -2063,7 +2169,8 @@ function gameOver(){
   portraitCanvas($('#over-face'), G.player.id, 'triste');
   const n = L.deposited;
   $('#over-score').textContent = `PONTUAÇÃO ATÉ AQUI: ${G.score.toLocaleString('pt-BR')}`;
-  $('#over-text').textContent = `Você separou ${n} ${n === 1 ? 'item' : 'itens'} nesta fase. Tente de novo com as mesmas melhorias que tinha no começo da fase.`;
+  const cc = ganhaConchas(Math.floor(n / 2));
+  $('#over-text').textContent = `Você separou ${n} ${n === 1 ? 'item' : 'itens'} nesta fase${cc ? ' e ganhou ' + cc + ' conchas para a Oficina' : ''}. Tente de novo com as mesmas melhorias que tinha no começo da fase.`;
   sfx('hurt'); setState('over');
 }
 
@@ -2121,10 +2228,11 @@ function killEnemy(e){
     L.fx.push({ kind:'ghost', spr:SPR[e.type][0], x:e.x, y:e.y, t:0, dur:1.6 });
     banner(B.nome + ' DESMONTADO! LEVE OS RESTOS PARA AS LIXEIRAS!', 3.2);
     cam.shake = 0.6; sfx('boss'); playMusic(FASES[L.fase].musica); G.player.cheer = 2.5; addScore(500 * (L.fase + 1));
+    conq('chefe' + L.fase); if (!L.bossHurt) conq('intocavel');
     return;
   }
   G.kills++; addScore(2);
-  G.combo = (G.comboT > 0 ? G.combo : 0) + 1; G.comboT = 2.6; G.comboPop = true;
+  G.combo = (G.comboT > 0 ? G.combo : 0) + 1; G.comboT = 2.6; G.comboPop = true; if (G.combo >= 30) conq('combo');
   if (G.combo % 25 === 0){ say(G.player.x, G.player.y - 40, G.combo + ' COMBO!', '#ffd23f', 1.2); addScore(G.combo); }
   G.player.burst = Math.min(100, G.player.burst + 0.6 + Math.min(1.2, G.combo * 0.04));
   const mc = MATS[ETYPES[e.type].mat].cor;
@@ -2143,7 +2251,7 @@ function addXp(v){
 function hurtPlayer(d){
   const p = G.player; if (p.inv > 0 || p.hp <= 0 || p.dashT > 0 || p.skillT > 0 || (p.burstT > 0 && (p.burstKind === 'tornado' || p.burstKind === 'tubo'))) return;
   if (d <= 0) return;
-  d = Math.max(1, d); p.hp -= d; p.inv = 0.55; p.hurt = 0.8; cam.shake = Math.max(cam.shake, 0.18); sfx('hurt');
+  d = Math.max(1, d); p.hp -= d; p.inv = 0.55; if (L.boss) L.bossHurt = true; p.hurt = 0.8; cam.shake = Math.max(cam.shake, 0.18); sfx('hurt');
   say(p.x, p.y - 20, '-' + Math.round(d), '#ff6b5b', 0.7);
   if (p.bag.length && Math.random() < 0.35){ const t = p.bag.splice(Math.random() * p.bag.length | 0, 1)[0]; dropItem(t, p.x, p.y, { spread:80, delay:1.1 }); say(p.x, p.y - 32, 'DERRUBOU LIXO!', '#ffb0a8', 0.9); hudDirty = true; }
   if (p.hp <= 0){ p.hp = 0; setTimeout(() => { if (state === 'play') gameOver(); }, 500); }
@@ -2192,7 +2300,7 @@ function updateForming(dt){
     L.enemies = L.enemies.filter(e => !e.fly); L.items = L.items.filter(i => !i.fly);
     const F = FASES[L.fase], B = BOSSES[F.boss], hp = B.hp * (1 + Math.min(0.8, f.absorbed * 0.012));
     L.boss = { boss:true, type:F.boss, x:f.x, y:f.y, hp, maxHp:hp, spd:B.spd, dmg:B.dmg, r:B.r, kx:0, ky:0, flash:0, rakeT:0, root:0, stun:0, anim:0, atk:2.5, cycle:0, mode:'walk', mt:0, dx:0, dy:0, spin:0, tick:0, grow:0 };
-    banner(`${B.nome}! (${f.absorbed} pedaços de lixo)`, 2.8); cam.shake = 0.6;
+    L.bossIntro = { t:0, dur:2.9, absorbed:f.absorbed }; cam.shake = 0.6; bannerT = 0; $('#banner').textContent = ''; $('#toast').classList.add('off'); toastT = 0;
     L.forming = null;
   }
 }
@@ -2434,7 +2542,7 @@ function updateItems(dt){
     if (d < 8 && it.delay <= 0){
       if (it.coco){ it.dead = true; p.hp = Math.min(p.maxHp, p.hp + p.maxHp * 0.3); say(p.x, p.y - 22, '+VIDA', '#7ee081', 0.9); sfx('lvl'); }
       else if (G.dlc){ it.dead = true; absorb(it); }
-      else if (p.bag.length < p.cap){ it.dead = true; p.bag.push(it.type); sfx('pick'); hudDirty = true;
+      else if (p.bag.length < p.cap){ it.dead = true; p.bag.push(it.type); sfx('pick'); hudDirty = true; if (it.mare) conqStat('mare'); if (L.weather && L.weather.gust) conqStat('vento');
         if (!G.seenItem.has(it.type)){ G.seenItem.add(it.type); toast('VOCÊ SABIA? · ' + ETYPES[it.type].nome.toUpperCase(), ETYPES[it.type].fato, ETYPES[it.type].curto); } }
       else if (p.fullT <= 0){ p.fullT = 2; say(p.x, p.y - 32, 'MOCHILA CHEIA!', '#d7a6ff', 1.1); }
     }
@@ -2448,7 +2556,7 @@ function updateItems(dt){
     if (Math.hypot(p.x - b.x, p.y - (b.y + 2)) > 26 || !p.bag.length) continue;
     const ok = p.bag.filter(t => ETYPES[t].mat === b.mat);
     if (ok.length) deposit(b, ok.length);
-    else if (b.wrongT <= 0){ b.wrongT = 2.2; const t = p.bag[0], m = MATS[ETYPES[t].mat]; say(b.x, b.y - 26, `${ETYPES[t].nome.toUpperCase()}: LIXEIRA ${m.lixeira.toUpperCase()}`, '#ffe08a', 1.4); }
+    else if (b.wrongT <= 0){ b.wrongT = 2.2; L.wrong = true; const t = p.bag[0], m = MATS[ETYPES[t].mat]; say(b.x, b.y - 26, `${ETYPES[t].nome.toUpperCase()}: LIXEIRA ${m.lixeira.toUpperCase()}`, '#ffe08a', 1.4); }
   }
 }
 // DLC: cada lixo absorvido deixa o Robert mais forte (dano e alcance do martelo)
@@ -2468,7 +2576,7 @@ function deposit(b, n, auto){
   const combo = n >= 4 ? 1.5 : 1;
   addXp(Math.round(4 * n * combo)); G.credits += n + (n >= 4 ? 2 : 0);
   for (const [k, v] of Object.entries(got)) L.stats[k] = (L.stats[k] || 0) + v;
-  L.deposited += n; p.burst = Math.min(100, p.burst + 5 * n); G.sep += n; addScore(Math.round(15 * n * combo)); p.cheer = Math.max(p.cheer, 0.9);
+  L.deposited += n; conq('primeiro'); conqStat('sep', n); p.burst = Math.min(100, p.burst + 5 * n); G.sep += n; addScore(Math.round(15 * n * combo)); p.cheer = Math.max(p.cheer, 0.9);
   say(b.x, b.y - 26, `+${n} ${MATS[b.mat].nome.toUpperCase()}${combo > 1 ? ' COMBO!' : ''}`, MATS[b.mat].cor, 1.3);
   for (let i = 0; i < 10; i++) L.parts.push({ x:b.x, y:b.y - 8, vx:rand(-40, 40), vy:rand(-90, -30), life:rand(.4, .8), col:i % 2 ? '#ffffff' : MATS[b.mat].cor, s:1 });
   if (!auto) sfx('deposit');
@@ -2524,7 +2632,7 @@ function updateSkillMove(dt){
 
 /* ---- efeitos que vivem na praia: rastro, onda, catadores, caranguejos, órbita, fenda ---- */
 function helperDeposit(type, b){
-  const p = G.player; L.stats[type] = (L.stats[type] || 0) + 1; L.deposited++; G.sep++; G.credits += 1; addXp(4); addScore(15); p.burst = Math.min(100, p.burst + 2);
+  const p = G.player; L.stats[type] = (L.stats[type] || 0) + 1; L.deposited++; conqStat('sep'); G.sep++; G.credits += 1; addXp(4); addScore(15); p.burst = Math.min(100, p.burst + 2);
   say(b.x, b.y - 26, '+1 ' + MATS[b.mat].nome.toUpperCase(), MATS[b.mat].cor, 1); hudDirty = true;
   for (let i = 0; i < 6; i++) L.parts.push({ x:b.x, y:b.y - 8, vx:rand(-30, 30), vy:rand(-70, -20), life:rand(.3, .6), col:i % 2 ? '#ffffff' : MATS[b.mat].cor, s:1 });
 }
@@ -2582,7 +2690,7 @@ function flagExplode(){
 function useBurst(){
   const p = G && G.player; if (!p || state !== 'play' || p.burst < 100 || p.burstT > 0 || p.hp <= 0) return;
   const cl = CLASSES.find(c => c.id === p.id), lv = p.burstLvl;
-  p.burst = 0; p.burstKind = cl.burst; p.burstTick = 0; sfx('burst'); cam.shake = 0.3;
+  p.burst = 0; p.burstKind = cl.burst; p.burstTick = 0; sfx('burst'); cam.shake = 0.3; conqStat('burst');
   banner(cl.burstNome.toUpperCase() + '!', 1.6);
   if (cl.burst === 'tornado') p.burstT = 2.5 + lv * 0.75;
   else if (cl.burst === 'tubo'){ const dir = p.flip ? -1 : 1; p.burstT = 1.9; L.wave = { dir, x0:dir > 0 ? cam.x - 40 : cam.x + VW + 40, t:0, dur:1.9, hit:new Set(), dmg:35 + lv * 20 }; }
@@ -2644,9 +2752,129 @@ function updateCritters(dt){
   }
 }
 
+/* clima: a maré leva e devolve o lixo, o vento espalha, a tempestade solta raios */
+const CLIMA_TXT = {
+  mare:['CLIMA · MARÉ', 'A maré sobe e leva o lixo da areia para o mar. Quando desce, o mar devolve parte dele, às vezes vindo de outras praias.', 'A maré leva o lixo para o mar.'],
+  vento:['CLIMA · VENTO', 'O vento espalha sacolas e isopor pela praia e até o mar. Lixo leve nunca deve ficar solto.', 'O vento espalha o lixo leve.'],
+  chuva:['CLIMA · TEMPESTADE', 'Com a chuva, o lixo das ruas desce pelos bueiros e rios até o mar. Cuidado com os raios: eles também acertam os monstros!', 'A chuva leva o lixo das ruas ao mar.'],
+};
+function climaTip(k){ if (!G.wxTip){ G.wxTip = {}; } if (G.wxTip[k]) return; G.wxTip[k] = true; toast(...CLIMA_TXT[k]); }
+function updateWeather(dt){
+  const W = L.weather, p = G.player, F = FASES[L.fase]; p.wet = false;
+  if (!W || L.tut) return;
+  W.flash = Math.max(0, W.flash - dt * 3);
+  if (W.kind === 'mare'){
+    if (L.cleanup){ W.reach = Math.max(0, W.reach - dt * 20); return; }
+    const C = 36, prev = W.cycle % C; W.cycle += dt; const c = W.cycle % C;
+    const lvl = c < 22 ? 0 : c < 26 ? (c - 22) / 4 : c < 32 ? 1 : (C - c) / 4;
+    W.reach = lvl * 64;
+    if (prev < 22 && c >= 22){ banner('A MARÉ ESTÁ SUBINDO!', 1.8); climaTip('mare'); }
+    if (lvl > 0) for (const it of L.items) if (!it.coco && !it.fly && !it.boss && it.y < SHORE + W.reach){ it.y -= 14 * dt * lvl; if (prev < 32 && c >= 32){ it.dead = true; W.taken++; } }
+    if (c < prev){
+      const tipos = Object.keys(F.tipos), n = Math.min(12, W.taken + 3);
+      for (let i = 0; i < n; i++){ dropItem(tipos[Math.random() * tipos.length | 0], clamp(p.x + rand(-VW / 2, VW / 2), 20, WORLD_W - 20), SHORE + 20 + rand(0, 20), { spread:20 }); L.items[L.items.length - 1].mare = true; }
+      banner(W.taken ? 'O MAR DEVOLVEU O LIXO!' : 'A MARÉ TROUXE LIXO DE OUTRAS PRAIAS!', 2); W.taken = 0;
+    }
+    p.wet = p.y < SHORE + W.reach;
+  } else if (W.kind === 'vento'){
+    W.next -= dt;
+    if (!W.gust && W.next <= 0 && !L.cleanup){
+      const dir = Math.random() < 0.5 ? -1 : 1; W.gust = { dir, t:0, dur:6 };
+      banner(dir > 0 ? 'RAJADA DE VENTO! >>>' : '<<< RAJADA DE VENTO!', 1.8); climaTip('vento');
+      if (!L.boss && !L.forming) for (let i = 0; i < 3; i++) spawnEnemy('sacola', clamp(dir > 0 ? cam.x - 10 : cam.x + VW + 10, 10, WORLD_W - 10), clamp(p.y + rand(-80, 80), SHORE + 10, WORLD_H - 20));
+    }
+    if (W.gust){ const g = W.gust; g.t += dt; const k = Math.sin(Math.PI * Math.min(1, g.t / g.dur)), dx = g.dir * k * dt;
+      for (const it of L.items) if (!it.coco && !it.fly && !it.boss) it.x = clamp(it.x + dx * 50, 8, WORLD_W - 8);
+      for (const e of L.enemies) if (e.type === 'sacola' || e.type === 'isopor') e.x = clamp(e.x + dx * 65, 8, WORLD_W - 8);
+      if (p.hp > 0){ p.x = clamp(p.x + dx * 20, 8, WORLD_W - 8); collide(p, p.r); }
+      if (g.t >= g.dur){ W.gust = null; W.next = rand(15, 21); } }
+  } else if (W.kind === 'chuva'){
+    W.next -= dt;
+    if (W.next <= 0 && !L.cleanup){
+      W.next = rand(8, 13); climaTip('chuva');
+      W.bolts.push({ x:clamp(p.x + rand(-50, 50), 20, WORLD_W - 20), y:clamp(p.y + rand(-30, 30), SHORE + 20, WORLD_H - 20), t:0, seed:Math.random() * 1e4 });
+      const vis = L.enemies.filter(e => !e.fly && Math.abs(e.x - p.x) < VW / 2 && Math.abs(e.y - p.y) < VH / 2);
+      for (let i = 0; i < 2 && vis.length; i++){ const e = vis[Math.random() * vis.length | 0]; W.bolts.push({ x:e.x, y:e.y, t:0, seed:Math.random() * 1e4 }); }
+      if (L.boss && Math.random() < 0.5) W.bolts.push({ x:L.boss.x, y:L.boss.y, t:0, seed:Math.random() * 1e4 });
+    }
+    for (const b of W.bolts){ b.t += dt;
+      if (!b.hit && b.t >= 1.1){ b.hit = true; W.flash = 1; cam.shake = Math.max(cam.shake, 0.35); sfx('boss');
+        L.fx.push({ kind:'cracks', x:b.x, y:b.y, r:30, t:0, dur:0.8, seed:b.seed });
+        for (let i = 0; i < 12; i++) L.parts.push({ x:b.x, y:b.y, vx:rand(-70, 70), vy:rand(-110, -30), life:0.45, col:i % 2 ? '#fff6b0' : '#9fd8ff', s:1 });
+        if (Math.hypot(p.x - b.x, (p.y - b.y) / 0.7) < 26) hurtPlayer(12);
+        for (const e of query(b.x, b.y, 40)) if (!e.dead && Math.hypot(e.x - b.x, e.y - b.y) < 28 + (e.r || 6)){ hitEnemy(e, e.boss ? 30 : 80); if (e.dead && !e.boss) conqStat('raio'); }
+      } }
+    W.bolts = W.bolts.filter(b => b.t < 1.6);
+  }
+}
+// desenho do clima no chão (antes das pessoas) e no céu (depois da noite)
+function drawWeatherGround(cx, cy, now){
+  const W = L.weather; if (!W) return;
+  if (W.reach > 0.5){ const T = FASES[L.fase].tema, yb = SHORE + W.reach - cy;
+    ctx.globalAlpha = 0.55; ctx.fillStyle = T.shallow; const yt = Math.max(0, SHORE - 30 - cy); ctx.fillRect(0, yt, VW, Math.max(0, Math.round(yb - yt))); ctx.globalAlpha = 1;
+    ctx.fillStyle = T.foam; for (let x = 0; x < VW; x += 2){ const y = Math.round(yb + Math.sin((x + cx) * 0.08 + now * 3) * 2); ctx.fillRect(x, y, 2, 2); if ((x + cx) % 6 === 0) ctx.fillRect(x, y - 5 - Math.round(Math.sin(now * 2 + x) * 2), 1, 1); } }
+  for (const b of W.bolts){ const x = Math.round(b.x - cx), y = Math.round(b.y - cy);
+    if (b.t < 1.1){ const k = b.t / 1.1, on = ((b.t * (6 + k * 14)) | 0) % 2; ctx.strokeStyle = on ? '#ffd23f' : '#ff4a3a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, 26, 18, 0, 0, TAU); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,74,58,' + (0.12 + 0.2 * k) + ')'; ctx.beginPath(); ctx.ellipse(x, y, 26 * k, 18 * k, 0, 0, TAU); ctx.fill(); }
+    else { ctx.fillStyle = 'rgba(20,14,24,' + 0.5 * (1 - (b.t - 1.1) / 0.5) + ')'; ctx.beginPath(); ctx.ellipse(x, y, 18, 12, 0, 0, TAU); ctx.fill(); } }
+}
+function drawWeatherSky(cx, cy, now){
+  const W = L.weather; if (!W) return;
+  if (W.kind === 'chuva'){
+    ctx.fillStyle = 'rgba(180,210,255,.5)';
+    for (let i = 0; i < 140; i++){ const sp = 300 + (i % 5) * 40, x = ((i * 97 + 13 - now * sp * 0.25 - cx * 0.2) % (VW + 20) + VW + 20) % (VW + 20) - 10, y = ((i * 53 + now * sp - cy * 0.2) % (VH + 20) + VH + 20) % (VH + 20) - 10; ctx.fillRect(Math.round(x), Math.round(y), 1, 5); }
+    ctx.fillStyle = 'rgba(210,230,255,.6)'; for (let i = 0; i < 10; i++){ const x = Math.random() * VW | 0, y = Math.random() * VH | 0; ctx.fillRect(x - 1, y, 3, 1); }
+    for (const b of W.bolts) if (b.t >= 1.1 && b.t < 1.28){ const R = mulberry(b.seed | 0), x1 = b.x - cx, y1 = b.y - cy; let x = x1 + (R() - 0.5) * 60, y = -10;
+      ctx.lineCap = 'square';
+      for (const [w, col] of [[5, 'rgba(159,216,255,.5)'], [2, '#ffffff']]){ const R2 = mulberry(b.seed | 0); let xx = x, yy = y; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(xx, yy);
+        while (yy < y1){ yy = Math.min(y1, yy + 12 + R2() * 10); xx += (x1 - xx) * 0.3 + (R2() - 0.5) * 18; ctx.lineTo(xx, yy); } ctx.lineTo(x1, y1); ctx.stroke(); } }
+    if (W.flash > 0){ ctx.fillStyle = 'rgba(230,240,255,' + W.flash * 0.45 + ')'; ctx.fillRect(0, 0, VW, VH); }
+  } else if (W.kind === 'vento' && W.gust){
+    const g = W.gust, k = Math.min(1, 1.8 * Math.sin(Math.PI * Math.min(1, g.t / g.dur)));
+    ctx.fillStyle = 'rgba(240,220,170,' + 0.1 * k + ')'; ctx.fillRect(0, 0, VW, VH);
+    ctx.strokeStyle = 'rgba(255,255,255,' + 0.85 * k + ')'; ctx.lineWidth = 2;
+    for (let i = 0; i < 46; i++){ const len = 14 + (i % 4) * 8, x = ((i * 73 + now * 420 * g.dir) % (VW + 60) + VW + 60) % (VW + 60) - 30, y = (i * 37 + Math.sin(now * 3 + i) * 4) % VH;
+      ctx.beginPath(); ctx.moveTo(Math.round(x), Math.round(y)); ctx.lineTo(Math.round(x - g.dir * len), Math.round(y)); ctx.stroke(); }
+    ctx.fillStyle = 'rgba(232,201,138,' + k + ')'; for (let i = 0; i < 24; i++){ const x = ((i * 131 + now * 300 * g.dir) % VW + VW) % VW, y = (i * 59 + now * 20) % VH; ctx.fillRect(Math.round(x), Math.round(y), 1, 1); }
+  }
+}
+
+/* entrada do chefe: câmera vai até ele, zoom, faixas pretas e o nome em letreiro */
+function bossIntroCam(){ const I = L.bossIntro, p = G.player, b = L.boss, k = I.t < 0.5 ? I.t / 0.5 : I.t > I.dur - 0.4 ? (I.dur - I.t) / 0.4 : 1, e = k * k * (3 - 2 * k);
+  return { x:p.x + (b.x - p.x) * e, y:p.y + (b.y - 16 - p.y) * e, k:e }; }
+function bossIntroPost(cx, cy){
+  const I = L.bossIntro, b = L.boss, B = BOSSES[b.type], k = bossIntroCam().k, z = 1 + 0.55 * k;
+  if (z > 1.02){
+    if (zbuf.width !== VW || zbuf.height !== VH){ zbuf.width = VW; zbuf.height = VH; }
+    zctx.imageSmoothingEnabled = false; zctx.clearRect(0, 0, VW, VH); zctx.drawImage(cv, 0, 0);
+    const w = VW / z, h = VH / z, sx = clamp(b.x - cx - w / 2, 0, VW - w), sy = clamp(b.y - 16 - cy - h / 2, 0, VH - h);
+    ctx.imageSmoothingEnabled = false; ctx.drawImage(zbuf, sx, sy, w, h, 0, 0, VW, VH);
+  }
+  const bar = Math.round(VH * 0.13 * k); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, VW, bar); ctx.fillRect(0, VH - bar, VW, bar);
+  const tt = I.t - 0.9; if (tt <= 0) return;
+  const a = Math.min(1, tt / 0.25) * Math.min(1, (I.dur - I.t) / 0.3), slide = 1 - Math.pow(1 - Math.min(1, tt / 0.35), 3), y = Math.round(VH * 0.68);
+  ctx.globalAlpha = a; ctx.fillStyle = 'rgba(150,18,30,.85)'; ctx.fillRect(Math.round(-VW + VW * slide), y - 16, VW, 30);
+  ctx.fillStyle = '#ffd23f'; ctx.fillRect(Math.round(-VW + VW * slide), y - 17, VW, 1); ctx.fillRect(Math.round(VW - VW * slide), y + 14, VW, 1);
+  pixText('CHEFE DA FASE ' + (L.fase + 1), Math.round(VW / 2 - VW * (1 - slide)), y - 22, '#ffe08a', 'small');
+  ctx.font = '16px "Press Start 2P", monospace'; ctx.textAlign = 'center'; const nx = Math.round(VW / 2 + VW * (1 - slide));
+  ctx.fillStyle = OUT; ctx.fillText(B.nome, nx + 2, y + 6); ctx.fillStyle = '#ffffff'; ctx.fillText(B.nome, nx, y + 4);
+  pixText(B.titulo + ' · ' + I.absorbed + ' PEDAÇOS DE LIXO', Math.round(VW / 2 - VW * (1 - slide)), y + 24, '#ffd0c9', 'small');
+  ctx.globalAlpha = 1;
+}
+function updateBossIntro(dt){
+  const I = L.bossIntro, b = L.boss; I.t += dt;
+  if (b){ b.grow = Math.min(1, b.grow + dt * 1.4); b.anim += dt; }
+  if (I.t > 1 && !I.roar && b){ I.roar = true; cam.shake = 0.9; sfx('boss'); G.player.surprise = 1.5;
+    for (let i = 0; i < 40; i++){ const a = i / 40 * TAU; L.parts.push({ x:b.x + Math.cos(a) * 30, y:b.y + 20 + Math.sin(a) * 12, vx:Math.cos(a) * 120, vy:Math.sin(a) * 50 - 40, life:0.6, col:i % 2 ? '#e8d2a0' : '#ffffff', s:2 }); } }
+  for (const q of L.parts){ q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 160 * dt; } L.parts = L.parts.filter(q => q.life > 0);
+  for (const f of L.fx) f.t += dt; L.fx = L.fx.filter(f => f.t < f.dur);
+  if (I.t >= I.dur){ L.bossIntro = null; if (b) banner(BOSSES[b.type].nome + '!', 1.6); G.player.inv = Math.max(G.player.inv, 1); }
+}
+
 function update(dt){
   const p = G.player, F = FASES[L.fase];
   L.time += dt;
+  if (L.bossIntro){ updateBossIntro(dt); return; }
   let ix = 0, iy = 0;
   if (keys.KeyA || keys.ArrowLeft) ix -= 1; if (keys.KeyD || keys.ArrowRight) ix += 1;
   if (keys.KeyW || keys.ArrowUp) iy -= 1; if (keys.KeyS || keys.ArrowDown) iy += 1;
@@ -2654,7 +2882,7 @@ function update(dt){
   const il = Math.hypot(ix, iy); if (il > 1){ ix /= il; iy /= il; }
   p.moving = il > 0.1 && p.hp > 0;
   if (p.moving){ p.face = Math.atan2(iy, ix); if (Math.abs(ix) > 0.15) p.flip = ix < 0; p.anim += dt; }
-  const spd = p.speed * (p.slow > 0 ? 0.5 : 1) * (p.bag.length >= p.cap ? 0.9 : 1);
+  const spd = p.speed * (p.slow > 0 ? 0.5 : 1) * (p.bag.length >= p.cap ? 0.9 : 1) * (p.wet ? 0.78 : 1);
   if (il > 0.1){ p.lastIx = ix / Math.max(il, 0.001); p.lastIy = iy / Math.max(il, 0.001); }
   if (p.hp > 0 && p.skillT > 0) updateSkillMove(dt);
   else if (p.hp > 0 && p.dashT > 0){
@@ -2691,6 +2919,7 @@ function update(dt){
   updateExtras(dt);
   updateProjectiles(dt);
   updateItems(dt);
+  updateWeather(dt);
   updateCritters(dt);
   for (const q of L.parts){ q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 160 * dt; }
   L.parts = L.parts.filter(q => q.life > 0);
@@ -2872,13 +3101,14 @@ function sortY(o, k){ return k === 'prop' ? o.y + o.spr.h / 2 - (o.kind === 'pal
 
 function render(dt){
   const t = L.time;
-  const target = CINE ? CINE.cam : G ? G.player : { x:WORLD_W / 2 + Math.sin(performance.now() / 6000) * 300, y:SHORE + 120 };
+  const target = CINE ? CINE.cam : G ? (L.bossIntro && L.boss ? bossIntroCam() : G.player) : { x:WORLD_W / 2 + Math.sin(performance.now() / 6000) * 300, y:SHORE + 120 };
   camUpdate(target.x, target.y, dt);
   let sx = 0, sy = 0; if (cam.shake > 0 && !reduceMotion && OPTS.tremor){ sx = rand(-2, 2); sy = rand(-2, 2); }
   const cx = Math.round(cam.x + sx), cy = Math.round(cam.y + sy);
   const now = performance.now() / 1000;
   ctx.drawImage(L.bg, -cx, -cy);
   drawWater(cx, cy, now);
+  drawWeatherGround(cx, cy, now);
   const onScr = (x, y, m = 40) => x > cx - m && x < cx + VW + m && y > cy - m && y < cy + VH + m;
 
   for (const z of L.zones){ const x = Math.round(z.x - cx), y = Math.round(z.y - cy), r = z.r * Math.min(1, z.t * 5);
@@ -3084,7 +3314,7 @@ function render(dt){
   const F = FASES[L.fase];
   if (F.overlay){ ctx.fillStyle = F.overlay; ctx.fillRect(0, 0, VW, VH); }
   if (F.night){
-    lctx.globalCompositeOperation = 'source-over'; lctx.clearRect(0, 0, VW, VH); lctx.fillStyle = 'rgba(8,12,40,0.6)'; lctx.fillRect(0, 0, VW, VH);
+    lctx.globalCompositeOperation = 'source-over'; lctx.clearRect(0, 0, VW, VH); lctx.fillStyle = `rgba(8,12,40,${0.6 * (1 - Math.min(1, (L.weather && L.weather.flash) || 0))})`; lctx.fillRect(0, 0, VW, VH);
     lctx.globalCompositeOperation = 'destination-out';
     const lights = [[G ? G.player.x - cx : VW / 2, G ? G.player.y - cy : VH / 2, 130]];
     for (const b of L.bins) lights.push([b.x - cx, b.y - cy, 40]);
@@ -3093,6 +3323,7 @@ function render(dt){
     ctx.fillStyle = '#fffbe6'; for (let i = 0; i < 40; i++){ const x = (i * 97 + 13) % VW, y = (i * 53) % Math.max(10, SHORE - 40 - cy); if ((t * 2 + i) % 7 > 1) ctx.fillRect(x, y, 1, 1); }
   }
 
+  drawWeatherSky(cx, cy, now);
   if (G && state === 'play' && G.player.hp > 0 && G.player.hp / G.player.maxHp < 0.3){
     const k = 0.35 + 0.2 * Math.sin(t * 5), gr = ctx.createRadialGradient(VW / 2, VH / 2, Math.min(VW, VH) * 0.35, VW / 2, VH / 2, Math.max(VW, VH) * 0.7);
     gr.addColorStop(0, 'rgba(200,20,30,0)'); gr.addColorStop(1, `rgba(200,20,30,${k})`); ctx.fillStyle = gr; ctx.fillRect(0, 0, VW, VH); }
@@ -3114,6 +3345,7 @@ function render(dt){
     ctx.strokeStyle = 'rgba(255,248,231,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 22, 0, TAU); ctx.stroke();
     ctx.fillStyle = 'rgba(255,248,231,.7)'; ctx.beginPath(); ctx.arc(ox + kx, oy + ky, 8, 0, TAU); ctx.fill();
   }
+  if (L.bossIntro && L.boss) bossIntroPost(cx, cy);
   if (CINE) cinePost();
 }
 function edgeArrow(bx, by, col, small, label){
@@ -4144,7 +4376,7 @@ function resetData(){
   const b = $('#opt-reset');
   if (Date.now() - resetArmed > 4000){ resetArmed = Date.now(); b.textContent = 'TOQUE DE NOVO PARA CONFIRMAR'; setTimeout(() => { if (Date.now() - resetArmed >= 4000) b.textContent = 'APAGAR'; }, 4100); return; }
   resetArmed = 0;
-  for (const k of ['lp-nick','lp-tut','lp-hist','lp-marina-infectada','lp-runs','lp-vote','lp-client','lp-zerou','lp-dlc-fim','lp-apresentacao']){ try { localStorage.removeItem(k); } catch (e) {} }
+  for (const k of ['lp-nick','lp-tut','lp-hist','lp-marina-infectada','lp-runs','lp-vote','lp-client','lp-zerou','lp-dlc-fim','lp-apresentacao','lp-conchas','lp-oficina','lp-conq','lp-cstats','lp-zerou-com']){ try { localStorage.removeItem(k); } catch (e) {} }
   Rank.local = []; Rank.localVote = null; Rank.last = null; myNick = ''; $('#nick').value = '';
   renderRank(); renderVotes();
   b.textContent = 'DADOS APAGADOS';
@@ -4179,6 +4411,7 @@ addEventListener('keydown', e => {
   if (['title','codex','chapters'].includes(state) && ['ArrowDown','ArrowUp','KeyW','KeyS'].includes(e.code)){ e.preventDefault(); menuNav(['ArrowDown','KeyS'].includes(e.code) ? 1 : -1); return; }
   if (state === 'codex'){ if (e.code === 'Escape') toTitle(); return; }
   if (state === 'chapters'){ if (e.code === 'Escape') toTitle(); return; }
+  if (state === 'oficina'){ if (e.code === 'Escape') toTitle(); return; }
   if (state === 'credits'){ if (['Escape','Space','Enter'].includes(e.code)){ e.preventDefault(); endCredits(); } return; }
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
   if (e.code === 'Space' && state === 'play') useBurst();
@@ -4213,6 +4446,9 @@ $('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); 
 $('#btn-rank-back').onclick = () => toTitle();
 $('#btn-win-rank').onclick = () => goRank();
 $('#btn-codex').onclick = () => { initAudio(); openCodex('personagens'); };
+$('#btn-oficina').onclick = () => { initAudio(); openOficina('melhorias'); };
+$('#of-back').onclick = () => toTitle();
+$('#of-tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b){ ofAba = b.dataset.v; renderOficina(); uiTick(); } });
 $('#btn-about').onclick = () => { initAudio(); openCodex('comojogar'); };
 $('#btn-cred').onclick = () => { initAudio(); rollCredits(toTitle); };
 $('#codex-back').onclick = () => toTitle();
@@ -4230,6 +4466,7 @@ const MENU_INFO = {
   dlc:        () => dlcUnlocked()
     ? ['O DESCARTE · DLC', 'Depois da cena pós-créditos, o Robert treina no lixão com o Chorume. Jogue com ele e o Martelo Compactador.']
     : ['O DESCARTE · BLOQUEADO', 'Termine a história principal para liberar o capítulo do Robert. Em História, o Modo apresentação libera sem precisar terminar.'],
+  oficina:    () => ['OFICINA DOS GUARDIÕES', `Você tem ${conchas()} conchas. Compre melhorias que valem para todas as partidas e veja suas conquistas (${Object.keys(load('lp-conq', {})).length} de ${CONQUISTAS.length}).`],
   personagens:() => ['PERSONAGENS', 'Os Guardiões da Maré, a Mestra Caretta e quem está do outro lado: história, roupas, armas, poderes e expressões.'],
   sobre:      () => ['SOBRE O JOGO', 'Como jogar, os monstros de lixo, as cores da coleta seletiva e a ideia do projeto integrador.'],
   ranking:    () => ['RANKING DA PRAIA', 'As melhores e as piores pontuações, e os votos de quem já jogou.'],
@@ -4265,7 +4502,7 @@ function drawMenuArt(k){
   else if (k === 'dlc'){ const ok = dlcUnlocked(); putSpr(g, SPR.chars.robert[0], 38, base, 'zangado', 'robert', !ok); putSpr(g, SPR.chars.chorume[0], 72, base, 'zangado', null, !ok); }
   else if (k === 'personagens'){ putSpr(g, SPR.caretta[0], 4, base, 'alegre'); HEROIS.forEach((id, i) => putSpr(g, SPR.chars[id][0], 30 + i * 19, base, 'alegre')); putSpr(g, SPR.chars.robert[0], 106, base, 'zangado'); }
   else if (k === 'sobre' || k === 'opcoes') Object.keys(MATS).forEach((m, i) => { const s = SPR.bin[m]; g.drawImage(s.img, 12 + i * 22, base - s.h); });
-  else if (k === 'ranking') heroes('comemorando', 12, true);
+  else if (k === 'ranking' || k === 'oficina') heroes('comemorando', 12, true);
   else if (k === 'creditos'){ putSpr(g, SPR.caretta[0], 6, base, 'alegre'); HEROIS.forEach((id, i) => putSpr(g, SPR.chars[id][0], 34 + i * 23, base, 'comemorando')); }
 }
 function paintMenu(){
@@ -4275,6 +4512,7 @@ function paintMenu(){
   const open = dlcUnlocked();
   $('#btn-dlc').classList.toggle('lock', !open);
   $('#dlc-sub').textContent = open ? 'DLC' : 'BLOQUEADO';
+  $('#of-sub').textContent = conchas() + ' CONCHAS';
   const f = document.activeElement && document.activeElement.closest && document.activeElement.closest('.mitem');
   menuDetail(f ? f.dataset.k : 'jogar');
 }
