@@ -1663,10 +1663,15 @@ Object.assign(TRACKS, {
   alegre: { bpm:76, leadWave:'triangle', leadVol:0.075, lead2:false, echo:true, arp:[0,7,12,19,12,7,0,7],
     lead:'E5 - - - D5 - C5 - G4 - - - C5 - D5 - | D5 - - - - - - - B4 - - - G4 - - - | C5 - - - E5 - - - A5 - - - G5 - E5 - | F5 - - - - - - - - - - - . . . . | E5 - - - G5 - - - C6 - - - B5 - A5 - | B5 - - - - - G5 - D5 - - - - - - - | A5 - - - G5 - F5 - E5 - - - F5 - - - | D5 - - - - - - - - - - - . . . .',
     bass:'C3 C3 G2 G2 A2 A2 F2 F2 C3 C3 G2 G2 F2 F2 G2 G2', bassSustain:true },
-  // tristeza: lenta, em ré menor, com acordes arpejados como um piano
-  triste: { bpm:70, leadWave:'triangle', leadVol:0.075, lead2:false, echo:true, arp:[0,7,12,7,0,7,12,7],
-    lead:'A4 - - - D5 - - - F5 - - - E5 - D5 - | D5 - - - - - - - C5 - - - Bb4 - - - | A4 - - - C5 - - - F5 - - - G5 - A5 - | G5 - - - - - - - E5 - - - - - . . | A5 - - - G5 - F5 - E5 - - - D5 - - - | F5 - - - E5 - D5 - C5 - - - D5 - - - | Bb4 - - - D5 - - - G5 - - - F5 - E5 - | E5 - - - - - - - C#5 - - - - - . .',
+  // tristeza: lenta, em ré menor, com acordes de fundo que sustentam a melodia até ela subir no clímax
+  triste: { bpm:64, leadWave:'triangle', leadVol:0.08, lead2:false, echo:true, arp:[0,7,12,7,0,7,12,7], pad:'m m M M M M M M m m M M m m M M',
+    lead:'F5 - - - E5 - D5 - A4 - - - - - - - | Bb4 - - - C5 - D5 - F5 - - - - - E5 - | C5 - - - - - - - A4 - - - C5 - F5 - | E5 - - - - - - - - - - - G5 - - - | A5 - - - - - G5 - F5 - - - E5 - D5 - | D5 - - - - - - - F5 - - - Bb5 - - - | A5 - - - G5 - F5 - G5 - - - - - - - | E5 - - - C#5 - - - A4 - - - - - . .',
     bass:'D2 D2 Bb1 Bb1 F2 F2 C2 C2 D2 D2 Bb1 Bb1 G1 G1 A1 A1', bassSustain:true },
+  // treinamento: montagem com batida, em lá menor subindo para o maior
+  treino: { bpm:116, leadVol:0.04,
+    lead:'A4 . A4 . C5 . E5 - - . D5 . C5 . B4 . | C5 - - . A4 . F4 . A4 . C5 . F5 - E5 . | E5 . E5 . G5 . C6 - - . B5 . A5 . G5 . | G5 - - - D5 - - - B4 - - - D5 - - - | A5 . A5 . G5 . E5 - - . G5 . A5 . C6 . | C6 - - . A5 . F5 . A5 . C6 . D6 - C6 . | B5 - - . G5 . D5 . G5 . B5 . D6 - - - | D6 - - - - - - - B5 - C6 - D6 - - -',
+    bass:'A2 A2 F2 F2 C3 C3 G2 G2 A2 A2 F2 F2 G2 G2 G2 G2', bassPat:[0,null,12,null,0,12,null,12],
+    kick:'x.......x.x.....', snare:'....x.......x...', hat:'x.x.x.x.x.x.x.x.', fill:'....x.......x.xx' },
   tensa: { bpm:120, leadVol:0.035, cut:2200, echo:true,
     lead:'D5 . . . D5 . . . G#4 - - - A4 - - - | D5 . . . D5 . . . F5 - - - E5 - - - | D5 . D5 . D#5 . D5 . G#4 - - - A4 - - - | C#5 - - - - - - - D5 - - - - - - -',
     bass:'D2 D2 D2 D2 D2 D2 A1 A1', bassPat:[0,0,0,0,0,0,0,0], bassVol:0.04,
@@ -1687,7 +1692,7 @@ Object.assign(TRACKS, {
     bass:'E2 E2 F2 F2 E2 E2 D2 F2', bassPat:[0,null,0,12,null,0,null,0], bassVol:0.05,
     kick:'x..x..x.x..x..x.', snare:'....x.......x...', hat:'.x.x.x.x.x.x.x.x' },
 });
-for (const T of Object.values(TRACKS)){ T.steps = T.lead.replace(/\|/g, ' ').trim().split(/\s+/); T.len = T.steps.length; T.roots = T.bass.split(/\s+/).map(midi); }
+for (const T of Object.values(TRACKS)){ if (T.pad) T.pads = T.pad.split(/\s+/); T.steps = T.lead.replace(/\|/g, ' ').trim().split(/\s+/); T.len = T.steps.length; T.roots = T.bass.split(/\s+/).map(midi); }
 // música do menu: arquivo gravado, tocado em loop no lugar do sequenciador
 TRACKS.menu = { file:'musica-menu.mp3', vol:0.85 };
 TRACKS.bossFinal = { ...TRACKS.boss, bpm:184, leadWave:'sawtooth', leadVol:0.04, cut:2600 };
@@ -1746,6 +1751,7 @@ function scheduleStep(T, i, t, sd){
   const bar = i >> 4, s = i & 15, half = i >> 3, root = T.roots[half % T.roots.length];
   if (T.bassSustain){ if ((s & 7) === 0) voice(T.bassWave || 'triangle', hz(root), t, sd * 7.6, T.bassVol ?? 0.08, 700); }
   else { const pat = T.bassPat || (T.chug ? [0,0,0,12,0,0,7,0] : [0,null,12,0,null,12,0,12]); const b = pat[s & 7]; if (b != null) voice(T.bassWave || 'square', hz(root + b), t, sd * 0.85, T.bassVol ?? 0.05, 900); }
+  if (T.pads && (s & 7) === 0){ const q = T.pads[half % T.pads.length] === 'm' ? 3 : 4; for (const iv of [12, 12 + q, 19]) voice('triangle', hz(root + iv), t, sd * 7.8, 0.022, 1300); }
   if (T.arp){ const iv = T.arp[s % T.arp.length]; voice('square', hz(root + 24 + iv), t, sd * 0.8, 0.016, 2600, T.echo ? echoBus : musicGain); }
   const lastBar = bar === (T.len >> 4) - 1;
   if (T.kick && T.kick[s] === 'x'){ const o = AC.createOscillator(), g = AC.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16); o.connect(g).connect(musicGain); o.start(t); o.stop(t + 0.18); }
@@ -3661,6 +3667,28 @@ function riseMonsters(C, x, y){
   const types = ['pet','lata','sacola','bituca','vidro','papelao','isopor','pet','lata','sacola'];
   types.forEach((type, i) => { const a = i / types.length * TAU; C.actors.push({ id:'m' + i, kind:'enemy', type, x:x + Math.cos(a) * 84, y:y + Math.sin(a) * 48, rise:0, delay:0.2 + i * 0.1, anim:Math.random() * 3 }); });
 }
+/* treinamento: cada aprendiz mostra o seu dom */
+function later(C, sec, fn){ (C.timers = C.timers || []).push({ t:sec, fn }); }
+function dashTo(C, id, x, spd){ const a = actor(C, id); if (a){ a.tx = x; a.ty = a.y; a.spd = spd; } }
+function popActor(C, e){ if (!e || e.gone) return; e.gone = true; cam.shake = 0.18; sfx('kill'); burst(C, { x:e.x, y:e.y + 6 }, ['#ffd23f', '#ffffff', '#9be6b0']); }
+function slash(C, id){
+  const a = actor(C, id); if (!a) return; const dir = a.flip ? -1 : 1;
+  C.fx.push({ kind:'slash', a, dir, t:0, dur:0.22 }); sfx('swing');
+  for (const e of C.actors) if (e.kind === 'enemy' && !e.gone && Math.abs(e.y - a.y) < 20 && (e.x - a.x) * dir > -4 && (e.x - a.x) * dir < 36) popActor(C, e);
+}
+function shoot(C, id, alvo){
+  const a = actor(C, id), b = actor(C, alvo); if (!a || !b) return; const dir = a.flip ? -1 : 1;
+  C.fx.push({ kind:'shot', x0:a.x + dir * 10, y0:a.y - 12, b, t:0, dur:0.32, hit:false }); sfx('swing'); a.hop = 0.2;
+}
+function toss(C, id, itemId){
+  const a = actor(C, id), it = actor(C, itemId); if (!a || !it) return; const bin = C.actors.find(b => b.kind === 'bin' && b.mat === ETYPES[it.type].mat); if (!bin) return;
+  it.gone = true; a.flip = bin.x < a.x;
+  C.fx.push({ kind:'toss', type:it.type, x0:a.x, y0:a.y - 14, b:bin, t:0, dur:0.5, hit:false }); sfx('swing');
+}
+function frisbeeAt(f){ const ang = Math.PI + Math.min(1, f.t / f.dur) * TAU; return { x:f.cx + Math.cos(ang) * f.rx, y:f.cy + Math.sin(ang) * f.ry - 8 }; }
+function throwFrisbee(C, id, rx, ry){ const a = actor(C, id); if (!a) return; a.noHeld = true; C.fx.push({ kind:'frisbee', a, cx:a.x + rx, cy:a.y, rx, ry, t:0, dur:1.7 }); sfx('swing'); }
+// lixo espalhado numa elipse, no caminho do frisbee do Léo
+function anelLixo(x, y, rx, ry){ return ['pet','lata','bituca','papelao','sacola','vidro'].map((type, i) => { const ang = Math.PI + (i + 0.6) / 6.4 * TAU; return { id:'f' + i, kind:'item', type, x:STAGE_X + x + rx + Math.cos(ang) * rx, y:y + Math.sin(ang) * ry }; }); }
 function throwToxic(C, from, to){
   const a = actor(C, from), b = actor(C, to); if (!a || !b) return;
   C.fx.push({ kind:'toxic', x0:a.x, y0:a.y - 12, b, t:0, dur:0.9, hit:false });
@@ -3702,18 +3730,77 @@ const OPENING = () => [
     { say:[{ who:'leo', mood:'surpreso', text:'Isso contraria tudo o que eu estudei... e eu adorei.' }, { who:'cida', mood:'preocupado', text:'Menino, isso não tá nos teus livros.' }], shot:{ at:[STAGE_X + 50, 330], z:2 } },
     { say:[{ who:'caretta', text:'É um chamado.' }], shot:'wide', fx:'flash', do:C => { setMoods(C, HEROIS, 'alegre'); setMoods(C, ['robert'], 'preocupado'); } } ] },
 
-  // 5 · o treinamento: uma página com as cinco transformações
-  { fase:0, music:'alegre', cam:[STAGE_X, 320], crabs:'alegre',
-    actors:[ ch('marina', -100, 380, 'alegre', CASUAL), ch('tiago', -50, 396, 'alegre', CASUAL), ch('robert', 0, 404, 'preocupado', CASUAL), ch('cida', 50, 396, 'alegre', { flip:true, ...CASUAL }), ch('leo', 100, 380, 'alegre', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 64) ], lines:[
+  // 5 · o treinamento: cada aprendiz recebe o poder e treina do jeito da sua classe
+  { fase:0, music:'treino', cam:[STAGE_X, 330], crabs:'alegre',
+    actors:[ ch('marina', -100, 390, 'alegre', CASUAL), ch('tiago', -50, 402, 'alegre', CASUAL), ch('robert', 0, 408, 'preocupado', CASUAL), ch('cida', 50, 402, 'alegre', { flip:true, ...CASUAL }), ch('leo', 100, 390, 'alegre', { flip:true, ...CASUAL }), carettaAt(0, SHORE + 64) ], lines:[
     { card:'O TREINAMENTO' },
-    { say:[{ who:'caretta', text:'Marina: coragem de chegar perto do que todos evitam.' }, { who:'marina', mood:'comemorando', text:'Ninguém fica pra trás. Pode contar comigo.' }], shot:{ f:'marina', z:2.4 }, do:C => transform(C, 'marina') },
-    { say:[{ who:'caretta', text:'Tiago: você lê o mar como ninguém.' }, { who:'tiago', mood:'comemorando', text:'Irado! Agora o mar tá do meu lado.' }], shot:{ f:'tiago', z:2.4 }, do:C => transform(C, 'tiago') },
-    { say:[{ who:'caretta', text:'Cida: ninguém conhece o lixo como você.' }, { who:'cida', mood:'alegre', text:'Trinta anos esperando alguém reparar, minha filha.' }], shot:{ f:'cida', z:2.4 }, do:C => transform(C, 'cida') },
-    { say:[{ who:'caretta', text:'Léo: na natureza, nada se perde.' }, { who:'leo', mood:'comemorando', text:'...tudo se transforma! Lavoisier já dizia!' }], shot:{ f:'leo', z:2.4 }, do:C => transform(C, 'leo') },
-    { say:[{ who:'caretta', text:'Robert: você é o mais rápido de todos.' }, { who:'robert', mood:'zangado', text:'Eu sei.' }], shot:{ f:'robert', z:2.6 }, do:C => transform(C, 'robert') },
-    { say:[{ who:'caretta', text:'Mas força sem paciência vira raiva. E raiva vira destruição.' }], shot:{ f:'caretta', z:2.8 }, page:true, do:C => setMoods(C, ['robert'], 'preocupado') },
-    { say:[{ who:'robert', mood:'preocupado', text:'...' }], shot:{ f:'robert', z:3.2 }, grade:'red' },
-    { say:[{ who:'caretta', text:'Lembrem: o segredo é separar na origem. Cada resíduo na sua lixeira.' }], shot:'wide' } ] },
+    { say:[{ who:'caretta', text:'A força da praia não chega para quem só quer. Chega para quem treina.' }], shot:{ f:'caretta', z:2.4 } },
+    { say:[{ who:'caretta', text:'Cada um de vocês tem um dom. Esta semana, vamos acordar cada um deles.' }], shot:'wide', do:C => hop(C, HEROIS) } ] },
+
+  // 5a · Marina, a guerreira: três bonecos de lixo, um golpe para cada
+  { fase:0, music:'treino', cam:[STAGE_X, 360], crabs:'alegre',
+    actors:[ ch('marina', -110, 400, 'alegre', CASUAL), carettaAt(-150, 352),
+      { id:'d1', kind:'enemy', type:'pet', x:STAGE_X - 10, y:398 }, { id:'d2', kind:'enemy', type:'sacola', x:STAGE_X + 34, y:402 }, { id:'d3', kind:'enemy', type:'lata', x:STAGE_X + 78, y:398 } ], lines:[
+    { card:'DIA 1 · MARINA', sub:'a guerreira' },
+    { say:[{ who:'caretta', text:'Marina: coragem de chegar perto do que todos evitam.' }], shot:{ f:'marina', z:2.4 }, do:C => transform(C, 'marina') },
+    { say:[{ who:'marina', mood:'comemorando', text:'Ninguém fica pra trás. Pode contar comigo.' }] },
+    { say:[{ who:'marina', mood:'zangado', text:'Três de uma vez? Pode vir!' }], shot:{ at:[STAGE_X - 10, 380], z:1.8 }, min:3,
+      do:C => { dashTo(C, 'marina', STAGE_X - 30, 170); later(C, 0.55, C => slash(C, 'marina')); later(C, 0.75, C => dashTo(C, 'marina', STAGE_X + 14, 170)); later(C, 1.1, C => slash(C, 'marina'));
+        later(C, 1.3, C => dashTo(C, 'marina', STAGE_X + 58, 170)); later(C, 1.65, C => slash(C, 'marina')); later(C, 1.9, C => { hop(C, ['marina']); setMoods(C, ['marina'], 'comemorando'); }); } },
+    { say:[{ who:'caretta', text:'Rápida e sem medo. Uma salva-vidas de verdade.' }], shot:{ f:'marina', z:2.2 } } ] },
+
+  // 5b · Tiago, o atirador: latinhas na areia, uma esponjada em cada
+  { fase:0, music:'treino', cam:[STAGE_X, 360], crabs:'alegre',
+    actors:[ ch('tiago', -100, 404, 'alegre', CASUAL), carettaAt(-150, 352),
+      { id:'c1', kind:'enemy', type:'lata', x:STAGE_X + 50, y:388 }, { id:'c2', kind:'enemy', type:'lata', x:STAGE_X + 80, y:404 }, { id:'c3', kind:'enemy', type:'lata', x:STAGE_X + 110, y:390 } ], lines:[
+    { card:'DIA 2 · TIAGO', sub:'o atirador' },
+    { say:[{ who:'caretta', text:'Tiago: você lê o mar como ninguém.' }], shot:{ f:'tiago', z:2.4 }, do:C => transform(C, 'tiago') },
+    { say:[{ who:'tiago', mood:'comemorando', text:'Irado! Agora o mar tá do meu lado.' }] },
+    { say:[{ who:'tiago', mood:'alegre', text:'Três latinhas, três esponjadas. Olha só, mestra!' }], shot:{ at:[STAGE_X + 10, 390], z:1.6 }, min:3,
+      do:C => { later(C, 0.4, C => shoot(C, 'tiago', 'c1')); later(C, 0.95, C => shoot(C, 'tiago', 'c2')); later(C, 1.5, C => shoot(C, 'tiago', 'c3')); later(C, 2.0, C => { hop(C, ['tiago']); setMoods(C, ['tiago'], 'comemorando'); }); } },
+    { say:[{ who:'caretta', text:'Olho de quem conhece cada onda. Nenhuma garrafa vai escapar de você.' }], shot:{ f:'caretta', z:2.4 } } ] },
+
+  // 5c · Cida, a alquimista: cada resíduo voa para a lixeira certa
+  { fase:0, music:'treino', cam:[STAGE_X, 360], crabs:'alegre',
+    actors:[ ch('cida', -10, 414, 'alegre', CASUAL), carettaAt(-150, 352),
+      ...['plastico','papel','vidro','metal','rejeito'].map((mat, i) => ({ id:'b' + i, kind:'bin', mat, x:STAGE_X - 70 + i * 34, y:368 })),
+      ...['pet','papelao','vidro','lata','bituca'].map((type, i) => ({ id:'i' + i, kind:'item', type, x:STAGE_X - 46 + i * 20 + (i % 2) * 4, y:432 + (i % 2) * 6 })) ], lines:[
+    { card:'DIA 3 · CIDA', sub:'a alquimista' },
+    { say:[{ who:'caretta', text:'Cida: ninguém conhece o lixo como você.' }], shot:{ f:'cida', z:2.4 }, do:C => transform(C, 'cida') },
+    { say:[{ who:'cida', mood:'alegre', text:'Trinta anos esperando alguém reparar, minha filha.' }] },
+    { say:[{ who:'cida', mood:'alegre', text:'Plástico no vermelho, papel no azul, vidro no verde, metal no amarelo... e bituca no cinza.' }], shot:{ at:[STAGE_X - 10, 396], z:1.7 }, min:3.6,
+      do:C => { [0, 1, 2, 3, 4].forEach(k => later(C, 0.3 + k * 0.5, C => toss(C, 'cida', 'i' + k))); later(C, 2.9, C => { hop(C, ['cida']); setMoods(C, ['cida'], 'comemorando'); }); } },
+    { say:[{ who:'caretta', text:'Nenhum erro. Isso é sabedoria que livro nenhum ensina.' }], shot:{ f:'caretta', z:2.4 } } ] },
+
+  // 5d · Léo, o coletor: um frisbee reciclado recolhe tudo numa curva só
+  { fase:0, music:'treino', cam:[STAGE_X, 360], crabs:'alegre',
+    actors:[ ch('leo', -70, 404, 'alegre', CASUAL), carettaAt(-150, 352), ...anelLixo(-70, 404, 70, 26) ], lines:[
+    { card:'DIA 4 · LÉO', sub:'o coletor' },
+    { say:[{ who:'caretta', text:'Léo: na natureza, nada se perde.' }], shot:{ f:'leo', z:2.4 }, do:C => transform(C, 'leo') },
+    { say:[{ who:'leo', mood:'comemorando', text:'...tudo se transforma! Lavoisier já dizia!' }] },
+    { say:[{ who:'leo', mood:'alegre', text:'Aerodinâmica aplicada: frisbee reciclado, curva perfeita e...' }], shot:{ at:[STAGE_X, 396], z:1.6 }, min:3,
+      do:C => { later(C, 0.4, C => throwFrisbee(C, 'leo', 70, 26)); later(C, 2.3, C => { hop(C, ['leo']); setMoods(C, ['leo'], 'comemorando'); }); } },
+    { say:[{ who:'leo', mood:'comemorando', text:'...coleta completa! Nem uma tampinha ficou pra trás.' }], shot:{ f:'leo', z:2.2 } } ] },
+
+  // 5e · Robert, o mais rápido: corre tanto que só espalha o lixo
+  { fase:0, music:'treino', cam:[STAGE_X, 360], crabs:'alegre',
+    actors:[ ch('robert', -120, 406, 'preocupado', CASUAL), carettaAt(-160, 352),
+      ...['pet','lata','bituca','papelao','sacola','vidro','lata','pet'].map((type, i) => ({ id:'r' + i, kind:'item', type, x:STAGE_X - 70 + i * 22, y:400 + (i % 3) * 5 })) ], lines:[
+    { card:'DIA 5 · ROBERT', sub:'o mais rápido' },
+    { say:[{ who:'caretta', text:'Robert: você é o mais rápido de todos.' }], shot:{ f:'robert', z:2.6 }, do:C => transform(C, 'robert') },
+    { say:[{ who:'robert', mood:'zangado', text:'Eu sei.' }] },
+    { say:[{ who:'caretta', text:'Então recolha este lixo. Com calma.' }], shot:{ f:'caretta', z:2.2 } },
+    { say:[{ who:'robert', mood:'zangado', text:'Calma é pra quem tem tempo.' }], shot:'wide', fx:'lines', min:2.6,
+      do:C => { dashTo(C, 'robert', STAGE_X + 150, 330); later(C, 0.9, C => dashTo(C, 'robert', STAGE_X - 40, 330)); } },
+    { say:[{ who:'caretta', mood:'triste', text:'Rápido... mas você só espalhou o lixo.' }], shot:'wide', do:C => setMoods(C, ['robert'], 'preocupado') },
+    { say:[{ who:'caretta', text:'Força sem paciência vira raiva. E raiva vira destruição.' }], shot:{ f:'caretta', z:2.8 } },
+    { say:[{ who:'robert', mood:'preocupado', text:'...' }], shot:{ f:'robert', z:3.2 }, grade:'red' } ] },
+
+  // 5f · os cinco, prontos
+  { fase:0, music:'treino', cam:[STAGE_X, 330], crabs:'alegre',
+    actors:[ ch('marina', -100, 390, 'comemorando', { outfit:'hero' }), ch('tiago', -50, 402, 'comemorando', { outfit:'hero' }), ch('robert', 0, 408, 'preocupado', { outfit:'hero' }), ch('cida', 50, 402, 'alegre', { flip:true, outfit:'hero' }), ch('leo', 100, 390, 'comemorando', { flip:true, outfit:'hero' }), carettaAt(0, SHORE + 64) ], lines:[
+    { card:'UMA SEMANA DEPOIS' },
+    { say:[{ who:'caretta', text:'Lembrem: o segredo é separar na origem. Cada resíduo na sua lixeira.' }], shot:'wide', do:C => hop(C, HEROIS) } ] },
 
   // 6 · a briga
   { fase:1, music:'tensa', cam:[STAGE_X, 380], crabs:'triste', trash:50,
@@ -3850,7 +3937,7 @@ function cineScene(i){
   if (!sc.keep){
     if (sc.fase != null) L = makeLevel(sc.fase);
     C.actors = (sc.actors || []).map(a => ({ anim:Math.random() * 3, ...a, mood:villainMood(a.id, a.mood) }));
-    C.fx = [];
+    C.fx = []; C.timers = [];
     if (sc.trash){
       const R = mulberry(17 + i), types = Object.keys(ETYPES), cx0 = sc.cam ? sc.cam[0] : STAGE_X, cy0 = sc.cam ? sc.cam[1] : 360;
       for (let k = 0; k < sc.trash; k++) L.items.push({ type:types[k % types.length], x:cx0 + (R() - 0.5) * 520, y:clamp(cy0 + (R() - 0.5) * 260, SHORE + 14, WORLD_H - 20), vx:0, vy:0, age:0, delay:0, keep:true });
@@ -3884,7 +3971,7 @@ function cineLine(){
   const C = CINE, sc = C.scenes[C.i]; C.line++;
   if (C.line >= sc.lines.length){ if (C.i + 1 < C.scenes.length) cineScene(C.i + 1); else cineEnd(); return; }
   const ln = sc.lines[C.line];
-  C.wait = 0; C.hold = 0; C.lineGrade = ln.grade || null;
+  C.wait = 0; C.hold = 0; C.lineGrade = ln.grade || null; C.minWait = ln.min || 0;
   if (ln.card){
     C.card = { t:0, dur:ln.sub ? 2.4 : 1.9 };
     if (C.comic){ C.text = ''; C.typed = 0; C.speaker = null; if (ln.red) sfx('boss'); comicPanel(C, ln, null); return; }
@@ -4036,17 +4123,22 @@ function cineUpdate(dt){
         if (now % 3 === 0 && chr !== ' ') talkBlip(C.speaker);
       }
     }
-  } else { C.wait += dt; if (C.wait > (C.comic ? 1.6 + C.text.length * 0.032 : 0.75 + C.text.length * 0.011) / TEXTO_VEL()){ cineLine(); if (CINE !== C) return; } }
+  } else { C.wait += dt; if (C.wait > Math.max(C.minWait || 0, (C.comic ? 1.6 + C.text.length * 0.032 : 0.75 + C.text.length * 0.011) / TEXTO_VEL())){ cineLine(); if (CINE !== C) return; } }
+  // ações agendadas da fala (golpes, tiros, arremessos)
+  if (C.timers) for (const tm of C.timers.splice(0)){ tm.t -= dt; if (tm.t <= 0) tm.fn(C); else C.timers.push(tm); }
   // atores
   for (const a of C.actors){
     a.anim = (a.anim || 0) + dt;
+    if (a.vx){ a.x += a.vx * dt; a.y = clamp(a.y + a.vy * dt, SHORE + 14, WORLD_H - 20); const k = Math.exp(-dt * 4); a.vx *= k; a.vy *= k; if (Math.abs(a.vx) < 2) a.vx = 0; }
+    if (a.spd > 150 && a.walking){ L.parts.push({ x:a.x + rand(-3, 3), y:a.y + 2, vx:rand(-20, 20), vy:rand(-30, -5), life:rand(.2, .45), col:'#e8cf9a', s:2 });
+      if (a.id === 'robert') for (const it of C.actors) if (it.kind === 'item' && !it.vx && Math.hypot(it.x - a.x, it.y - a.y) < 11){ it.vx = (a.tx > a.x ? 1 : -1) * rand(90, 170); it.vy = rand(-70, 70); it.hop = 0.45; sfx('hit'); } }
     if (a.hop > 0) a.hop -= dt;
     if (a.tremble > 0) a.tremble -= dt;
     if (a.rise != null){ a.delay -= dt; if (a.delay <= 0) a.rise = Math.min(1, a.rise + dt * 1.5); }
     if (a.tx != null){
       const dx = a.tx - a.x, dy = a.ty - a.y, d = Math.hypot(dx, dy);
-      if (d > 1){ const sp = Math.min(d, (a.kind === 'caretta' ? 26 : 58) * dt); a.x += dx / d * sp; a.y += dy / d * sp; a.walking = a.kind === 'char'; if (Math.abs(dx) > 0.5) a.flip = dx < 0; }
-      else { a.walking = false; a.tx = null; if (a.leave) a.gone = true; }
+      if (d > 1){ const sp = Math.min(d, (a.spd || (a.kind === 'caretta' ? 26 : 58)) * dt); a.x += dx / d * sp; a.y += dy / d * sp; a.walking = a.kind === 'char'; if (Math.abs(dx) > 0.5) a.flip = dx < 0; }
+      else { a.walking = false; a.tx = null; a.spd = 0; if (a.leave) a.gone = true; }
     }
   }
   C.actors = C.actors.filter(a => !a.gone);
@@ -4057,6 +4149,10 @@ function cineUpdate(dt){
       f.hit = true; f.b.sick = true; f.b.mood = 'dor'; f.b.tremble = 1.5; cam.shake = 0.5; C.flash = 1; sfx('hurt');
       for (let k = 0; k < 30; k++) L.parts.push({ x:f.b.x, y:f.b.y - 10, vx:rand(-70, 70), vy:rand(-100, 10), life:rand(.4, 1), col:k % 2 ? '#8bd450' : '#4f8a2a', s:2 });
     }
+    if (f.kind === 'shot' && !f.hit && f.t >= f.dur){ f.hit = true; popActor(C, f.b); }
+    if (f.kind === 'toss' && !f.hit && f.t >= f.dur){ f.hit = true; f.b.hop = 0.3; sfx('deposit'); for (let k = 0; k < 14; k++) L.parts.push({ x:f.b.x, y:f.b.y - 16, vx:rand(-40, 40), vy:rand(-80, -20), life:rand(.3, .7), col:k % 2 ? MATS[f.b.mat].cor : '#ffffff', s:2 }); }
+    if (f.kind === 'frisbee'){ const p = frisbeeAt(f); for (const it of C.actors) if (it.kind === 'item' && !it.gone && Math.hypot(it.x - p.x, it.y - p.y - 8) < 13){ it.gone = true; sfx('pick'); for (let k = 0; k < 8; k++) L.parts.push({ x:it.x, y:it.y - 4, vx:rand(-30, 30), vy:rand(-60, -20), life:rand(.3, .6), col:'#ffd23f', s:2 }); }
+      if (f.t >= f.dur) f.a.noHeld = false; }
   }
   C.fx = C.fx.filter(f => f.t < f.dur + 0.3);
   for (const q of L.parts){ q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 160 * dt; }
@@ -4099,7 +4195,7 @@ function drawActor(a, x, y, t){
     shadow(x - jx, y - jy + 2, 14);
     if (a.flip){ ctx.save(); ctx.translate(x0 + s.w, y0); ctx.scale(-1, 1); ctx.drawImage(s.img, 0, 0); ctx.restore(); if (!a.silhouette) drawFace(ctx, x0 + s.w - s.face.x - 7, y0 + s.face.y, a.mood, s.face); }
     else { ctx.drawImage(s.img, x0, y0); if (!a.silhouette) drawFace(ctx, x0 + s.face.x, y0 + s.face.y, a.mood, s.face); }
-    if ((HEROIS.includes(a.id) || a.hammer) && !a.sick && a.outfit !== 'casual') drawHeld(ctx, a.id, x + (a.flip ? -(s.hx || 5) : (s.hx || 5)), y0 + (s.hy || 18), a.flip ? Math.PI : 0, a.flip, t);
+    if ((HEROIS.includes(a.id) || a.hammer) && !a.sick && a.outfit !== 'casual' && !a.noHeld) drawHeld(ctx, a.id, x + (a.flip ? -(s.hx || 5) : (s.hx || 5)), y0 + (s.hy || 18), a.flip ? Math.PI : 0, a.flip, t);
     if (a.sick || a.id === 'robert'){ ctx.fillStyle = '#8bd450'; const k = (t * 1.5 + a.x * 0.01) % 1; ctx.globalAlpha = 1 - k; ctx.fillRect(x - 7, Math.round(y0 + 6 - k * 10), 2, 2); ctx.fillRect(x + 6, Math.round(y0 + 12 - ((k + 0.5) % 1) * 10), 2, 2); ctx.globalAlpha = 1; }
     return { top:y0 };
   }
@@ -4111,6 +4207,8 @@ function drawActor(a, x, y, t){
     else drawSpr(s, x0, y0, a.mood);
     return { top:y0 };
   }
+  if (a.kind === 'item'){ const s = SPR.item[a.type]; shadow(x - jx, y - jy + (s.h >> 1) - 1, s.w - 2); ctx.drawImage(s.img, x - (s.w >> 1), y - (s.h >> 1)); return { top:y - (s.h >> 1) }; }
+  if (a.kind === 'bin'){ const s = SPR.bin[a.mat]; shadow(x - jx, y - jy + 9, 18); ctx.drawImage(s.img, x - (s.w >> 1), y - s.h + 11); return { top:y - s.h + 11 }; }
   if (a.kind === 'enemy'){
     const r = a.rise == null ? 1 : a.rise; if (r <= 0) return null;
     const s = SPR[a.type][((a.anim * 5) | 0) % 2], yy = y - (s.h >> 1) + Math.round((1 - r) * 10);
@@ -4124,6 +4222,15 @@ function drawCineOverlay(cx, cy, t){
   if (C.glow){
     for (const it of L.items){ const x = Math.round(it.x - cx), y = Math.round(it.y - cy); if (x < -10 || y < -10 || x > VW + 10 || y > VH + 10) continue; ctx.fillStyle = `rgba(160,255,120,${0.16 + 0.12 * Math.sin(t * 4 + it.x)})`; ctx.beginPath(); ctx.arc(x, y, 7, 0, TAU); ctx.fill(); }
     for (const a of C.actors) if (a.kind === 'enemy' && a.rise > 0){ ctx.fillStyle = `rgba(160,255,120,${0.25 * a.rise})`; ctx.beginPath(); ctx.arc(Math.round(a.x - cx), Math.round(a.y - cy), 12, 0, TAU); ctx.fill(); }
+  }
+  for (const f of C.fx){
+    if (f.kind === 'slash' && f.t < f.dur){ const k = f.t / f.dur, x = Math.round(f.a.x - cx + f.dir * 10), y = Math.round(f.a.y - cy - 10);
+      ctx.strokeStyle = `rgba(255,255,255,${1 - k})`; ctx.lineWidth = 2; ctx.beginPath();
+      if (f.dir > 0) ctx.arc(x, y, 14, -1.3 + k * 0.6, 1.1 + k * 0.6); else ctx.arc(x, y, 14, Math.PI - 1.1 - k * 0.6, Math.PI + 1.3 - k * 0.6);
+      ctx.stroke(); ctx.lineWidth = 1; }
+    if (f.kind === 'shot' && !f.hit){ const k = f.t / f.dur, s = SPR.sponge; ctx.drawImage(s.img, Math.round(f.x0 + (f.b.x - f.x0) * k - cx - (s.w >> 1)), Math.round(f.y0 + (f.b.y - 2 - f.y0) * k - Math.sin(k * Math.PI) * 6 - cy)); }
+    if (f.kind === 'toss' && !f.hit){ const k = f.t / f.dur, s = SPR.item[f.type]; ctx.drawImage(s.img, Math.round(f.x0 + (f.b.x - f.x0) * k - cx - (s.w >> 1)), Math.round(f.y0 + (f.b.y - 18 - f.y0) * k - Math.sin(k * Math.PI) * 34 - cy)); }
+    if (f.kind === 'frisbee' && f.t < f.dur){ const p = frisbeeAt(f), s = SPR.frisbee; shadow(Math.round(p.x - cx), Math.round(p.y - cy + 10), 8); ctx.drawImage(s.img, Math.round(p.x - cx - (s.w >> 1)), Math.round(p.y - cy - (s.h >> 1))); }
   }
   for (const f of C.fx) if (f.kind === 'toxic' && !f.hit){
     const k = f.t / f.dur, x = Math.round(f.x0 + (f.b.x - f.x0) * k - cx), y = Math.round(f.y0 + (f.b.y - 12 - f.y0) * k - Math.sin(k * Math.PI) * 30 - cy);
