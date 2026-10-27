@@ -1667,11 +1667,10 @@ function midi(t){ const m = /^([A-G])(#|b)?(\d)$/.exec(t); if (!m) return null; 
 const hz = n => 440 * Math.pow(2, (n - 69) / 12);
 /* trilhas da história e das fases (chiptune original) */
 Object.assign(TRACKS, {
-  // abertura da história: dia de sol na praia, em sol maior
-  alegre: { bpm:120, leadVol:0.045, lead2:false, arp:[0,7,12,7,0,7,12,19],
-    lead:'B4 - D5 - G5 - - . F#5 . G5 . A5 - G5 . | F#5 - - - D5 - - . A4 . D5 . F#5 - E5 . | E5 - G5 - B5 - - . A5 . G5 . F#5 - E5 . | G5 - - - - - E5 . C5 . E5 . D5 - - . | B4 - D5 - G5 - - . F#5 . G5 . B5 - A5 . | A5 - - - F#5 - D5 . E5 . F#5 . A5 - - . | G5 - E5 . C5 - E5 . G5 - C6 . B5 - A5 . | A5 - - - F#5 - - - G5 - - - - - . .',
-    bass:'G2 G2 D2 D2 E2 E2 C2 C2 G2 G2 D2 D2 C2 C2 D2 D2', bassPat:[0,null,7,null,12,null,7,null], bassWave:'triangle', bassVol:0.07,
-    kick:'x.......x.......', snare:'....x.......x...', hat:'..x...x...x...x.' },
+  // abertura da história: lenta e emocionante, como quem começa a contar uma lembrança (dó maior)
+  alegre: { bpm:76, leadWave:'triangle', leadVol:0.075, lead2:false, echo:true, arp:[0,7,12,19,12,7,0,7],
+    lead:'E5 - - - D5 - C5 - G4 - - - C5 - D5 - | D5 - - - - - - - B4 - - - G4 - - - | C5 - - - E5 - - - A5 - - - G5 - E5 - | F5 - - - - - - - - - - - . . . . | E5 - - - G5 - - - C6 - - - B5 - A5 - | B5 - - - - - G5 - D5 - - - - - - - | A5 - - - G5 - F5 - E5 - - - F5 - - - | D5 - - - - - - - - - - - . . . .',
+    bass:'C3 C3 G2 G2 A2 A2 F2 F2 C3 C3 G2 G2 F2 F2 G2 G2', bassSustain:true },
   // tristeza: lenta, em ré menor, com acordes arpejados como um piano
   triste: { bpm:70, leadWave:'triangle', leadVol:0.075, lead2:false, echo:true, arp:[0,7,12,7,0,7,12,7],
     lead:'A4 - - - D5 - - - F5 - - - E5 - D5 - | D5 - - - - - - - C5 - - - Bb4 - - - | A4 - - - C5 - - - F5 - - - G5 - A5 - | G5 - - - - - - - E5 - - - - - . . | A5 - - - G5 - F5 - E5 - - - D5 - - - | F5 - - - E5 - D5 - C5 - - - D5 - - - | Bb4 - - - D5 - - - G5 - - - F5 - E5 - | E5 - - - - - - - C#5 - - - - - . .',
