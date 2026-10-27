@@ -1687,11 +1687,21 @@ Object.assign(TRACKS, {
     kick:'x..x..x.x..x..x.', snare:'....x.......x...', hat:'.x.x.x.x.x.x.x.x' },
 });
 for (const T of Object.values(TRACKS)){ T.steps = T.lead.replace(/\|/g, ' ').trim().split(/\s+/); T.len = T.steps.length; T.roots = T.bass.split(/\s+/).map(midi); }
+// música do menu: arquivo gravado, tocado em loop no lugar do sequenciador
+TRACKS.menu = { file:'musica-menu.mp3', vol:0.85 };
 TRACKS.bossFinal = { ...TRACKS.boss, bpm:184, leadWave:'sawtooth', leadVol:0.04, cut:2600 };
 
 let echoBus = null, sfxBus = null;
 let AC = null, sfxOn = true, musicOn = true, master = null, musicGain = null, noiseBuf = null;
-const Music = { track:null, step:0, nextT:0, timer:null };
+const Music = { track:null, step:0, nextT:0, timer:null, el:null, elGain:null };
+function fileMusic(T){
+  if (!Music.el){ Music.el = new Audio(T.file); Music.el.loop = true;
+    // pela web passa pelo volume da música; abrindo o arquivo direto (file://) o navegador bloquearia o som, então toca sem o mixer
+    if (location.protocol !== 'file:'){ try { Music.elGain = AC.createGain(); Music.elGain.gain.value = T.vol; AC.createMediaElementSource(Music.el).connect(Music.elGain).connect(musicGain); } catch (e) { Music.elGain = null; } } }
+  if (!Music.elGain) Music.el.volume = Math.min(1, musicLevel() * T.vol);
+  Music.el.currentTime = 0; if (musicOn) Music.el.play().catch(() => {});
+}
+function stopFileMusic(){ if (Music.el) Music.el.pause(); }
 function initAudio(){
   if (!AC){ try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; return; }
     master = AC.createGain(); master.gain.value = 0.9; master.connect(AC.destination);
@@ -1707,10 +1717,11 @@ function playMusic(name){
   const now = AC.currentTime;
   musicGain.gain.cancelScheduledValues(now); musicGain.gain.setValueAtTime(0.0001, now); musicGain.gain.linearRampToValueAtTime(Math.max(0.0001, musicLevel()), now + 0.7);
   Music.track = T; Music.step = 0; Music.nextT = now + 0.08;
+  if (T.file) fileMusic(T); else stopFileMusic();
   if (!Music.timer) Music.timer = setInterval(musicTick, 25);
 }
 function musicTick(){
-  const T = Music.track; if (!T || !AC) return;
+  const T = Music.track; if (!T || !AC || T.file) return;
   const sd = 60 / T.bpm / 4;
   if (Music.nextT < AC.currentTime - 0.5) Music.nextT = AC.currentTime + 0.05;
   while (Music.nextT < AC.currentTime + 0.12){ if (musicOn) scheduleStep(T, Music.step, Music.nextT, sd); Music.nextT += sd; Music.step = (Music.step + 1) % T.len; }
@@ -1954,8 +1965,10 @@ function show(id){
   $('#hud').hidden = !(G && !['start','logo','title','select','rank','credits','chapters','codex','oficina'].includes(id)) || state === 'cutscene';
   if (id === 'title') paintMenu();
 }
+const MENU_MUSICA = ['title', 'select', 'rank', 'codex', 'oficina', 'chapters'];
 function setState(s, scr){
   state = s; const id = scr === undefined ? s : scr; show(id);
+  if (MENU_MUSICA.includes(id)) playMusic('menu');
   const b = id === 'title' ? $('#btn-play') : id === 'codex' ? document.querySelector('#codex-tabs [aria-selected="true"]') : (document.querySelector('#scr-' + id + ' .choice') || document.querySelector('#scr-' + id + ' .btn:not(.ghost):not([hidden])') || document.querySelector('#scr-' + id + ' .btn')); if (b) setTimeout(() => b.focus({ preventScroll:true }), 30);
 }
 function binsHTML(){
@@ -4348,6 +4361,7 @@ function TEXTO_VEL(){ return { lenta:0.7, normal:1, rapida:1.6 }[OPTS.texto] || 
 function musicLevel(){ return 0.77 * OPTS.musica / 100; }
 function saveOpts(){ store('lp-opts', OPTS); }
 function applyVolumes(){
+  if (Music.el && !Music.elGain && Music.track && Music.track.file) Music.el.volume = Math.min(1, musicLevel() * Music.track.vol);
   if (!AC) return; const now = AC.currentTime;
   musicGain.gain.cancelScheduledValues(now); musicGain.gain.setTargetAtTime(Math.max(0.0001, musicLevel()), now, 0.05);
   sfxBus.gain.setTargetAtTime(OPTS.efeitos / 80, now, 0.05);
@@ -4428,7 +4442,8 @@ cv.addEventListener('pointerdown', e => { if (state !== 'play' || joy) return; j
 cv.addEventListener('pointermove', e => { if (joy && e.pointerId === joy.id){ joy.x = e.clientX; joy.y = e.clientY; } });
 const endJoy = e => { if (joy && e.pointerId === joy.id) joy = null; };
 cv.addEventListener('pointerup', endJoy); cv.addEventListener('pointercancel', endJoy);
-function toggleMusic(){ musicOn = !musicOn; $('#btn-music').setAttribute('aria-pressed', musicOn); }
+function toggleMusic(){ musicOn = !musicOn; $('#btn-music').setAttribute('aria-pressed', musicOn);
+  if (Music.track && Music.track.file && Music.el){ if (musicOn) Music.el.play().catch(() => {}); else Music.el.pause(); } }
 
 function takeNick(){
   const n = cleanNick($('#nick').value);
@@ -4438,8 +4453,8 @@ function takeNick(){
 $('#nick-form').addEventListener('submit', e => {
   e.preventDefault();
   if (!takeNick()) return;
-  initAudio(); playMusic('main');
-  const goSelect = () => { store('lp-hist', true); L = makeLevel(0); playMusic('main'); buildSelect(); setState('select'); };
+  initAudio(); playMusic('menu');
+  const goSelect = () => { store('lp-hist', true); L = makeLevel(0); playMusic('menu'); buildSelect(); setState('select'); };
   goSelect();
 });
 $('#btn-rank').onclick = () => { renderRank(); renderVotes(); setState('rank'); refreshSB(); };
@@ -4681,7 +4696,7 @@ $('#cine-skip').onclick = e => { e.stopPropagation(); cineSkip(); };
 $('#btn-cure').onclick = () => { store('lp-marina-infectada', false); buildSelect(); };
 $('#btn-shop-go').onclick = () => startFase(G.fase + 1);
 $('#btn-retry').onclick = () => { restore(G.player, G.snap); G.score = G.scoreSnap; G.sep = G.sepSnap; startFase(G.fase); };
-function resetToMenu(){ $('#coach').hidden = true; G = null; L = makeLevel(0); toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); $('#banner').textContent = ''; playMusic('main'); }
+function resetToMenu(){ $('#coach').hidden = true; G = null; L = makeLevel(0); toastQ.length = 0; toastT = 0; $('#toast').classList.add('off'); $('#banner').textContent = ''; playMusic('menu'); }
 function toTitle(){ resetToMenu(); setState('title'); }
 function goRank(){ resetToMenu(); renderRank(); renderVotes(); setState('rank'); refreshSB(); }
 async function endRun(){ if (L && L.tut){ toTitle(); return; } if (G && G.score > 0 && !G.saved){ await finishRun(false); goRank(); } else toTitle(); }
